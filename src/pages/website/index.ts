@@ -1,0 +1,11 @@
+export { HomePage } from './HomePage';
+export { BuyVoucherPage } from './BuyVoucherPage';
+export { PricingPage } from './PricingPage';
+export { TimetablePage } from './TimetablePage';
+export { PricingSection } from './PricingSection';
+export { ContactPage } from './ContactPage';
+export { DisclaimerPage } from './DisclaimerPage';
+export { HelpPage } from './HelpPage';
+export { VerifyPaymentPage } from './VerifyPaymentPage';
+export { CancelPaymentPage } from './CancelPaymentPage';
+export { PortalsPage } from './PortalsPage';

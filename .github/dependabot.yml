@@ -1,0 +1,47 @@
+# Keeps dependencies patched without anyone having to remember.
+#
+# The frontend ships its dependencies to every visitor's browser, so an
+# advisory in a bundled package is served to users directly. Dependabot opens a
+# PR, CI lints, type-checks and builds it, and the audit job fails on high or
+# critical advisories.
+version: 2
+
+updates:
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+      time: "06:00"
+      timezone: Africa/Accra
+    open-pull-requests-limit: 5
+    labels:
+      - dependencies
+    commit-message:
+      prefix: "deps"
+      prefix-development: "deps-dev"
+    groups:
+      # Patch and minor bumps travel together; majors come one at a time.
+      routine:
+        patterns:
+          - "*"
+        update-types:
+          - minor
+          - patch
+    ignore:
+      # A React or Vite major needs the migration guide read first, not a merge.
+      - dependency-name: react
+        update-types: ["version-update:semver-major"]
+      - dependency-name: react-dom
+        update-types: ["version-update:semver-major"]
+      - dependency-name: vite
+        update-types: ["version-update:semver-major"]
+
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: monthly
+    labels:
+      - dependencies
+    commit-message:
+      prefix: "ci"

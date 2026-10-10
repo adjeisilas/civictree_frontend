@@ -1,0 +1,52 @@
+@import "tailwindcss";
+
+@layer base {
+  html, body {
+    @apply font-sans;
+    overflow-x: hidden;
+    max-width: 100vw;
+  }
+}
+
+@theme {
+  --font-family-heading: "Cinzel", serif;
+  --font-family-sans: "Inter", system-ui, sans-serif;
+
+  --color-primary: #346231;
+  --color-primary-hover: #517643;
+  --color-cta: #ebc56b;
+  --color-success: #00A36C;
+  --color-background: #FFFFFF;
+  --color-bg-secondary: #F8FAF8;
+  --color-text-primary: #371f0d;
+  --color-text-secondary: #6B7280;
+  --color-border: #E5E7EB;
+  --color-dark-green: #1a3319;
+  --color-cream: #ffeade;
+}
+
+@layer components {
+  .grain-overlay {
+    @apply relative;
+  }
+
+  .grain-overlay::before {
+    content: '';
+    @apply absolute inset-0 pointer-events-none;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' seed='2'/%3E%3C/filter%3E%3Crect width='400' height='400' filter='url(%23noiseFilter)' opacity='0.05'/%3E%3C/svg%3E");
+    opacity: 0.5;
+  }
+
+  .glass-card {
+    @apply backdrop-blur-md bg-white/30 border border-white/40 shadow-xl rounded-2xl;
+  }
+
+  .glass-navbar {
+    @apply backdrop-blur-md bg-white/80;
+  }
+
+  .gradient-mesh {
+    @apply relative overflow-hidden;
+    background: linear-gradient(135deg, rgba(236, 181, 107, 0.15) 0%, rgba(52, 98, 49, 0.15) 100%);
+  }
+}

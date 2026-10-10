@@ -1,0 +1,22 @@
+{
+  "short_name": "CT Admin",
+  "name": "CivicTree Admin Dashboard",
+  "icons": [
+    {
+      "src": "/favicon.png",
+      "sizes": "64x64 32x32 24x24 16x16",
+      "type": "image/png"
+    },
+    {
+      "src": "/logo.png",
+      "sizes": "192x192 512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "start_url": "/admin",
+  "background_color": "#346231",
+  "theme_color": "#346231",
+  "display": "standalone",
+  "orientation": "portrait"
+}
