@@ -26,7 +26,7 @@ export default function PartnerReportsPage() {
     doc.text('Official Partner Revenue-Share Statement', 14, 28)
 
     doc.setFontSize(9)
-    doc.text(`Partner Entity: ${profile?.legalEntityName || profile?.partnerName || 'Apex Capital'}`, 14, 36)
+    doc.text(`Partner Entity: ${profile?.legalEntityName || profile?.partnerName || 'Unknown'}`, 14, 36)
     doc.text(`Contract ID: ${profile?.contractRef || 'CTR-REV-2026-04'} | Agreement: ${shareRate}% Gross Cut`, 14, 42)
     doc.text(`Reporting Interval: ${period.toUpperCase()} | Generated: ${new Date().toLocaleString()}`, 14, 48)
 

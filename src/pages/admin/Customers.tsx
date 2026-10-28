@@ -4,6 +4,7 @@ import CustomerDetailsPage from '../../components/admin/customers/CustomerDetail
 
 import { useCustomers, useCustomerStats } from '../../hooks/useCustomers'
 import { exportCustomersToCSV, exportCustomerPhonesToCSV } from '../../utils/exportUtils'
+import { VOUCHER_TYPES } from '../../config/voucherTypes'
 
 export default function Customers() {
   // Pagination
@@ -106,14 +107,14 @@ export default function Customers() {
           <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
           <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
         </svg>
-        <span className="text-xs font-bold text-gray-400 uppercase tracking-widest animate-pulse">Loading customer profiles...</span>
+        <span className="text-xs font-bold text-gray-400 animate-pulse">Loading customer profiles...</span>
       </div>
     )
   }
 
   if (error) {
     return (
-      <div className="bg-red-50 border border-red-200 text-red-800 p-5 rounded-2xl flex items-center space-x-3 shadow-sm">
+      <div className="bg-red-50 border border-red-200 text-red-800 p-5 rounded-lg flex items-center space-x-3">
         <AlertTriangle className="w-5 h-5 text-red-500 shrink-0" />
         <p className="text-xs font-semibold">{error.message}</p>
       </div>
@@ -134,20 +135,19 @@ export default function Customers() {
       )}
 
       {/* Main Page Title Header Banner */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center bg-primary p-6 sm:p-8 rounded-2xl text-white shadow-md relative overflow-hidden">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(235,197,107,0.15),transparent_60%)]" />
-        <div className="z-10 w-full">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center pb-1">
+        <div className="w-full">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between w-full">
             <div>
-              <h2 className="text-2xl sm:text-3xl font-serif font-bold tracking-tight">Customer Records</h2>
-              <p className="text-white/80 text-xs sm:text-sm mt-1.5 font-sans max-w-3xl">
+              <h2 className="font-heading text-[26px] leading-tight text-text-primary">Customer Records</h2>
+              <p className="text-[13px] text-gray-600 mt-1 max-w-3xl">
                 Unified customer profiles auto-captured at checkout from both the website and USSD channels. No registration required — records are created automatically on first purchase.
               </p>
             </div>
             
             <button
               onClick={() => setShowGuidelines(!showGuidelines)}
-              className="mt-4 sm:mt-0 flex items-center space-x-2 bg-white/10 hover:bg-white/20 border border-white/20 px-4 py-2 rounded-xl text-xs font-semibold tracking-wide transition-all duration-200 cursor-pointer active:scale-95"
+              className="mt-4 sm:mt-0 flex items-center space-x-2 bg-gray-50 hover:bg-gray-100 border border-gray-200 px-4 py-2 rounded-xl text-xs font-semibold tracking-wide transition-all duration-200 cursor-pointer active:scale-95"
             >
               <svg className={`w-4 h-4 transform transition-transform duration-200 ${showGuidelines ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
@@ -159,7 +159,7 @@ export default function Customers() {
       </div>
 
       {/* Primary Key Merge Info callout banner */}
-      <div className="bg-blue-50 border border-blue-200 text-blue-800 rounded-xl p-4 flex items-start space-x-3 shadow-sm">
+      <div className="bg-blue-50 border border-blue-200 text-blue-800 rounded-xl p-4 flex items-start space-x-3">
         <Pin className="w-5 h-5 text-blue-600 shrink-0 mt-0.5 transform -rotate-45" />
         <p className="text-xs font-medium leading-relaxed font-sans">
           <strong>Primary Identifier:</strong> Customers are identified by their phone number as the primary key. If the same phone number places orders on both Web and USSD, they are merged into a single unified <strong>Omnichannel</strong> profile.
@@ -168,14 +168,14 @@ export default function Customers() {
 
       {/* Expandable Guidelines & Specs (matching image specifications) */}
       {showGuidelines && (
-        <div className="space-y-6 bg-gray-50 border border-gray-100 p-6 rounded-2xl animate-fadeIn">
+        <div className="space-y-6 bg-gray-50 border border-gray-200 p-6 rounded-lg animate-fadeIn">
           {/* Customer Profile Data Block */}
           <div>
-            <h4 className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-3 select-none">Customer Profile Data</h4>
+            <h4 className="text-xs font-bold text-gray-400 mb-3 select-none">Customer Profile Data</h4>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
               {/* Card 1 */}
-              <div className="bg-white p-4 rounded-xl border border-gray-100 shadow-sm">
-                <h5 className="text-xs font-bold text-primary mb-3 uppercase tracking-wide">Core Profile Fields</h5>
+              <div className="bg-white p-4 rounded-xl border border-gray-200">
+                <h5 className="text-xs font-bold text-primary mb-3">Core Profile Fields</h5>
                 <ul className="space-y-2 text-xs text-gray-600 font-medium">
                   <li className="flex items-start"><span className="text-emerald-500 mr-2">•</span> Full name (captured at checkout)</li>
                   <li className="flex items-start"><span className="text-emerald-500 mr-2">•</span> Phone number — primary identifier</li>
@@ -186,8 +186,8 @@ export default function Customers() {
                 </ul>
               </div>
               {/* Card 2 */}
-              <div className="bg-white p-4 rounded-xl border border-gray-100 shadow-sm">
-                <h5 className="text-xs font-bold text-primary mb-3 uppercase tracking-wide">Purchase Summary</h5>
+              <div className="bg-white p-4 rounded-xl border border-gray-200">
+                <h5 className="text-xs font-bold text-primary mb-3">Purchase Summary</h5>
                 <ul className="space-y-2 text-xs text-gray-600 font-medium">
                   <li className="flex items-start"><span className="text-emerald-500 mr-2">•</span> Total number of orders placed</li>
                   <li className="flex items-start"><span className="text-emerald-500 mr-2">•</span> Total lifetime spend (GH₵)</li>
@@ -198,8 +198,8 @@ export default function Customers() {
                 </ul>
               </div>
               {/* Card 3 */}
-              <div className="bg-white p-4 rounded-xl border border-gray-100 shadow-sm">
-                <h5 className="text-xs font-bold text-primary mb-3 uppercase tracking-wide">Purchase History View</h5>
+              <div className="bg-white p-4 rounded-xl border border-gray-200">
+                <h5 className="text-xs font-bold text-primary mb-3">Purchase History View</h5>
                 <ul className="space-y-2 text-xs text-gray-600 font-medium">
                   <li className="flex items-start"><span className="text-emerald-500 mr-2">•</span> Per-order breakdown listed chronologically</li>
                   <li className="flex items-start"><span className="text-emerald-500 mr-2">•</span> Voucher type and quantity per order</li>
@@ -210,8 +210,8 @@ export default function Customers() {
                 </ul>
               </div>
               {/* Card 4 */}
-              <div className="bg-white p-4 rounded-xl border border-gray-100 shadow-sm">
-                <h5 className="text-xs font-bold text-primary mb-3 uppercase tracking-wide">USSD-Specific Data</h5>
+              <div className="bg-white p-4 rounded-xl border border-gray-200">
+                <h5 className="text-xs font-bold text-primary mb-3">USSD-Specific Data</h5>
                 <ul className="space-y-2 text-xs text-gray-600 font-medium">
                   <li className="flex items-start"><span className="text-emerald-500 mr-2">•</span> Network used (MTN / Telecel / AirtelTigo)</li>
                   <li className="flex items-start"><span className="text-emerald-500 mr-2">•</span> USSD session reference</li>
@@ -224,11 +224,11 @@ export default function Customers() {
 
           {/* Admin Actions & Tools Block */}
           <div>
-            <h4 className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-3 select-none">Admin Actions & Tools</h4>
+            <h4 className="text-xs font-bold text-gray-400 mb-3 select-none">Admin Actions & Tools</h4>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
               {/* Card 1 */}
-              <div className="bg-white p-4 rounded-xl border border-gray-100 shadow-sm">
-                <h5 className="text-xs font-bold text-primary mb-3 uppercase tracking-wide">Search & Filter</h5>
+              <div className="bg-white p-4 rounded-xl border border-gray-200">
+                <h5 className="text-xs font-bold text-primary mb-3">Search & Filter</h5>
                 <ul className="space-y-2 text-xs text-gray-600 font-medium">
                   <li className="flex items-start"><span className="text-emerald-500 mr-2">•</span> Search by name or phone number</li>
                   <li className="flex items-start"><span className="text-emerald-500 mr-2">•</span> Filter by channel (Web / USSD)</li>
@@ -239,8 +239,8 @@ export default function Customers() {
                 </ul>
               </div>
               {/* Card 2 */}
-              <div className="bg-white p-4 rounded-xl border border-gray-100 shadow-sm">
-                <h5 className="text-xs font-bold text-primary mb-3 uppercase tracking-wide">Communication Actions</h5>
+              <div className="bg-white p-4 rounded-xl border border-gray-200">
+                <h5 className="text-xs font-bold text-primary mb-3">Communication Actions</h5>
                 <ul className="space-y-2 text-xs text-gray-600 font-medium">
                   <li className="flex items-start"><span className="text-emerald-500 mr-2">•</span> Send individual SMS from profile page</li>
                   <li className="flex items-start"><span className="text-emerald-500 mr-2">•</span> Add customer to a bulk SMS campaign</li>
@@ -249,8 +249,8 @@ export default function Customers() {
                 </ul>
               </div>
               {/* Card 3 */}
-              <div className="bg-white p-4 rounded-xl border border-gray-100 shadow-sm">
-                <h5 className="text-xs font-bold text-primary mb-3 uppercase tracking-wide">Export Options</h5>
+              <div className="bg-white p-4 rounded-xl border border-gray-200">
+                <h5 className="text-xs font-bold text-primary mb-3">Export Options</h5>
                 <ul className="space-y-2 text-xs text-gray-600 font-medium">
                   <li className="flex items-start"><span className="text-emerald-500 mr-2">•</span> Export full customer list (CSV / Excel)</li>
                   <li className="flex items-start"><span className="text-emerald-500 mr-2">•</span> Export filtered subset</li>
@@ -259,8 +259,8 @@ export default function Customers() {
                 </ul>
               </div>
               {/* Card 4 */}
-              <div className="bg-white p-4 rounded-xl border border-gray-100 shadow-sm">
-                <h5 className="text-xs font-bold text-primary mb-3 uppercase tracking-wide">Customer Segmentation</h5>
+              <div className="bg-white p-4 rounded-xl border border-gray-200">
+                <h5 className="text-xs font-bold text-primary mb-3">Customer Segmentation</h5>
                 <ul className="space-y-2 text-xs text-gray-600 font-medium">
                   <li className="flex items-start"><span className="text-emerald-500 mr-2">•</span> High-value customers (top spenders)</li>
                   <li className="flex items-start"><span className="text-emerald-500 mr-2">•</span> Repeat customers (2+ orders)</li>
@@ -276,22 +276,22 @@ export default function Customers() {
 
       {/* Directory Section Header & Stats Overview */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-        <div className="bg-white p-4 rounded-xl border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
-          <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Total Captured Profiles</p>
+        <div className="bg-white p-4 rounded-xl border border-gray-200 transition-colors">
+          <p className="text-xs font-bold text-gray-400">Total Captured Profiles</p>
           <p className="text-2xl font-bold text-primary mt-0.5">{stats.total}</p>
         </div>
-        <div className="bg-white p-4 rounded-xl border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
-          <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Web Captured</p>
+        <div className="bg-white p-4 rounded-xl border border-gray-200 transition-colors">
+          <p className="text-xs font-bold text-gray-400">Web Captured</p>
           <p className="text-2xl font-bold text-blue-600 mt-0.5">{stats.webOnly}</p>
         </div>
-        <div className="bg-white p-4 rounded-xl border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
-          <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">USSD Captured</p>
+        <div className="bg-white p-4 rounded-xl border border-gray-200 transition-colors">
+          <p className="text-xs font-bold text-gray-400">USSD Captured</p>
           <p className="text-2xl font-bold text-orange-600 mt-0.5">{stats.ussdOnly}</p>
         </div>
       </div>
 
       {/* Toolbar: Search, Filters, and Segment Selector tabs */}
-      <div className="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm space-y-4">
+      <div className="bg-white p-5 rounded-lg border border-gray-200 space-y-4">
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
           {/* Search Box */}
           <div className="relative flex-1">
@@ -329,8 +329,9 @@ export default function Customers() {
               className="px-3 py-2 text-xs font-semibold bg-gray-50/50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary cursor-pointer text-gray-600"
             >
               <option value="ALL">Voucher Type: All</option>
-              <option value="WASSCE_NOVDEC">WASSCE / NOVDEC</option>
-              <option value="BECE">BECE</option>
+              {VOUCHER_TYPES.map((v) => (
+                <option key={v.type} value={v.type}>{v.displayName}</option>
+              ))}
             </select>
 
             {/* View Mode Toggle */}
@@ -362,7 +363,7 @@ export default function Customers() {
         </div>
 
         {/* Segment Selector & Exports Panel */}
-        <div className="flex flex-col lg:flex-row lg:items-center justify-between border-t border-gray-100 pt-4 gap-4">
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between border-t border-gray-200 pt-4 gap-4">
           {/* Tabs for customer segments */}
           <div className="flex flex-wrap gap-1.5 bg-gray-50 p-1 rounded-xl w-fit">
             <button
@@ -443,7 +444,7 @@ export default function Customers() {
 
       {/* Directory Grid/Table layout mapping */}
       {displayedCustomers.length === 0 ? (
-        <div className="bg-white p-12 rounded-2xl border border-gray-100 text-center shadow-sm">
+        <div className="bg-white p-12 rounded-lg border border-gray-200 text-center">
           <svg className="w-12 h-12 mx-auto text-gray-300 mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5">
             <path strokeLinecap="round" strokeLinejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
           </svg>
@@ -456,7 +457,7 @@ export default function Customers() {
             <div
               key={cust.id}
               onClick={() => setSelectedCustomerPhone(cust.phone)}
-              className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm hover:shadow-md hover:border-gray-200 transition-all duration-200 cursor-pointer relative group flex flex-col justify-between"
+              className="bg-white p-6 rounded-lg border border-gray-200 hover:border-gray-200 transition-all duration-200 cursor-pointer relative group flex flex-col justify-between"
             >
               <div>
                 {/* Card Header section */}
@@ -469,13 +470,13 @@ export default function Customers() {
                     <div>
                       <h4 className="font-serif font-bold text-primary text-base group-hover:text-secondary transition-colors">{cust.name}</h4>
                       <p className="text-gray-400 text-xs font-mono mt-0.5">
-                        {cust.phone} &bull; <span className="font-sans font-medium text-[10px] uppercase tracking-wide">{cust.channel} customer</span>
+                        {cust.phone} &bull; <span className="font-sans font-medium text-xs">{cust.channel} customer</span>
                       </p>
                     </div>
                   </div>
 
                   {/* Status Badge */}
-                  <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold ${
+                  <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-bold ${
                     cust.status === 'Active' ? 'bg-emerald-50 text-emerald-700 border border-emerald-100' : 'bg-red-50 text-red-700 border border-red-100'
                   }`}>
                     {cust.status}
@@ -485,27 +486,27 @@ export default function Customers() {
                 {/* Card details grids */}
                 <div className="grid grid-cols-2 gap-y-4 gap-x-6 py-4 text-xs font-sans">
                   <div>
-                    <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Total Orders</p>
+                    <p className="text-xs font-bold text-gray-400">Total Orders</p>
                     <p className="font-bold text-text-primary mt-0.5">{cust.totalOrders} {cust.totalOrders === 1 ? 'order' : 'orders'}</p>
                   </div>
                   <div>
-                    <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Lifetime Spend</p>
+                    <p className="text-xs font-bold text-gray-400">Lifetime Spend</p>
                     <p className="font-bold text-emerald-600 mt-0.5">GH₵ {cust.lifetimeSpend}</p>
                   </div>
                   <div>
-                    <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">First Purchase</p>
+                    <p className="text-xs font-bold text-gray-400">First Purchase</p>
                     <p className="font-semibold text-gray-500 mt-0.5">{cust.firstPurchase}</p>
                   </div>
                   <div>
-                    <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Last Purchase</p>
+                    <p className="text-xs font-bold text-gray-400">Last Purchase</p>
                     <p className="font-semibold text-gray-500 mt-0.5">{cust.lastPurchase}</p>
                   </div>
                   <div>
-                    <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Preferred Payment</p>
+                    <p className="text-xs font-bold text-gray-400">Preferred Payment</p>
                     <p className="font-semibold text-gray-500 mt-0.5">{cust.preferredPayment}</p>
                   </div>
                   <div>
-                    <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Voucher Types</p>
+                    <p className="text-xs font-bold text-gray-400">Voucher Types</p>
                     <p className="font-bold text-primary mt-0.5">{(cust.voucherTypes || []).join(', ')}</p>
                   </div>
                 </div>
@@ -513,7 +514,7 @@ export default function Customers() {
 
               {/* View Profile Action button */}
               <div className="pt-2 flex justify-end">
-                <span className="text-[11px] font-bold text-secondary group-hover:text-primary transition-colors flex items-center space-x-1 uppercase tracking-wider">
+                <span className="text-[11px] font-bold text-secondary group-hover:text-primary transition-colors flex items-center space-x-1">
                   <span>View Full Profile</span>
                   <svg className="w-3.5 h-3.5 transform group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
@@ -525,11 +526,11 @@ export default function Customers() {
         </div>
       ) : (
         /* Table List Layout */
-        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+        <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full border-collapse text-left text-sm font-sans text-text-primary">
               <thead>
-                <tr className="bg-gray-50/50 text-gray-400 text-xs font-semibold uppercase border-b border-gray-100">
+                <tr className="bg-gray-50/50 text-gray-400 text-xs font-semibold uppercase border-b border-gray-200">
                   <th className="px-6 py-4">Customer</th>
                   <th className="px-6 py-4">Primary Phone</th>
                   <th className="px-6 py-4">Channel</th>
@@ -553,7 +554,7 @@ export default function Customers() {
                     </td>
                     <td className="px-6 py-4 font-mono text-gray-500">{cust.phone}</td>
                     <td className="px-6 py-4">
-                      <span className={`inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold border ${
+                      <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-bold border ${
                         cust.channel === 'Web' ? 'bg-blue-50 text-blue-700 border-blue-100' : cust.channel === 'USSD' ? 'bg-orange-50 text-orange-700 border-orange-100' : 'bg-emerald-50 text-emerald-700 border-emerald-100'
                       }`}>
                         {cust.channel}
@@ -563,7 +564,7 @@ export default function Customers() {
                     <td className="px-6 py-4 font-bold text-emerald-600">GH₵ {cust.lifetimeSpend}</td>
                     <td className="px-6 py-4 text-gray-500">{cust.lastPurchase}</td>
                     <td className="px-6 py-4">
-                      <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold ${
+                      <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-bold ${
                         cust.status === 'Active' ? 'bg-emerald-50 text-emerald-700 border border-emerald-100' : 'bg-red-50 text-red-700 border border-red-100'
                       }`}>
                         {cust.status}
@@ -572,7 +573,7 @@ export default function Customers() {
                     <td className="px-6 py-4 text-right">
                       <button
                         onClick={() => setSelectedCustomerPhone(cust.phone)}
-                        className="px-3 py-1.5 text-xs font-semibold text-secondary hover:text-primary bg-gray-50 hover:bg-gray-100 border border-gray-100 rounded-lg transition-colors cursor-pointer"
+                        className="px-3 py-1.5 text-xs font-semibold text-secondary hover:text-primary bg-gray-50 hover:bg-gray-100 border border-gray-200 rounded-lg transition-colors cursor-pointer"
                       >
                         View Profile
                       </button>
@@ -587,7 +588,7 @@ export default function Customers() {
 
       {/* Pagination Controls */}
       {totalPages > 1 && !selectedCustomerPhone && (
-        <div className="flex items-center justify-between bg-white px-6 py-4 border border-gray-100 rounded-2xl shadow-sm mt-4">
+        <div className="flex items-center justify-between bg-white px-6 py-4 border border-gray-200 rounded-lg mt-4">
           <p className="text-xs text-gray-500 font-medium">
             Showing <span className="font-bold text-gray-900">{displayedCustomers.length}</span> out of <span className="font-bold text-gray-900">{paginatedData?.totalCount || 0}</span> customers
           </p>

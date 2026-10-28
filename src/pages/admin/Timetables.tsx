@@ -13,7 +13,9 @@ import {
   Loader2
 } from 'lucide-react'
 import { useAdminTimetables, useUpdateTimetable } from '../../hooks/useTimetables'
+import { X as XIcon } from 'lucide-react'
 import { TimetableConfig, TimetableType } from '../../types/timetable'
+import { VOUCHER_TYPE_CODES, voucherTypeChip, voucherTypeLabel } from '../../config/voucherTypes'
 
 /** Default exam year for a category that has nothing saved yet. */
 const CURRENT_YEAR = new Date().getFullYear()
@@ -141,14 +143,14 @@ export default function Timetables() {
   return (
     <div className="space-y-6 pb-12">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 bg-white p-6 rounded-lg border border-gray-200">
         <div>
           <h1 className="text-2xl font-bold font-heading text-text-primary flex items-center gap-2.5">
             <Calendar className="text-primary" size={28} />
             Timetable Management
           </h1>
           <p className="text-sm text-text-secondary mt-1">
-            Upload and configure official WASSCE and BECE examination timetables for the website.
+            Upload and configure the official examination timetables shown on the website.
           </p>
         </div>
         <div className="flex items-center gap-3">
@@ -167,7 +169,7 @@ export default function Timetables() {
 
       {/* Save Success Alert Banner */}
       {saveSuccess && (
-        <div className="bg-emerald-50 border border-emerald-200 text-emerald-800 p-4 rounded-xl flex items-center justify-between shadow-sm animate-fade-in">
+        <div className="bg-emerald-50 border border-emerald-200 text-emerald-800 p-4 rounded-xl flex items-center justify-between animate-fade-in">
           <div className="flex items-center gap-3">
             <CheckCircle2 className="text-emerald-600 shrink-0" size={22} />
             <div>
@@ -181,21 +183,21 @@ export default function Timetables() {
             onClick={() => setSaveSuccess(false)}
             className="text-emerald-600 hover:text-emerald-800 font-bold text-sm px-2"
           >
-            ✕
+            <XIcon className="w-4 h-4" strokeWidth={2} />
           </button>
         </div>
       )}
 
       {/* Overview Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-        {(['BECE', 'WASSCE_NOVDEC'] as TimetableType[]).map((key) => {
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
+        {VOUCHER_TYPE_CODES.map((key) => {
           const item: Partial<TimetableConfig> = timetables?.find((t: TimetableConfig) => t.type === key) || { title: 'Not Configured', type: key, isPublished: false, fileName: '-', fileSize: '' }
           const isSelected = activeTab === key
           return (
             <div
               key={key}
               onClick={() => setActiveTab(key)}
-              className={`cursor-pointer transition-all duration-200 p-5 rounded-2xl border ${
+              className={`cursor-pointer transition-all duration-200 p-5 rounded-lg border ${
                 isSelected
                   ? 'bg-white border-primary shadow-md ring-2 ring-primary/20'
                   : 'bg-white/80 border-gray-200 hover:border-gray-300 hover:shadow-sm'
@@ -204,13 +206,13 @@ export default function Timetables() {
               <div className="flex items-start justify-between">
                 <div className="flex items-center gap-3">
                   <div className={`w-12 h-12 rounded-xl flex items-center justify-center font-bold ${
-                    key === 'BECE' ? 'bg-primary/10 text-primary' : 'bg-amber-100 text-amber-800'
+                    voucherTypeChip(key)
                   }`}>
                     <FileText size={24} />
                   </div>
                   <div>
                     <h3 className="font-bold text-lg text-text-primary">{item.title}</h3>
-                    <p className="text-xs text-text-secondary">Type: {item.type}</p>
+                    <p className="text-xs text-text-secondary">Type: {voucherTypeLabel(item.type)}</p>
                   </div>
                 </div>
                 <span className={`px-2.5 py-1 rounded-full text-xs font-semibold ${
@@ -222,7 +224,7 @@ export default function Timetables() {
                 </span>
               </div>
 
-              <div className="mt-4 pt-4 border-t border-gray-100 flex items-center justify-between text-xs text-text-secondary">
+              <div className="mt-4 pt-4 border-t border-gray-200 flex items-center justify-between text-xs text-text-secondary">
                 <div className="flex items-center gap-1.5">
                   <FileCheck size={14} className="text-primary" />
                   <span className="truncate max-w-[180px] font-mono">{item.fileName || '-'}</span>
@@ -240,31 +242,23 @@ export default function Timetables() {
       </div>
 
       {/* Main Edit Panel */}
-      <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+      <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
         {/* Tabs */}
         <div className="flex border-b border-gray-200 bg-gray-50/50">
-          <button
-            type="button"
-            onClick={() => setActiveTab('BECE')}
-            className={`flex-1 py-4 px-6 font-semibold text-sm text-center border-b-2 transition-colors ${
-              activeTab === 'BECE'
-                ? 'border-primary text-primary bg-white'
-                : 'border-transparent text-text-secondary hover:text-text-primary'
-            }`}
-          >
-            BECE Timetable Configuration
-          </button>
-          <button
-            type="button"
-            onClick={() => setActiveTab('WASSCE_NOVDEC')}
-            className={`flex-1 py-4 px-6 font-semibold text-sm text-center border-b-2 transition-colors ${
-              activeTab === 'WASSCE_NOVDEC'
-                ? 'border-primary text-primary bg-white'
-                : 'border-transparent text-text-secondary hover:text-text-primary'
-            }`}
-          >
-            WASSCE / NOVDEC Timetable Configuration
-          </button>
+          {VOUCHER_TYPE_CODES.map((key) => (
+            <button
+              key={key}
+              type="button"
+              onClick={() => setActiveTab(key)}
+              className={`flex-1 py-4 px-4 font-semibold text-xs sm:text-sm text-center border-b-2 transition-colors ${
+                activeTab === key
+                  ? 'border-primary text-primary bg-white'
+                  : 'border-transparent text-text-secondary hover:text-text-primary'
+              }`}
+            >
+              {voucherTypeLabel(key)} Timetable
+            </button>
+          ))}
         </div>
 
         {/* Form */}
@@ -272,7 +266,7 @@ export default function Timetables() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* Title */}
             <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-text-secondary mb-2">
+              <label className="block text-xs font-bold text-text-secondary mb-2">
                 Card Title (Display on Website)
               </label>
               <input
@@ -287,7 +281,7 @@ export default function Timetables() {
 
             {/* Exam Year */}
             <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-text-secondary mb-2">
+              <label className="block text-xs font-bold text-text-secondary mb-2">
                 Examination Year
               </label>
               <input
@@ -302,7 +296,7 @@ export default function Timetables() {
 
             {/* Release Date */}
             <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-text-secondary mb-2">
+              <label className="block text-xs font-bold text-text-secondary mb-2">
                 Expected Release / Exam Start Date
               </label>
               <input
@@ -315,7 +309,7 @@ export default function Timetables() {
 
             {/* Visibility Toggle */}
             <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-text-secondary mb-2">
+              <label className="block text-xs font-bold text-text-secondary mb-2">
                 Website Visibility
               </label>
               <label className="flex items-center gap-3 p-2.5 rounded-xl border border-gray-200 cursor-pointer hover:bg-gray-50">
@@ -334,7 +328,7 @@ export default function Timetables() {
 
           {/* Description */}
           <div>
-            <label className="block text-xs font-bold uppercase tracking-wider text-text-secondary mb-2">
+            <label className="block text-xs font-bold text-text-secondary mb-2">
               Website Card Description
             </label>
             <textarea
@@ -347,7 +341,7 @@ export default function Timetables() {
           </div>
 
           {/* Upload Section */}
-          <div className="border-2 border-dashed border-gray-200 rounded-2xl p-6 bg-gray-50/50 hover:bg-gray-50 transition-colors">
+          <div className="border-2 border-dashed border-gray-200 rounded-lg p-6 bg-gray-50/50 hover:bg-gray-50 transition-colors">
             <div className="flex flex-col items-center text-center">
               <div className="w-12 h-12 rounded-full bg-primary/10 text-primary flex items-center justify-center mb-3">
                 <Upload size={22} />
@@ -393,7 +387,7 @@ export default function Timetables() {
 
           {/* Or Manual URL Input */}
           <div>
-            <label className="block text-xs font-bold uppercase tracking-wider text-text-secondary mb-2">
+            <label className="block text-xs font-bold text-text-secondary mb-2">
               Or Specify Direct File URL
             </label>
             <input
@@ -406,7 +400,7 @@ export default function Timetables() {
           </div>
 
           {/* Action Buttons */}
-          <div className="pt-4 border-t border-gray-100 flex items-center justify-between">
+          <div className="pt-4 border-t border-gray-200 flex items-center justify-between">
             <span className="text-xs text-text-secondary">
               {formData.updatedAt ? `Last updated: ${new Date(formData.updatedAt).toLocaleString()}` : ''}
             </span>
@@ -426,17 +420,17 @@ export default function Timetables() {
       {/* Preview Modal */}
       {previewUrl && (
         <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl max-w-4xl w-full max-h-[85vh] flex flex-col overflow-hidden shadow-2xl">
-            <div className="p-4 border-b border-gray-100 flex items-center justify-between bg-gray-50">
+          <div className="bg-white rounded-lg max-w-4xl w-full max-h-[85vh] flex flex-col overflow-hidden shadow-2xl">
+            <div className="p-4 border-b border-gray-200 flex items-center justify-between bg-gray-50">
               <h3 className="font-bold text-sm text-text-primary flex items-center gap-2">
                 <FileText size={18} className="text-primary" />
                 Timetable Document Preview: {formData.fileName}
               </h3>
               <button
                 onClick={() => setPreviewUrl(null)}
-                className="w-8 h-8 rounded-full bg-gray-200 text-gray-700 hover:bg-gray-300 flex items-center justify-center font-bold text-sm"
+                className="w-8 h-8 rounded-md text-gray-500 hover:bg-gray-100 hover:text-text-primary flex items-center justify-center transition-colors cursor-pointer"
               >
-                ✕
+                <XIcon className="w-4 h-4" strokeWidth={2} />
               </button>
             </div>
             <div className="flex-1 p-4 bg-gray-100 overflow-auto min-h-[400px] flex items-center justify-center">

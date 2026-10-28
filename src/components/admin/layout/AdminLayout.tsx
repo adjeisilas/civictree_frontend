@@ -4,6 +4,7 @@ import Sidebar from './Sidebar'
 import { useAuthStore } from '../../../services/authStore'
 import { useLogout } from '../../../hooks/useAuth'
 import { useNotifications, useMarkAllRead, useSubscribePush } from '../../../hooks/useNotifications'
+import { Bell, ChevronRight, LogOut, Menu, Settings, User } from 'lucide-react'
 
 // Helper to convert base64 VAPID to Uint8Array
 function urlBase64ToUint8Array(base64String: string) {
@@ -131,23 +132,21 @@ export default function AdminLayout() {
       {/* Main content area */}
       <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
         {/* Sticky Header */}
-        <header className="h-14 shrink-0 bg-[#eee] backdrop-blur-md border-b border-gray-100 flex items-center justify-between px-4 sm:px-6 z-30">
+        <header className="h-15 shrink-0 bg-white border-b border-gray-200 flex items-center justify-between px-4 sm:px-6 z-30">
           <div className="flex items-center space-x-2.5 sm:space-x-4 min-w-0">
             {/* Hamburger button for mobile */}
             <button
               onClick={() => setSidebarOpen(true)}
-              className="p-1.5 rounded-lg text-gray-500 hover:bg-gray-100 hover:text-gray-700 md:hidden focus:outline-none transition-colors shrink-0"
+              className="p-2 -ml-2 rounded-md text-gray-500 hover:bg-gray-100 hover:text-text-primary md:hidden transition-colors shrink-0"
             >
-              <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
-              </svg>
+              <Menu className="w-5 h-5" strokeWidth={1.75} />
             </button>
             
             {/* Breadcrumb Title */}
-            <div className="flex items-center space-x-1.5 sm:space-x-2 text-[11.5px] font-bold text-gray-400 select-none min-w-0">
+            <div className="flex items-center gap-2 text-[13px] text-gray-500 select-none min-w-0">
               <span className="hidden sm:inline shrink-0">{getPageSection()}</span>
-              <span className="text-gray-300 font-normal hidden sm:inline shrink-0">/</span>
-              <span className="text-gray-700 font-semibold truncate max-w-[130px] sm:max-w-none">{getPageTitle()}</span>
+              <ChevronRight className="w-3.5 h-3.5 text-gray-300 hidden sm:inline shrink-0" strokeWidth={2} />
+              <span className="font-medium text-text-primary truncate max-w-[160px] sm:max-w-none">{getPageTitle()}</span>
             </div>
           </div>
 
@@ -160,15 +159,13 @@ export default function AdminLayout() {
             <div className="relative">
               <button
                 onClick={() => setNotifMenuOpen(!notifMenuOpen)}
-                className="w-7 h-7 rounded-full bg-gray-100 hover:bg-gray-200 text-gray-600 hover:text-text-primary transition-all flex items-center justify-center cursor-pointer relative select-none"
+                className="w-9 h-9 rounded-md text-gray-500 hover:bg-gray-100 hover:text-text-primary transition-colors flex items-center justify-center cursor-pointer relative select-none"
                 title="Notifications"
               >
-                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
-                </svg>
+                <Bell className="w-[18px] h-[18px]" strokeWidth={1.75} />
                 {unreadNotifications.length > 0 && (
-                  <span className="absolute -top-1.5 -right-1.5 w-4 h-4 bg-red-500 border border-white text-white font-bold text-[8px] rounded-full flex items-center justify-center">
-                    {unreadNotifications.length}
+                  <span className="absolute top-1 right-1 min-w-[16px] h-4 px-1 bg-red-600 text-white font-semibold text-xs leading-4 rounded-full flex items-center justify-center tabular-nums">
+                    {unreadNotifications.length > 9 ? '9+' : unreadNotifications.length}
                   </span>
                 )}
               </button>
@@ -179,70 +176,62 @@ export default function AdminLayout() {
                     onClick={() => setNotifMenuOpen(false)}
                     className="fixed inset-0 z-40 cursor-default"
                   />
-                  <div className="absolute right-0 mt-2 w-72 bg-white border border-gray-200 rounded-2xl shadow-xl z-50 py-2.5 text-xs font-semibold text-gray-600 animate-fadeIn">
-                    <div className="px-4 py-2 border-b border-gray-50 mb-1 flex justify-between items-center">
-                      <span className="text-text-primary text-[10px] font-bold">Recent Alerts ({unreadNotifications.length})</span>
+                  <div className="absolute right-0 mt-2 w-80 bg-white border border-gray-200 rounded-lg shadow-lg z-50 py-1.5 text-gray-600 animate-fadeIn">
+                    <div className="px-4 py-2.5 border-b border-gray-200 flex justify-between items-center gap-3">
+                      <span className="text-text-primary text-[13px] font-semibold">Unread alerts ({unreadNotifications.length})</span>
                       {unreadNotifications.length > 0 && (
                         <button
                           onClick={() => {
                             markAllRead()
                             setNotifMenuOpen(false)
                           }}
-                          className="text-[9px] text-primary hover:text-secondary font-bold cursor-pointer"
+                          className="text-xs text-primary hover:underline font-medium cursor-pointer shrink-0"
                         >
                           Mark all read
                         </button>
                       )}
                     </div>
 
-                    <div className="max-h-60 overflow-y-auto divide-y divide-gray-50">
+                    <div className="max-h-72 overflow-y-auto divide-y divide-gray-100">
                       {unreadNotifications.length > 0 ? (
                         unreadNotifications.map((n) => (
-                          <div key={n.id} className="p-3 hover:bg-gray-50 flex items-start gap-2.5 transition-colors">
-                            <span className={`w-2 h-2 rounded-full mt-1.5 shrink-0 ${
-                              n.type === 'critical' ? 'bg-red-500' : n.type === 'warning' ? 'bg-amber-500' : 'bg-emerald-500'
+                          <div key={n.id} className="px-4 py-3 hover:bg-gray-50 flex items-start gap-3 transition-colors">
+                            <span className={`w-1.5 h-1.5 rounded-full mt-1.5 shrink-0 ${
+                              n.type === 'critical' ? 'bg-red-600' : n.type === 'warning' ? 'bg-amber-500' : 'bg-gray-300'
                             }`} />
-                            <div className="space-y-0.5">
-                              <p className="text-text-primary text-[10px] font-bold leading-tight">{n.title}</p>
-                              <p className="text-gray-400 text-[9px] font-medium leading-normal">{n.message}</p>
-                              <p className="text-[8px] text-gray-400 font-mono mt-0.5">{n.time}</p>
+                            <div className="min-w-0">
+                              <p className="text-text-primary text-[13px] font-medium leading-snug">{n.title}</p>
+                              <p className="text-gray-600 text-xs leading-relaxed mt-0.5">{n.message}</p>
+                              <p className="text-[11px] text-gray-400 mt-1">{n.time}</p>
                             </div>
                           </div>
                         ))
                       ) : (
-                        <div className="py-6 text-center text-gray-400 font-medium">
-                          No new notifications
+                        <div className="py-8 text-center text-[13px] text-gray-500">
+                          Nothing unread
                         </div>
                       )}
                     </div>
 
-                    <div className="border-t border-gray-50 mt-1.5 pt-2 px-3 text-center">
+                    <div className="border-t border-gray-200 mt-1 pt-2 px-3 space-y-1.5">
                       <button
                         onClick={() => {
                           setNotifMenuOpen(false)
                           navigate('/admin/notifications')
                         }}
-                        className="w-full py-1.5 bg-primary/5 hover:bg-primary/10 text-primary hover:text-secondary text-[9px] font-bold rounded-xl transition-all cursor-pointer"
+                        className="w-full py-2 text-primary hover:bg-primary/5 text-[13px] font-medium rounded-md transition-colors cursor-pointer"
                       >
-                        View All Notifications
+                        View all notifications
                       </button>
                       
                       {('Notification' in window) && Notification.permission !== 'granted' && (
                         <button
                           onClick={handleSubscribePush}
                           disabled={isSubscribing}
-                          className="w-full mt-1.5 py-1.5 bg-gray-100 hover:bg-gray-200 text-gray-600 hover:text-gray-800 text-[9px] font-bold rounded-xl transition-all cursor-pointer flex items-center justify-center gap-1"
+                          className="w-full py-2 text-gray-600 hover:bg-gray-50 hover:text-text-primary text-[13px] font-medium rounded-md transition-colors cursor-pointer flex items-center justify-center gap-1.5"
                         >
-                          {isSubscribing ? (
-                            <span>Enabling...</span>
-                          ) : (
-                            <>
-                              <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
-                                <path strokeLinecap="round" strokeLinejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
-                              </svg>
-                              <span>Enable Push Notifications</span>
-                            </>
-                          )}
+                          <Bell className="w-3.5 h-3.5" strokeWidth={1.75} />
+                          <span>{isSubscribing ? 'Enabling...' : 'Enable push notifications'}</span>
                         </button>
                       )}
                     </div>
@@ -252,11 +241,11 @@ export default function AdminLayout() {
             </div>
 
             {/* Profile trigger */}
-            <div className="relative pl-2 border-l border-gray-100">
+            <div className="relative pl-2 ml-1 border-l border-gray-200">
               <button 
                 onClick={() => setProfileMenuOpen(!profileMenuOpen)}
-                className="w-7 h-7 rounded-full bg-primary/10 flex items-center justify-center border border-primary/20 text-primary font-bold text-[10px] hover:bg-primary/20 transition-all cursor-pointer select-none"
-                title="Admin Menu"
+                className="w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center text-xs font-semibold hover:bg-primary-hover transition-colors cursor-pointer select-none"
+                title="Admin menu"
               >
                 {user?.name?.charAt(0) || 'A'}
               </button>
@@ -270,11 +259,11 @@ export default function AdminLayout() {
                   />
                   
                   {/* Dropdown Menu Box */}
-                  <div className="absolute right-0 mt-2 w-52 bg-white border border-gray-200 rounded-2xl shadow-xl z-50 py-2 text-xs font-semibold text-gray-600 animate-fadeIn">
-                    {/* User Info Header */}
-                    <div className="px-4 py-2 border-b border-gray-50 mb-1">
-                      <p className="text-text-primary text-[10px] font-bold truncate leading-tight">{user?.name || 'Admin User'}</p>
-                      <p className="text-gray-400 text-[8px] mt-0.5 truncate">{user?.email || 'admin@civictree.com'}</p>
+                  <div className="absolute right-0 mt-2 w-60 bg-white border border-gray-200 rounded-lg shadow-lg z-50 py-1.5 text-gray-600 animate-fadeIn">
+                    {/* Who is signed in */}
+                    <div className="px-4 py-2.5 border-b border-gray-200">
+                      <p className="text-text-primary text-[13px] font-semibold truncate">{user?.name || 'Admin user'}</p>
+                      <p className="text-gray-500 text-xs mt-0.5 truncate">{user?.email || 'admin@civictree.com'}</p>
                     </div>
 
                     {/* Menu links */}
@@ -283,12 +272,10 @@ export default function AdminLayout() {
                         setProfileMenuOpen(false)
                         navigate('/admin/profile')
                       }}
-                      className="w-full text-left px-4 py-1.5 hover:bg-gray-50 hover:text-text-primary transition-colors flex items-center space-x-2 cursor-pointer"
+                      className="w-full text-left px-4 py-2 text-[13px] hover:bg-gray-50 hover:text-text-primary transition-colors flex items-center gap-2.5 cursor-pointer"
                     >
-                      <svg className="w-3.5 h-3.5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                      </svg>
-                      <span>My Profile & Security</span>
+                      <User className="w-4 h-4 text-gray-400" strokeWidth={1.75} />
+                      <span>Profile &amp; security</span>
                     </button>
 
                     <button
@@ -296,29 +283,24 @@ export default function AdminLayout() {
                         setProfileMenuOpen(false)
                         navigate('/admin/settings')
                       }}
-                      className="w-full text-left px-4 py-1.5 hover:bg-gray-50 hover:text-text-primary transition-colors flex items-center space-x-2 cursor-pointer"
+                      className="w-full text-left px-4 py-2 text-[13px] hover:bg-gray-50 hover:text-text-primary transition-colors flex items-center gap-2.5 cursor-pointer"
                     >
-                      <svg className="w-3.5 h-3.5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                      </svg>
-                      <span>System Settings</span>
+                      <Settings className="w-4 h-4 text-gray-400" strokeWidth={1.75} />
+                      <span>System settings</span>
                     </button>
 
                     {/* Divider */}
-                    <div className="border-b border-gray-100 my-1" />
+                    <div className="border-t border-gray-200 my-1" />
 
                     <button
                       onClick={() => {
                         setProfileMenuOpen(false)
                         handleLogout()
                       }}
-                      className="w-full text-left px-4 py-1.5 text-red-500 hover:bg-red-50 hover:text-red-700 transition-colors flex items-center space-x-2 cursor-pointer"
+                      className="w-full text-left px-4 py-2 text-[13px] text-red-600 hover:bg-red-50 transition-colors flex items-center gap-2.5 cursor-pointer"
                     >
-                      <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-                      </svg>
-                      <span>Sign Out</span>
+                      <LogOut className="w-4 h-4" strokeWidth={1.75} />
+                      <span>Sign out</span>
                     </button>
                   </div>
                 </>
@@ -328,8 +310,10 @@ export default function AdminLayout() {
         </header>
 
         {/* Dynamic Inner Page Viewer */}
-        <main className="flex-1 overflow-y-auto p-6 scrollbar">
-          <Outlet />
+        <main className="flex-1 overflow-y-auto scrollbar">
+          <div className="max-w-[1600px] mx-auto p-5 sm:p-6 lg:p-8">
+            <Outlet />
+          </div>
         </main>
       </div>
     </div>

@@ -58,22 +58,22 @@ export default function OrderDetailsDrawer({
   const getPaymentBadge = (status: Order['paymentStatus']) => {
     switch (status) {
       case 'Successful':
-        return <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-100">Successful</span>
+        return <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-100">Successful</span>
       case 'Pending':
-        return <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-amber-50 text-amber-700 border border-amber-100">Pending</span>
+        return <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-amber-50 text-amber-700 border border-amber-100">Pending</span>
       case 'Failed':
-        return <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-red-50 text-red-700 border border-red-100">Failed</span>
+        return <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-red-50 text-red-700 border border-red-100">Failed</span>
     }
   }
 
   const getDeliveryBadge = (status: Order['deliveryStatus']) => {
     switch (status) {
       case 'Delivered':
-        return <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-100">Delivered</span>
+        return <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-100">Delivered</span>
       case 'Delayed':
-        return <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-50 text-amber-700 border border-amber-100">Stock Delayed</span>
+        return <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-bold bg-amber-50 text-amber-700 border border-amber-100">Stock Delayed</span>
       case 'Failed':
-        return <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-red-50 text-red-700 border border-red-100">Failed SMS Node</span>
+        return <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-bold bg-red-50 text-red-700 border border-red-100">Failed SMS Node</span>
     }
   }
 
@@ -86,12 +86,12 @@ export default function OrderDetailsDrawer({
       />
 
       {/* Sliding Drawer Container */}
-      <div className="absolute inset-y-0 right-0 max-w-md w-full bg-white shadow-xl flex flex-col justify-between overflow-hidden border-l border-gray-100">
+      <div className="absolute inset-y-0 right-0 max-w-md w-full bg-white shadow-xl flex flex-col justify-between overflow-hidden border-l border-gray-200">
         
         {/* Top Header */}
-        <div className="p-6 border-b border-gray-100 bg-[#FCFDFB] flex items-center justify-between">
+        <div className="p-6 border-b border-gray-200 bg-[#FCFDFB] flex items-center justify-between">
           <div>
-            <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest leading-none">Order Details</span>
+            <span className="text-xs font-bold text-gray-400 leading-none">Order Details</span>
             <h3 className="text-base font-serif font-bold text-primary mt-1.5 leading-none">{order.id}</h3>
           </div>
           <button 
@@ -108,13 +108,13 @@ export default function OrderDetailsDrawer({
         <div className="flex-1 p-6 space-y-6 overflow-y-auto text-xs font-semibold text-gray-500 scrollbar">
           
           {/* Status summary banner */}
-          <div className="flex justify-between items-center bg-gray-50 p-4 rounded-xl border border-gray-100">
+          <div className="flex justify-between items-center bg-gray-50 p-4 rounded-xl border border-gray-200">
             <div>
-              <p className="text-[9px] font-bold text-gray-400 uppercase tracking-wider">Payment</p>
+              <p className="text-[11px] font-bold text-gray-400">Payment</p>
               <div className="mt-1">{getPaymentBadge(order.paymentStatus)}</div>
             </div>
             <div>
-              <p className="text-[9px] font-bold text-gray-400 uppercase tracking-wider">SMS Delivery</p>
+              <p className="text-[11px] font-bold text-gray-400">SMS Delivery</p>
               <div className="mt-1">{getDeliveryBadge(order.deliveryStatus)}</div>
             </div>
           </div>
@@ -122,7 +122,7 @@ export default function OrderDetailsDrawer({
           {/* Customer Metadata Card */}
           <div className="space-y-2">
             <h4 className="font-serif text-sm font-bold text-primary">Customer Profile</h4>
-            <div className="bg-white border border-gray-150 p-4 rounded-xl space-y-2.5 shadow-sm text-text-primary">
+            <div className="bg-white border border-gray-200 p-4 rounded-xl space-y-2.5 text-text-primary">
               <div className="flex justify-between">
                 <span className="text-gray-400">Full Name</span>
                 <span>{order.customerName}</span>
@@ -141,7 +141,7 @@ export default function OrderDetailsDrawer({
           {/* Transaction Metadata Card */}
           <div className="space-y-2">
             <h4 className="font-serif text-sm font-bold text-primary">Transaction Info</h4>
-            <div className="bg-white border border-gray-150 p-4 rounded-xl space-y-2.5 shadow-sm text-text-primary">
+            <div className="bg-white border border-gray-200 p-4 rounded-xl space-y-2.5 text-text-primary">
               <div className="flex justify-between">
                 <span className="text-gray-400">Voucher Type</span>
                 <span>{order.voucherType} Checker</span>
@@ -156,7 +156,7 @@ export default function OrderDetailsDrawer({
               </div>
               <div className="flex justify-between">
                 <span className="text-gray-400">Payment Gateway Ref</span>
-                <span className="font-mono text-[10px] text-gray-500">{order.gatewayRef || 'N/A'}</span>
+                <span className="font-mono text-xs text-gray-500">{order.gatewayRef || 'N/A'}</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-gray-400">Method Used</span>
@@ -173,9 +173,9 @@ export default function OrderDetailsDrawer({
                 {order.allocatedKeys.map((key) => {
                   const isRevealed = !!showPins[key.serial]
                   return (
-                    <div key={key.serial} className="bg-gray-50 border border-gray-150 p-3.5 rounded-xl flex items-center justify-between text-text-primary">
+                    <div key={key.serial} className="bg-gray-50 border border-gray-200 p-3.5 rounded-xl flex items-center justify-between text-text-primary">
                       <div>
-                        <div className="text-[10px] text-gray-400 font-bold uppercase tracking-wider">SERIAL: {key.serial}</div>
+                        <div className="text-xs text-gray-400 font-bold">SERIAL: {key.serial}</div>
                         <div className="font-mono text-sm mt-1 tracking-widest font-bold">
                           {isRevealed ? key.pin : '•••• •••• ••••'}
                         </div>
@@ -206,7 +206,7 @@ export default function OrderDetailsDrawer({
           {/* SMS Dispatch Activity Logs */}
           <div className="space-y-2">
             <h4 className="font-serif text-sm font-bold text-primary">SMS Delivery Node Logs</h4>
-            <div className="bg-gray-900 text-green-400 font-mono text-[10px] p-4 rounded-xl space-y-2 shadow-inner min-h-[90px] border border-white/5 max-h-44 overflow-y-auto">
+            <div className="bg-gray-900 text-green-400 font-mono text-xs p-4 rounded-xl space-y-2 shadow-inner min-h-[90px] border border-white/5 max-h-44 overflow-y-auto">
               {smsLog.map((log, idx) => (
                 <div key={idx} className="leading-relaxed">{log}</div>
               ))}
@@ -223,7 +223,7 @@ export default function OrderDetailsDrawer({
         </div>
 
         {/* Action Panel Footer */}
-        <div className="p-6 border-t border-gray-100 bg-[#FCFDFB] space-y-3">
+        <div className="p-6 border-t border-gray-200 bg-[#FCFDFB] space-y-3">
           <div className="flex space-x-3">
             <button
               onClick={handleResendClick}

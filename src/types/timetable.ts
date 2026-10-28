@@ -1,4 +1,4 @@
-export type TimetableType = 'BECE' | 'WASSCE_NOVDEC'
+export type TimetableType = 'BECE' | 'WASSCE_NOVDEC' | 'CTVET_NABTEX'
 
 export interface TimetableConfig {
   id: string

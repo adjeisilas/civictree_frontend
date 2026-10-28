@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react'
-import { useSendBulkSms, useSendBeceBulkSms, useSendWassceBulkSms, useSendSingleSms, useSmsHistory, useSmsTemplates, useSmsRecipientCount } from '../../hooks/useSms'
+import { useSendBulkSms, useSendVoucherTypeBulkSms, useSendSingleSms, useSmsHistory, useSmsTemplates, useSmsRecipientCount } from '../../hooks/useSms'
 import type { SmsResponse } from '../../hooks/useSms'
 import { apiErrorMessage } from '../../utils/apiError'
 
@@ -20,6 +20,17 @@ import {
   FileText,
   X
 } from 'lucide-react'
+import { VOUCHER_TYPES, VOUCHER_TYPE_CODES } from '../../config/voucherTypes'
+import ClearContactsPanel from '../../components/admin/sms/ClearContactsPanel'
+import { ENDPOINTS } from '../../services/endpoints'
+import type { ExamType } from '../../types/admin'
+
+/** Shown in the campaign receipt so an admin can see which endpoint ran. */
+const BULK_ENDPOINT_LABELS: Record<ExamType, string> = {
+  BECE: ENDPOINTS.SMS.SEND_BULK_BECE,
+  WASSCE_NOVDEC: ENDPOINTS.SMS.SEND_BULK_WASSCE,
+  CTVET_NABTEX: ENDPOINTS.SMS.SEND_BULK_CTVET_NABTEX,
+}
 
 const presetTemplates = {
   Promotional: 'Discount alert! Get 10% off WASSCE & BECE checkers this weekend on CivicTree. Dial *713*5912# or visit civictree.com.',
@@ -38,8 +49,8 @@ export default function SMS() {
   const senderId = 'CivicTree'
   
   // Unified Bulk Audience Division state matching API specifications
-  const [campaignCategory, setCampaignCategory] = useState<'GENERAL' | 'BECE' | 'WASSCE_NOVDEC'>('GENERAL')
-  const [recipientType, setRecipientType] = useState<'ALL' | 'SUCCESSFUL' | 'FAILED_ONLY' | 'BECE' | 'WASSCE_NOVDEC'>('ALL')
+  const [campaignCategory, setCampaignCategory] = useState<'GENERAL' | ExamType>('GENERAL')
+  const [recipientType, setRecipientType] = useState<'ALL' | 'SUCCESSFUL' | 'FAILED_ONLY' | ExamType>('ALL')
 
   // Message content
   const [messageType, setMessageType] = useState<string>('Announcements')
@@ -67,10 +78,9 @@ export default function SMS() {
   const [historyStatusFilter, setHistoryStatusFilter] = useState<'ALL' | 'Sent' | 'Failed' | 'Processing'>('ALL')
 
   const { mutate: sendBulkSms, isPending: isSendingBulk } = useSendBulkSms()
-  const { mutate: sendBeceSms, isPending: isSendingBece } = useSendBeceBulkSms()
-  const { mutate: sendWassceSms, isPending: isSendingWassce } = useSendWassceBulkSms()
+  const { mutate: sendVoucherTypeSms, isPending: isSendingVoucherType } = useSendVoucherTypeBulkSms()
   const { mutate: sendSingleSms, isPending: isSendingSingle } = useSendSingleSms()
-  const isSending = isSendingBulk || isSendingBece || isSendingWassce || isSendingSingle
+  const isSending = isSendingBulk || isSendingVoucherType || isSendingSingle
 
   // Character and unit calculation
   const charLimit = 160
@@ -80,12 +90,14 @@ export default function SMS() {
   // The legacy division options mean "everyone who touched that product"
   const countScope = useMemo<{
     segment: 'ALL' | 'SUCCESSFUL' | 'FAILED_ONLY'
-    voucherType?: 'BECE' | 'WASSCE_NOVDEC'
+    voucherType?: ExamType
   }>(() => {
-    if (recipientType === 'BECE') return { segment: 'ALL', voucherType: 'BECE' }
-    if (recipientType === 'WASSCE_NOVDEC') return { segment: 'ALL', voucherType: 'WASSCE_NOVDEC' }
+    // The legacy division options name a product rather than a payment status
+    const legacyProduct = VOUCHER_TYPE_CODES.find((code) => code === recipientType)
+    if (legacyProduct) return { segment: 'ALL', voucherType: legacyProduct }
+
     return {
-      segment: recipientType,
+      segment: recipientType as 'ALL' | 'SUCCESSFUL' | 'FAILED_ONLY',
       voucherType: campaignCategory === 'GENERAL' ? undefined : campaignCategory,
     }
   }, [recipientType, campaignCategory])
@@ -130,9 +142,10 @@ export default function SMS() {
     if (dispatchMode === 'Bulk') {
       const commonTitle = senderId.trim() || messageType || 'CivicTree'
       const commonSender = senderId.trim() || 'CivicTree'
-      const targetEndpoint = 
-        campaignCategory === 'BECE' ? 'POST /api/admin/sms/bulk/bece' :
-        campaignCategory === 'WASSCE_NOVDEC' ? 'POST /api/admin/sms/bulk/wassce' : 'POST /api/admin/sms/bulk (General/Legacy)'
+      const targetEndpoint =
+        campaignCategory === 'GENERAL'
+          ? 'POST /api/admin/sms/bulk (General/Legacy)'
+          : `POST ${BULK_ENDPOINT_LABELS[campaignCategory]}`
 
       const handleSuccess = (res: SmsResponse) => {
         const counts = res.data
@@ -166,12 +179,19 @@ export default function SMS() {
         showToast(serverMsg, 'error')
       }
 
-      if (campaignCategory === 'BECE') {
-        sendBeceSms({ recipientType: recipientType as 'ALL' | 'SUCCESSFUL' | 'FAILED_ONLY', title: commonTitle, body: messageBody, senderId: commonSender }, { onSuccess: handleSuccess, onError: handleError })
-      } else if (campaignCategory === 'WASSCE_NOVDEC') {
-        sendWassceSms({ recipientType: recipientType as 'ALL' | 'SUCCESSFUL' | 'FAILED_ONLY', title: commonTitle, body: messageBody, senderId: commonSender }, { onSuccess: handleSuccess, onError: handleError })
-      } else {
+      if (campaignCategory === 'GENERAL') {
         sendBulkSms({ recipientType, title: commonTitle, body: messageBody, senderId: commonSender, contactsCount: estimatedRecipients }, { onSuccess: handleSuccess, onError: handleError })
+      } else {
+        sendVoucherTypeSms(
+          {
+            voucherType: campaignCategory,
+            recipientType: recipientType as 'ALL' | 'SUCCESSFUL' | 'FAILED_ONLY',
+            title: commonTitle,
+            body: messageBody,
+            senderId: commonSender,
+          },
+          { onSuccess: handleSuccess, onError: handleError }
+        )
       }
     } else {
       if (!singlePhoneNumber.trim()) {
@@ -266,7 +286,7 @@ export default function SMS() {
       )}
 
       {/* Page Title Header Banner */}
-      <div className="bg-white border border-gray-200 p-6 rounded-2xl shadow-sm flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+      <div className="bg-white border border-gray-200 p-6 rounded-lg flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
           <div className="flex items-center space-x-2.5">
             <div className="p-2 bg-emerald-50 text-emerald-800 rounded-xl">
@@ -274,16 +294,16 @@ export default function SMS() {
             </div>
             <h2 className="text-xl sm:text-2xl font-serif font-bold text-primary">Bulk SMS Module & Communications</h2>
           </div>
-          <p className="text-[10px] text-gray-400 font-bold uppercase tracking-wider mt-1 font-mono">
+          <p className="text-xs text-gray-400 font-bold mt-1 font-mono">
             CivicTree Enterprise Results Checker Platform
           </p>
           <p className="text-xs text-gray-500 font-medium leading-relaxed max-w-3xl mt-2 font-sans">
             Broadcast promotional campaigns, announcement alerts, and result release updates. Segment target audiences by transaction status and examination checker type.
           </p>
         </div>
-        <div className="flex flex-col items-end gap-1.5 shrink-0 self-stretch sm:self-auto border-t md:border-t-0 pt-3 md:pt-0 border-gray-100">
+        <div className="flex flex-col items-end gap-1.5 shrink-0 self-stretch sm:self-auto border-t md:border-t-0 pt-3 md:pt-0 border-gray-200">
           <span className="text-xs font-semibold text-gray-500 font-mono">{currentDateFormatted}</span>
-          <span className="bg-amber-100 text-amber-900 text-[10px] font-bold px-2.5 py-0.5 rounded-full uppercase tracking-wider">
+          <span className="bg-amber-100 text-amber-900 text-xs font-bold px-2.5 py-0.5 rounded-full">
             {user?.role || 'Super Admin'}
           </span>
         </div>
@@ -291,7 +311,7 @@ export default function SMS() {
 
       {/* Interactive API Response Alert Report Banner */}
       {campaignAlert && (
-        <div className={`p-6 rounded-2xl border shadow-md transition-all ${
+        <div className={`p-6 rounded-lg border shadow-md transition-all ${
           campaignAlert.status === 'success'
             ? 'bg-emerald-50/90 border-emerald-300 text-emerald-900'
             : campaignAlert.status === 'partial_success'
@@ -313,7 +333,7 @@ export default function SMS() {
               </div>
               <div className="space-y-1">
                 <div className="flex items-center space-x-2.5">
-                  <span className={`text-[10px] font-extrabold uppercase px-2.5 py-0.5 rounded-full font-mono ${
+                  <span className={`text-xs font-extrabold uppercase px-2.5 py-0.5 rounded-full font-mono ${
                     campaignAlert.status === 'success'
                       ? 'bg-emerald-200/80 text-emerald-900'
                       : campaignAlert.status === 'partial_success'
@@ -346,9 +366,9 @@ export default function SMS() {
           {/* Detailed Metric Cards from Response Data */}
           {campaignAlert.stats && (
             <div className="mt-5 pt-4 border-t border-black/10 grid grid-cols-1 sm:grid-cols-3 gap-4">
-              <div className="bg-white/90 backdrop-blur-sm p-3.5 rounded-xl border border-black/5 flex items-center justify-between shadow-sm">
+              <div className="bg-white/90 backdrop-blur-sm p-3.5 rounded-xl border border-black/5 flex items-center justify-between">
                 <div>
-                  <p className="text-[10px] font-bold text-gray-400 uppercase font-mono tracking-wider">Total Recipients</p>
+                  <p className="text-xs font-bold text-gray-400 uppercase font-mono tracking-wider">Total Recipients</p>
                   <p className="text-xl font-serif font-extrabold text-gray-800 mt-0.5">
                     {campaignAlert.stats.totalRecipients !== undefined ? campaignAlert.stats.totalRecipients.toLocaleString() : '—'}
                   </p>
@@ -358,9 +378,9 @@ export default function SMS() {
                 </div>
               </div>
 
-              <div className="bg-white/90 backdrop-blur-sm p-3.5 rounded-xl border border-emerald-500/20 flex items-center justify-between shadow-sm">
+              <div className="bg-white/90 backdrop-blur-sm p-3.5 rounded-xl border border-emerald-500/20 flex items-center justify-between">
                 <div>
-                  <p className="text-[10px] font-bold text-emerald-700 uppercase font-mono tracking-wider">Success Count</p>
+                  <p className="text-xs font-bold text-emerald-700 uppercase font-mono tracking-wider">Success Count</p>
                   <p className="text-xl font-serif font-extrabold text-emerald-700 mt-0.5">
                     {campaignAlert.stats.successCount !== undefined ? campaignAlert.stats.successCount.toLocaleString() : '—'}
                   </p>
@@ -370,9 +390,9 @@ export default function SMS() {
                 </div>
               </div>
 
-              <div className="bg-white/90 backdrop-blur-sm p-3.5 rounded-xl border border-red-500/20 flex items-center justify-between shadow-sm">
+              <div className="bg-white/90 backdrop-blur-sm p-3.5 rounded-xl border border-red-500/20 flex items-center justify-between">
                 <div>
-                  <p className="text-[10px] font-bold text-red-600 uppercase font-mono tracking-wider">Failed / Undelivered</p>
+                  <p className="text-xs font-bold text-red-600 uppercase font-mono tracking-wider">Failed / Undelivered</p>
                   <p className={`text-xl font-serif font-extrabold mt-0.5 ${
                     (campaignAlert.stats.failedCount || 0) > 0 ? 'text-red-700' : 'text-gray-600'
                   }`}>
@@ -399,14 +419,14 @@ export default function SMS() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         
         {/* Left Column (2 span): SMS Compose & Filtering Interface */}
-        <div className="lg:col-span-2 bg-white p-6 rounded-2xl border border-gray-200 shadow-sm flex flex-col justify-between space-y-6">
+        <div className="lg:col-span-2 bg-white p-6 rounded-lg border border-gray-200 flex flex-col justify-between space-y-6">
           <div>
-            <div className="flex items-center justify-between border-b border-gray-100 pb-3 mb-5">
-              <h3 className="text-xs font-bold text-gray-700 uppercase tracking-widest flex items-center gap-2">
+            <div className="flex items-center justify-between border-b border-gray-200 pb-3 mb-5">
+              <h3 className="text-xs font-bold text-gray-700 flex items-center gap-2">
                 <Send className="w-3.5 h-3.5 text-emerald-700" />
                 <span>SMS Campaign Composer</span>
               </h3>
-              <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider bg-gray-100 px-2.5 py-1 rounded-full">
+              <span className="text-xs font-bold text-gray-400 bg-gray-100 px-2.5 py-1 rounded-full">
                 GSM 160 Char Standard
               </span>
             </div>
@@ -415,7 +435,7 @@ export default function SMS() {
               
               {/* Dispatch Mode Toggle */}
               <div>
-                <label className="block text-[10px] text-gray-400 uppercase font-bold tracking-wider mb-2">
+                <label className="block text-xs text-gray-400 uppercase font-bold tracking-wider mb-2">
                   Select Dispatch Mode
                 </label>
                 <div className="flex space-x-3">
@@ -456,10 +476,10 @@ export default function SMS() {
                   
                   {/* Tier 1: Campaign Category */}
                   <div className="space-y-1.5">
-                    <label className="text-gray-600 uppercase tracking-wider text-[10px] font-bold block">
+                    <label className="text-gray-600 text-xs font-bold block">
                       Step 1: Select Target Exam Cohort
                     </label>
-                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2">
                       <button
                         type="button"
                         onClick={() => {
@@ -476,58 +496,50 @@ export default function SMS() {
                           <span className="w-2 h-2 rounded-full bg-emerald-600 shrink-0"></span>
                           <span>General / Global</span>
                         </span>
-                        <span className="text-[10px] text-gray-500 mt-1 font-medium">All platform transactions</span>
+                        <span className="text-xs text-gray-500 mt-1 font-medium">All platform transactions</span>
                       </button>
 
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setCampaignCategory('BECE')
-                          setRecipientType('ALL')
-                        }}
-                        className={`p-2.5 rounded-xl border text-left transition-all flex flex-col justify-between cursor-pointer ${
-                          campaignCategory === 'BECE'
-                            ? 'bg-blue-50 border-blue-600 text-blue-950 shadow-sm font-extrabold ring-1 ring-blue-500'
-                            : 'bg-white border-gray-200 hover:border-gray-300 text-gray-700 font-bold'
-                        }`}
-                      >
-                        <span className="text-[11px] flex items-center gap-1.5">
-                          <span className="w-2 h-2 rounded-full bg-blue-600 shrink-0"></span>
-                          <span>BECE Candidates</span>
-                        </span>
-                        <span className="text-[10px] text-blue-700 mt-1 font-medium">BECE orders & dialers</span>
-                      </button>
-
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setCampaignCategory('WASSCE_NOVDEC')
-                          setRecipientType('ALL')
-                        }}
-                        className={`p-2.5 rounded-xl border text-left transition-all flex flex-col justify-between cursor-pointer ${
-                          campaignCategory === 'WASSCE_NOVDEC'
-                            ? 'bg-amber-50 border-amber-600 text-amber-950 shadow-sm font-extrabold ring-1 ring-amber-500'
-                            : 'bg-white border-gray-200 hover:border-gray-300 text-gray-700 font-bold'
-                        }`}
-                      >
-                        <span className="text-[11px] flex items-center gap-1.5">
-                          <span className="w-2 h-2 rounded-full bg-amber-600 shrink-0"></span>
-                          <span>WASSCE & NOVDEC</span>
-                        </span>
-                        <span className="text-[10px] text-amber-700 mt-1 font-medium">WASSCE orders & dialers</span>
-                      </button>
+                      {VOUCHER_TYPES.map((voucher) => {
+                        const isActive = campaignCategory === voucher.type
+                        return (
+                          <button
+                            key={voucher.type}
+                            type="button"
+                            onClick={() => {
+                              setCampaignCategory(voucher.type)
+                              setRecipientType('ALL')
+                            }}
+                            className={`p-2.5 rounded-xl border text-left transition-all flex flex-col justify-between cursor-pointer ${
+                              isActive
+                                ? 'bg-gray-50 border-gray-700 text-gray-950 shadow-sm font-extrabold ring-1 ring-gray-500'
+                                : 'bg-white border-gray-200 hover:border-gray-300 text-gray-700 font-bold'
+                            }`}
+                          >
+                            <span className="text-[11px] flex items-center gap-1.5">
+                              <span
+                                className="w-2 h-2 rounded-full shrink-0"
+                                style={{ backgroundColor: voucher.accent.chartColor }}
+                              />
+                              <span>{voucher.displayName}</span>
+                            </span>
+                            <span className="text-xs text-gray-500 mt-1 font-medium">
+                              {voucher.shortName} orders &amp; dialers
+                            </span>
+                          </button>
+                        )
+                      })}
                     </div>
                   </div>
 
                   {/* Tier 2: Division Option */}
-                  <div className="space-y-1.5 pt-2 border-t border-gray-100">
-                    <label className="text-gray-600 uppercase tracking-wider text-[10px] font-bold block">
+                  <div className="space-y-1.5 pt-2 border-t border-gray-200">
+                    <label className="text-gray-600 text-xs font-bold block">
                       Step 2: Select Division / Transaction Status Option
                     </label>
                     <select
                       value={recipientType}
                       onChange={(e) => setRecipientType(e.target.value as typeof recipientType)}
-                      className="w-full px-3.5 py-2.5 bg-white border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-600/20 text-gray-800 font-bold cursor-pointer shadow-sm text-xs"
+                      className="w-full px-3.5 py-2.5 bg-white border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-600/20 text-gray-800 font-bold cursor-pointer text-xs"
                     >
                       <option value="ALL">
                         {campaignCategory === 'BECE'
@@ -544,12 +556,15 @@ export default function SMS() {
                       </option>
                       {campaignCategory === 'GENERAL' && (
                         <>
-                          <option value="BECE">BECE — Customers who bought BECE Vouchers (Legacy Filter)</option>
-                          <option value="WASSCE_NOVDEC">WASSCE_NOVDEC — Customers who bought WASSCE / NOVDEC Vouchers (Legacy Filter)</option>
+                          {VOUCHER_TYPES.map((v) => (
+                            <option key={v.type} value={v.type}>
+                              {v.displayName} — Customers who bought {v.displayName} vouchers (Legacy Filter)
+                            </option>
+                          ))}
                         </>
                       )}
                     </select>
-                    <p className="text-[10.5px] text-gray-500 font-medium leading-relaxed pt-1">
+                    <p className="text-xs text-gray-500 font-medium leading-relaxed pt-1">
                       {campaignCategory === 'GENERAL' && recipientType === 'ALL' && 'Dispatches to all unique platform order and USSD dialer numbers.'}
                       {campaignCategory === 'GENERAL' && recipientType === 'SUCCESSFUL' && 'Dispatches exclusively to confirmed paying customers.'}
                       {campaignCategory === 'GENERAL' && recipientType === 'FAILED_ONLY' && 'Dispatches to customers with failed/incomplete purchase attempts (ideal for transaction recovery).'}
@@ -562,7 +577,7 @@ export default function SMS() {
                 /* Single Recipient Phone Input */
                 <div className="space-y-3.5">
                   <div className="space-y-1.5">
-                    <label className="text-gray-500 uppercase tracking-wider text-[10px] font-bold">
+                    <label className="text-gray-500 text-xs font-bold">
                       Recipient Phone Number
                     </label>
                     <input
@@ -584,7 +599,7 @@ export default function SMS() {
 
               {/* Message Type / Template Selector */}
               <div className="space-y-1.5">
-                <label className="text-gray-500 uppercase tracking-wider text-[10px] font-bold">
+                <label className="text-gray-500 text-xs font-bold">
                   Campaign Category / Preset Template
                 </label>
                 <select
@@ -605,7 +620,7 @@ export default function SMS() {
 
               {/* Message Body Textarea */}
               <div className="space-y-1.5">
-                <label className="text-gray-500 uppercase tracking-wider text-[10px] font-bold">
+                <label className="text-gray-500 text-xs font-bold">
                   Message Copy & Content
                 </label>
                 <textarea
@@ -630,7 +645,7 @@ export default function SMS() {
               </div>
 
               {/* Submit Dispatch Button */}
-              <div className="pt-3 border-t border-gray-100 flex justify-end">
+              <div className="pt-3 border-t border-gray-200 flex justify-end">
                 <button
                   type="submit"
                   disabled={isSending || !messageBody.trim()}
@@ -664,23 +679,24 @@ export default function SMS() {
         </div>
 
         {/* Right Column (1 span): Live Targeting & Billing Analytics Widget */}
-        <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm flex flex-col justify-between space-y-6">
+        <div className="space-y-6">
+        <div className="bg-white p-6 rounded-lg border border-gray-200 flex flex-col justify-between space-y-6">
           <div className="space-y-6">
-            <div className="border-b border-gray-100 pb-3 flex items-center justify-between">
-              <h3 className="text-xs font-bold text-gray-700 uppercase tracking-widest flex items-center gap-2">
+            <div className="border-b border-gray-200 pb-3 flex items-center justify-between">
+              <h3 className="text-xs font-bold text-gray-700 flex items-center gap-2">
                 <Sparkles className="w-3.5 h-3.5 text-emerald-700" />
                 <span>Campaign Analytics</span>
               </h3>
-              <span className="text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full uppercase">
+              <span className="text-xs font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full uppercase">
                 Live Preview
               </span>
             </div>
 
             {/* Targeted Segment Breakdown Box */}
-            <div className="bg-gradient-to-br from-emerald-900 to-emerald-800 text-white p-5 rounded-2xl shadow-md space-y-4">
+            <div className="bg-gradient-to-br from-emerald-900 to-emerald-800 text-white p-5 rounded-lg shadow-md space-y-4">
               <div className="flex justify-between items-start">
                 <div>
-                  <p className="text-[10px] font-bold uppercase tracking-widest text-emerald-300 font-mono">
+                  <p className="text-xs font-bold text-emerald-300 font-mono">
                     {dispatchMode === 'Bulk' ? 'Target Audience Reach' : 'Single Dispatch Mode'}
                   </p>
                   <h4 className="text-3xl font-serif font-extrabold tracking-tight mt-1">
@@ -696,7 +712,7 @@ export default function SMS() {
                       : 'Recipients, counted from the database'}
                   </p>
                   {dispatchMode === 'Bulk' && recipientCount && recipientCount.duplicatesMerged > 0 && (
-                    <p className="text-[10px] text-emerald-300/90 mt-1 font-medium">
+                    <p className="text-xs text-emerald-300/90 mt-1 font-medium">
                       {recipientCount.sourceRows.toLocaleString()} records,{' '}
                       {recipientCount.duplicatesMerged.toLocaleString()} merged as the same person
                       {recipientCount.unusable > 0 && `, ${recipientCount.unusable.toLocaleString()} unusable`}
@@ -713,13 +729,13 @@ export default function SMS() {
                 <div className="pt-3 border-t border-emerald-700/50 space-y-2 text-xs">
                   <div className="flex justify-between items-center">
                     <span className="text-emerald-200 font-medium">Cohort Category:</span>
-                    <span className="font-bold text-white bg-emerald-700/90 px-2.5 py-0.5 rounded text-[10px] uppercase font-mono shadow-inner">
+                    <span className="font-bold text-white bg-emerald-700/90 px-2.5 py-0.5 rounded text-xs uppercase font-mono shadow-inner">
                       {campaignCategory}
                     </span>
                   </div>
                   <div className="flex justify-between items-center">
                     <span className="text-emerald-200 font-medium">Target Division:</span>
-                    <span className="font-bold text-white bg-emerald-700/90 px-2.5 py-0.5 rounded text-[10px] uppercase font-mono shadow-inner">
+                    <span className="font-bold text-white bg-emerald-700/90 px-2.5 py-0.5 rounded text-xs uppercase font-mono shadow-inner">
                       {recipientType}
                     </span>
                   </div>
@@ -734,7 +750,7 @@ export default function SMS() {
 
             {/* Gateway & Billing Consumption Summary */}
             <div className="space-y-3">
-              <h4 className="text-xs font-bold text-gray-700 uppercase tracking-wide flex items-center gap-2">
+              <h4 className="text-xs font-bold text-gray-700 flex items-center gap-2">
                 <Layers className="w-3.5 h-3.5 text-gray-500" />
                 <span>Gateway Billing Calculation</span>
               </h4>
@@ -761,7 +777,7 @@ export default function SMS() {
 
             {/* Compliance Guidelines */}
             <div className="p-4 bg-amber-50 rounded-xl border border-amber-200/60 text-amber-900 space-y-1.5">
-              <p className="text-[11px] font-bold uppercase tracking-wider flex items-center gap-1.5">
+              <p className="text-[11px] font-bold flex items-center gap-1.5">
                 <AlertCircle className="w-3.5 h-3.5 text-amber-600 shrink-0" />
                 <span>NCA & Telecom Guidelines</span>
               </p>
@@ -773,17 +789,20 @@ export default function SMS() {
 
           {/* Quick Stats Support Text */}
           <div className="text-center pt-2">
-            <p className="text-[10px] text-gray-400 font-mono">
+            <p className="text-xs text-gray-400 font-mono">
               Powered by CivicTree Omnichannel SMS Gateway
             </p>
           </div>
+          </div>
+
+          <ClearContactsPanel />
         </div>
 
       </div>
 
       {/* Campaign Transmission History Section */}
-      <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm space-y-6">
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-gray-100 pb-4">
+      <div className="bg-white p-6 rounded-lg border border-gray-200 space-y-6">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-gray-200 pb-4">
           <div className="flex items-center space-x-2.5">
             <div className="p-2 bg-emerald-50 text-emerald-800 rounded-xl">
               <History className="w-5 h-5" />
@@ -831,7 +850,7 @@ export default function SMS() {
           <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse">
               <thead>
-                <tr className="border-b border-gray-150 text-[11px] font-bold text-gray-400 uppercase tracking-wider font-mono">
+                <tr className="border-b border-gray-200 text-[11px] font-bold text-gray-400 font-mono">
                   <th className="py-3 px-4">Date & Time</th>
                   <th className="py-3 px-4">Sender ID</th>
                   <th className="py-3 px-4">Target Segment / Category</th>
@@ -850,13 +869,13 @@ export default function SMS() {
                     <tr key={item.id} className="hover:bg-gray-50/70 transition-colors">
                       <td className="py-3.5 px-4 whitespace-nowrap">
                         <div className="font-bold text-gray-800 font-mono">{formattedDate}</div>
-                        <div className="text-[10px] text-gray-400 font-mono">{formattedTime}</div>
+                        <div className="text-xs text-gray-400 font-mono">{formattedTime}</div>
                       </td>
                       <td className="py-3.5 px-4 font-bold text-gray-800 whitespace-nowrap">
                         {item.senderId || 'CivicTree'}
                       </td>
                       <td className="py-3.5 px-4 whitespace-nowrap">
-                        <span className="inline-flex items-center px-2.5 py-1 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-800 border border-emerald-200">
+                        <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-50 text-emerald-800 border border-emerald-200">
                           {item.recipientsGroup || item.type || 'Broadcast'}
                         </span>
                       </td>
@@ -869,7 +888,7 @@ export default function SMS() {
                         </p>
                       </td>
                       <td className="py-3.5 px-4 whitespace-nowrap text-right">
-                        <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold ${
+                        <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold ${
                           item.status === 'Sent' 
                             ? 'bg-emerald-100 text-emerald-900 border border-emerald-200' 
                             : item.status === 'Processing'

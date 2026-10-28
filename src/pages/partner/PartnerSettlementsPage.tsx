@@ -18,15 +18,17 @@ export default function PartnerSettlementsPage() {
   const [amount, setAmount] = useState('')
   const [payoutMethod, setPayoutMethod] = useState<PayoutMethodType>('MOMO')
   const [provider, setProvider] = useState('MTN Mobile Money')
-  const [accountNumber, setAccountNumber] = useState('0245558921')
-  const [accountName, setAccountName] = useState('Apex Capital Ventures Ltd')
+  const [accountNumber, setAccountNumber] = useState('')
+  const [accountName, setAccountName] = useState('')
   const [notes, setNotes] = useState('')
   const [errorMsg, setErrorMsg] = useState('')
   const [successMsg, setSuccessMsg] = useState(false)
 
-  const availableBalance = profile?.availableBalance ?? 3362.50
-  const pendingAmount = profile?.pendingWithdrawalAmount ?? 1200.00
-  const lifetimeWithdrawn = profile?.withdrawnAmount ?? 18500.00
+  // Never substitute a figure the API did not report: a made-up balance
+  // invites a payout request against money that may not exist.
+  const availableBalance = profile?.availableBalance ?? 0
+  const pendingAmount = profile?.pendingWithdrawalAmount ?? 0
+  const lifetimeWithdrawn = profile?.withdrawnAmount ?? 0
 
   const handlePayoutSubmit = (e: React.FormEvent) => {
     e.preventDefault()

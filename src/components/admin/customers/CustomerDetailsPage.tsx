@@ -27,14 +27,14 @@ export default function CustomerDetailsPage({ phoneNumber, onBack, onSendSMS }: 
           <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
           <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
         </svg>
-        <span className="text-xs font-bold text-gray-400 uppercase tracking-widest animate-pulse">Loading profile data...</span>
+        <span className="text-xs font-bold text-gray-400 animate-pulse">Loading profile data...</span>
       </div>
     )
   }
 
   if (error || !customer) {
     return (
-      <div className="bg-red-50 border border-red-200 text-red-800 p-5 rounded-2xl flex items-center space-x-3 shadow-sm">
+      <div className="bg-red-50 border border-red-200 text-red-800 p-5 rounded-lg flex items-center space-x-3">
         <AlertTriangle className="w-5 h-5 text-red-500 shrink-0" />
         <p className="text-xs font-semibold">{error?.message || 'Customer profile not found.'}</p>
         <button onClick={onBack} className="ml-auto underline font-bold">Go Back</button>
@@ -45,7 +45,7 @@ export default function CustomerDetailsPage({ phoneNumber, onBack, onSendSMS }: 
   return (
     <div className="space-y-6 animate-fadeIn">
       {/* Top Breadcrumb & Action Header */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white p-4 rounded-xl border border-gray-100 shadow-sm">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white p-4 rounded-xl border border-gray-200">
         <button
           onClick={onBack}
           className="flex items-center space-x-2 text-xs font-bold text-gray-500 hover:text-primary transition-colors cursor-pointer select-none"
@@ -60,8 +60,7 @@ export default function CustomerDetailsPage({ phoneNumber, onBack, onSendSMS }: 
       </div>
 
       {/* Main Profile Info Banner Header */}
-      <div className="bg-primary p-6 sm:p-8 rounded-2xl text-white shadow-md relative overflow-hidden">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(235,197,107,0.15),transparent_60%)]" />
+      <div className="pb-1">
         <div className="z-10 flex flex-col sm:flex-row items-start sm:items-center sm:justify-between gap-4 w-full">
           <div className="flex items-center space-x-4">
             <div className="w-16 h-16 min-w-[64px] min-h-[64px] aspect-square rounded-full bg-white text-primary flex items-center justify-center font-bold text-xl shadow-md border-2 border-accent shrink-0 select-none">
@@ -70,7 +69,7 @@ export default function CustomerDetailsPage({ phoneNumber, onBack, onSendSMS }: 
             <div>
               <h3 className="text-xl sm:text-2xl font-serif font-bold">{customer.name || 'Unknown Customer'}</h3>
               <p className="text-white/85 text-xs sm:text-sm font-mono mt-1">
-                {customer.phone} &bull; <span className="font-sans uppercase font-bold text-[10px] text-accent tracking-wide">{customer.channel} Profile</span>
+                {customer.phone} &bull; <span className="font-sans uppercase font-bold text-xs text-accent tracking-wide">{customer.channel} Profile</span>
               </p>
             </div>
           </div>
@@ -88,85 +87,85 @@ export default function CustomerDetailsPage({ phoneNumber, onBack, onSendSMS }: 
       {/* Data Summary Grid Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {/* Card 1: Core Fields */}
-        <div className="bg-white border border-gray-100 p-5 rounded-2xl shadow-sm hover:shadow-md transition-shadow">
-          <h4 className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-4 border-b border-gray-50 pb-2">Core Profile Fields</h4>
+        <div className="bg-white border border-gray-200 p-5 rounded-lg transition-colors">
+          <h4 className="text-xs font-bold text-gray-400 mb-4 border-b border-gray-50 pb-2">Core Profile Fields</h4>
           <div className="space-y-4 text-xs font-sans">
             <div>
-              <span className="text-gray-400 font-semibold uppercase tracking-wide text-[9px]">Full Customer Name</span>
+              <span className="text-gray-400 font-semibold text-[11px]">Full Customer Name</span>
               <p className="font-bold text-primary mt-0.5">{customer.name}</p>
             </div>
             <div>
-              <span className="text-gray-400 font-semibold uppercase tracking-wide text-[9px]">Primary Phone Number</span>
+              <span className="text-gray-400 font-semibold text-[11px]">Primary Phone Number</span>
               <p className="font-mono font-bold text-gray-600 mt-0.5">{customer.phone}</p>
             </div>
             <div>
-              <span className="text-gray-400 font-semibold uppercase tracking-wide text-[9px]">First Acquisition Route</span>
+              <span className="text-gray-400 font-semibold text-[11px]">First Acquisition Route</span>
               <p className="font-bold mt-0.5 text-gray-700">{customer.channel} Checkout</p>
             </div>
             <div>
-              <span className="text-gray-400 font-semibold uppercase tracking-wide text-[9px]">Account Status</span>
+              <span className="text-gray-400 font-semibold text-[11px]">Account Status</span>
               <p className="font-bold text-emerald-600 mt-0.5">{customer.status}</p>
             </div>
           </div>
         </div>
 
         {/* Card 2: Purchase Summary */}
-        <div className="bg-white border border-gray-100 p-5 rounded-2xl shadow-sm hover:shadow-md transition-shadow">
-          <h4 className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-4 border-b border-gray-50 pb-2">Purchase Summary</h4>
+        <div className="bg-white border border-gray-200 p-5 rounded-lg transition-colors">
+          <h4 className="text-xs font-bold text-gray-400 mb-4 border-b border-gray-50 pb-2">Purchase Summary</h4>
           <div className="space-y-4 text-xs font-sans">
             <div>
-              <span className="text-gray-400 font-semibold uppercase tracking-wide text-[9px]">Total Placed Orders</span>
+              <span className="text-gray-400 font-semibold text-[11px]">Total Placed Orders</span>
               <p className="font-bold text-primary mt-0.5">{customer.totalOrders} Completed Orders</p>
             </div>
             <div>
-              <span className="text-gray-400 font-semibold uppercase tracking-wide text-[9px]">Lifetime Gross Spend</span>
+              <span className="text-gray-400 font-semibold text-[11px]">Lifetime Gross Spend</span>
               <p className="font-bold text-emerald-600 mt-0.5">GH₵ {(customer.lifetimeSpend || 0).toFixed(2)}</p>
             </div>
             <div>
-              <span className="text-gray-400 font-semibold uppercase tracking-wide text-[9px]">Average Transaction Value</span>
+              <span className="text-gray-400 font-semibold text-[11px]">Average Transaction Value</span>
               <p className="font-bold text-gray-600 mt-0.5">GH₵ {((customer.lifetimeSpend || 0) / (customer.totalOrders || 1)).toFixed(2)}</p>
             </div>
             <div>
-              <span className="text-gray-400 font-semibold uppercase tracking-wide text-[9px]">Active Voucher Subscriptions</span>
+              <span className="text-gray-400 font-semibold text-[11px]">Active Voucher Subscriptions</span>
               <p className="font-bold text-primary mt-0.5">{(customer.voucherTypes || []).join(', ')}</p>
             </div>
           </div>
         </div>
 
         {/* Card 3: USSD Data */}
-        <div className="bg-white border border-gray-100 p-5 rounded-2xl shadow-sm hover:shadow-md transition-shadow">
-          <h4 className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-4 border-b border-gray-50 pb-2">USSD-Specific Attributes</h4>
+        <div className="bg-white border border-gray-200 p-5 rounded-lg transition-colors">
+          <h4 className="text-xs font-bold text-gray-400 mb-4 border-b border-gray-50 pb-2">USSD-Specific Attributes</h4>
           {customer.ussdNetwork ? (
             <div className="space-y-4 text-xs font-sans">
               <div>
-                <span className="text-gray-400 font-semibold uppercase tracking-wide text-[9px]">USSD Mobile Network</span>
+                <span className="text-gray-400 font-semibold text-[11px]">USSD Mobile Network</span>
                 <p className="font-bold text-orange-600 mt-0.5">{customer.ussdNetwork}</p>
               </div>
               <div>
-                <span className="text-gray-400 font-semibold uppercase tracking-wide text-[9px]">USSD Mobile Wallet</span>
+                <span className="text-gray-400 font-semibold text-[11px]">USSD Mobile Wallet</span>
                 <p className="font-mono font-bold text-gray-600 mt-0.5">{customer.linkedWallet}</p>
               </div>
               <div>
-                <span className="text-gray-400 font-semibold uppercase tracking-wide text-[9px]">Total Interactive Sessions</span>
+                <span className="text-gray-400 font-semibold text-[11px]">Total Interactive Sessions</span>
                 <p className="font-bold text-gray-600 mt-0.5">{customer.ussdSessionsCount} sessions</p>
               </div>
               <div>
-                <span className="text-gray-400 font-semibold uppercase tracking-wide text-[9px]">Session Identifier</span>
+                <span className="text-gray-400 font-semibold text-[11px]">Session Identifier</span>
                 <p className="font-mono text-gray-400 mt-0.5">REF-USSD-{customer.phone.replace(/\s/g, '').slice(-4)}-92A</p>
               </div>
             </div>
           ) : (
             <div className="h-44 flex flex-col items-center justify-center text-center text-gray-400">
               <Globe className="w-8 h-8 text-gray-300 mb-2" />
-              <p className="text-[10px] font-bold uppercase tracking-wider mt-2">No USSD Session Data</p>
-              <p className="text-[10px] text-gray-400 max-w-[180px] mx-auto mt-1 leading-relaxed">This customer has placed orders exclusively via Web channel.</p>
+              <p className="text-xs font-bold mt-2">No USSD Session Data</p>
+              <p className="text-xs text-gray-400 max-w-[180px] mx-auto mt-1 leading-relaxed">This customer has placed orders exclusively via Web channel.</p>
             </div>
           )}
         </div>
       </div>
 
       {/* Chronological Purchase History Table */}
-      <div className="bg-white border border-gray-100 rounded-2xl shadow-sm overflow-hidden">
+      <div className="bg-white border border-gray-200 rounded-lg overflow-hidden">
         <div className="p-5 bg-[#FCFDFB] border-b border-gray-50 flex justify-between items-center">
           <h4 className="font-serif font-bold text-primary text-base">Chronological Purchase History</h4>
           <button
@@ -182,7 +181,7 @@ export default function CustomerDetailsPage({ phoneNumber, onBack, onSendSMS }: 
         <div className="overflow-x-auto">
           <table className="w-full border-collapse text-left text-xs text-text-primary font-sans">
             <thead>
-              <tr className="bg-gray-50/50 text-gray-400 text-[10px] font-bold uppercase border-b border-gray-100">
+              <tr className="bg-gray-50/50 text-gray-400 text-xs font-bold uppercase border-b border-gray-200">
                 <th className="px-6 py-4">Order ID</th>
                 <th className="px-6 py-4">Date</th>
                 <th className="px-6 py-4">Voucher Type</th>
@@ -201,14 +200,14 @@ export default function CustomerDetailsPage({ phoneNumber, onBack, onSendSMS }: 
                   <td className="px-6 py-4 text-center text-gray-500">{item.quantity}</td>
                   <td className="px-6 py-4 font-bold">GH₵ {(Number(item.amount) || 0).toFixed(2)}</td>
                   <td className="px-6 py-4">
-                    <span className={`inline-flex items-center px-2 py-0.5 rounded text-[9px] font-bold uppercase ${
+                    <span className={`inline-flex items-center px-2 py-0.5 rounded text-[11px] font-bold uppercase ${
                       item.paymentStatus === 'Paid' ? 'bg-emerald-50 text-emerald-700 border border-emerald-100' : 'bg-red-50 text-red-700 border border-red-100'
                     }`}>
                       {item.paymentStatus}
                     </span>
                   </td>
                   <td className="px-6 py-4">
-                    <span className={`inline-flex items-center px-2 py-0.5 rounded text-[9px] font-bold uppercase ${
+                    <span className={`inline-flex items-center px-2 py-0.5 rounded text-[11px] font-bold uppercase ${
                       item.deliveryStatus === 'Sent' ? 'bg-emerald-50 text-emerald-700 border border-emerald-100' : item.deliveryStatus === 'Pending' ? 'bg-amber-50 text-amber-700 border border-amber-100' : 'bg-red-50 text-red-700 border border-red-100'
                     }`}>
                       {item.deliveryStatus}
@@ -225,20 +224,20 @@ export default function CustomerDetailsPage({ phoneNumber, onBack, onSendSMS }: 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         
         {/* Outbound SMS History log */}
-        <div className="bg-white border border-gray-100 p-5 rounded-2xl shadow-sm flex flex-col justify-between min-h-[250px]">
+        <div className="bg-white border border-gray-200 p-5 rounded-lg flex flex-col justify-between min-h-[250px]">
           <div>
-            <h4 className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-4 border-b border-gray-50 pb-2">Outbound SMS History</h4>
+            <h4 className="text-xs font-bold text-gray-400 mb-4 border-b border-gray-50 pb-2">Outbound SMS History</h4>
             <div className="space-y-4 max-h-[190px] overflow-y-auto pr-1 font-sans">
               {(customer.smsHistory || []).length === 0 ? (
                 <p className="text-xs text-gray-400 italic">No SMS logs found for this customer.</p>
               ) : (
                 (customer.smsHistory || []).map((sms) => (
-                  <div key={sms.id} className="border-l-2 border-gray-100 pl-4 space-y-1 relative">
+                  <div key={sms.id} className="border-l-2 border-gray-200 pl-4 space-y-1 relative">
                     {/* Status dot indicator */}
                     <div className={`absolute left-[-6px] top-1.5 w-2.5 h-2.5 rounded-full border border-white ${
                       sms.status === 'Delivered' ? 'bg-emerald-500' : sms.status === 'Sending' ? 'bg-amber-400' : 'bg-red-500'
                     }`} />
-                    <div className="flex justify-between items-center text-[10px] text-gray-400 font-bold">
+                    <div className="flex justify-between items-center text-xs text-gray-400 font-bold">
                       <span>{sms.timestamp}</span>
                       <span className={`uppercase font-bold ${
                         sms.status === 'Delivered' ? 'text-emerald-600' : sms.status === 'Sending' ? 'text-amber-500' : 'text-red-500'
@@ -253,9 +252,9 @@ export default function CustomerDetailsPage({ phoneNumber, onBack, onSendSMS }: 
         </div>
 
         {/* Dispatch Direct SMS Panel */}
-        <div className="bg-white border border-gray-100 p-5 rounded-2xl shadow-sm flex flex-col justify-between min-h-[250px]">
+        <div className="bg-white border border-gray-200 p-5 rounded-lg flex flex-col justify-between min-h-[250px]">
           <div>
-            <h4 className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-4 border-b border-gray-50 pb-2">Dispatch Direct SMS Notification</h4>
+            <h4 className="text-xs font-bold text-gray-400 mb-4 border-b border-gray-50 pb-2">Dispatch Direct SMS Notification</h4>
             <p className="text-[11px] text-gray-400 leading-relaxed mb-4 font-sans">
               Draft and dispatch customized text notifications directly to the customer's mobile device via CivicTree's integrated bulk SMS nodes.
             </p>

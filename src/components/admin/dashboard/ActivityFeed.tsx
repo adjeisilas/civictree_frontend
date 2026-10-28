@@ -17,7 +17,7 @@ export default function ActivityFeed({ activities = [] }: ActivityFeedProps) {
   }
 
   return (
-    <div className="bg-white p-6 rounded-xl border border-gray-100 shadow-sm flex flex-col justify-between h-[420px]">
+    <div className="bg-white p-6 rounded-xl border border-gray-200 flex flex-col justify-between h-[420px]">
       <div>
         <h3 className="font-serif font-bold text-primary text-lg">Live Activity Feed</h3>
         <p className="text-xs text-gray-400">Real-time status updates and order notifications</p>
@@ -37,7 +37,7 @@ export default function ActivityFeed({ activities = [] }: ActivityFeedProps) {
                 <span className="font-bold text-text-primary group-hover:text-primary transition-colors">
                   {item.message}
                 </span>
-                <span className="text-[10px] text-gray-400 font-semibold shrink-0 ml-2">
+                <span className="text-xs text-gray-400 font-semibold shrink-0 ml-2">
                   {item.timestamp}
                 </span>
               </div>

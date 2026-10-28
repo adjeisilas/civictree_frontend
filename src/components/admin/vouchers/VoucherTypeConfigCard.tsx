@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import type { ExamType } from '../../../types/admin'
+import { voucherTypeDefinition, voucherTypeLabel } from '../../../config/voucherTypes'
 
 interface VoucherTypeConfigCardProps {
   type: ExamType
@@ -9,19 +10,15 @@ interface VoucherTypeConfigCardProps {
   onUpdateConfig: (type: ExamType, price: number, minLimit: number) => void
 }
 
-const themeMap = {
-  WASSCE_NOVDEC: {
-    color: '#8B5CF6', // Purple
-    bgColor: 'bg-[#8B5CF6]/10',
-    borderColor: 'border-[#8B5CF6]/20',
-    accentBorder: 'border-t-4 border-t-[#8B5CF6]',
-  },
-  BECE: {
-    color: '#FBBF24', // Gold
-    bgColor: 'bg-[#FBBF24]/10',
-    borderColor: 'border-[#FBBF24]/20',
-    accentBorder: 'border-t-4 border-t-[#FBBF24]',
-  },
+/** Each type's colour comes from the shared list, so a new type needs no entry. */
+const themeFor = (type: ExamType) => {
+  const color = voucherTypeDefinition(type)?.accent.chartColor ?? '#6b7280'
+  return {
+    color,
+    bgColor: 'bg-gray-50',
+    borderColor: 'border-gray-200',
+    accentBorder: 'border-t-4',
+  }
 }
 
 export default function VoucherTypeConfigCard({
@@ -36,7 +33,7 @@ export default function VoucherTypeConfigCard({
   const [editLimit, setEditLimit] = useState(minLimit.toString())
   const [error, setError] = useState<string | null>(null)
 
-  const theme = themeMap[type]
+  const theme = themeFor(type)
   const isLowStock = count <= minLimit
 
   const handleSave = (e: React.FormEvent) => {
@@ -66,10 +63,10 @@ export default function VoucherTypeConfigCard({
         {/* Header */}
         <div className="flex justify-between items-start">
           <div>
-            <span className={`inline-block px-2.5 py-0.5 rounded-full text-[10px] font-bold text-white`} style={{ backgroundColor: theme.color }}>
-              {type === 'WASSCE_NOVDEC' ? 'WASSCE / NOVDEC' : type} CATEGORY
+            <span className={`inline-block px-2.5 py-0.5 rounded-full text-xs font-bold text-white`} style={{ backgroundColor: theme.color }}>
+              {voucherTypeLabel(type)} CATEGORY
             </span>
-            <h3 className="text-base font-bold text-text-primary mt-1.5">{type === 'WASSCE_NOVDEC' ? 'WASSCE / NOVDEC' : type} Checker Stock</h3>
+            <h3 className="text-base font-bold text-text-primary mt-1.5">{voucherTypeLabel(type)} Checker Stock</h3>
           </div>
           <div className={`w-10 h-10 rounded-lg ${theme.bgColor} flex items-center justify-center`} style={{ color: theme.color }}>
             <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
@@ -81,7 +78,7 @@ export default function VoucherTypeConfigCard({
         {isEditing ? (
           /* Editing Form */
           <form onSubmit={handleSave} className="space-y-3 text-xs">
-            {error && <p className="text-[10px] font-bold text-red-600">{error}</p>}
+            {error && <p className="text-xs font-bold text-red-600">{error}</p>}
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-1">
                 <label className="font-bold text-gray-400">Unit Price (GHS)</label>
@@ -129,18 +126,18 @@ export default function VoucherTypeConfigCard({
           <div className="space-y-3">
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Selling Price</p>
+                <p className="text-xs font-bold text-gray-400">Selling Price</p>
                 <p className="text-xl font-bold text-text-primary mt-0.5">GHS {Number(price).toFixed(2)}</p>
               </div>
               <div>
-                <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Warning Alarm</p>
+                <p className="text-xs font-bold text-gray-400">Warning Alarm</p>
                 <p className="text-lg font-bold text-text-primary mt-0.5">&lt; {minLimit} units</p>
               </div>
             </div>
 
             {/* Current Stock progress */}
             <div className="pt-1.5 space-y-1.5">
-              <div className="flex justify-between items-center text-[10px] font-bold text-gray-400">
+              <div className="flex justify-between items-center text-xs font-bold text-gray-400">
                 <span>Available Keys</span>
                 <span className={isLowStock ? 'text-red-500 font-bold animate-pulse' : 'text-primary'}>
                   {count} Keys
@@ -162,9 +159,9 @@ export default function VoucherTypeConfigCard({
 
       {/* Footer controls */}
       {!isEditing && (
-        <div className="px-5 py-3.5 bg-gray-50/50 border-t border-gray-100 flex justify-between items-center">
-          <span className="text-[10px] font-bold text-gray-400 uppercase">
-            {isLowStock ? '⚠️ Low Stock Active' : '🟢 Stock Levels Stable'}
+        <div className="px-5 py-3.5 bg-gray-50/50 border-t border-gray-200 flex justify-between items-center">
+          <span className="text-xs font-bold text-gray-400 uppercase">
+            {isLowStock ? 'Low stock' : 'Stock healthy'}
           </span>
           <button
             onClick={() => setIsEditing(true)}

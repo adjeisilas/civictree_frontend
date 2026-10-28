@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import { Smartphone } from 'lucide-react'
 import { useLocation, Link } from 'react-router-dom'
 import axios from 'axios'
 import { z } from 'zod'
@@ -73,7 +74,7 @@ export default function Login() {
       {isInstallable && !dismissed && (
         <div className="mb-6 p-4 rounded-xl bg-amber-50 border border-amber-200 flex items-start justify-between space-x-3 text-amber-900 text-sm animate-fade-in">
           <div className="flex items-start space-x-3">
-            <span className="text-xl shrink-0">📱</span>
+            <Smartphone className="w-5 h-5 shrink-0 text-gray-400" strokeWidth={1.75} />
             <div>
               <p className="font-semibold text-amber-900">Install CivicTree Admin</p>
               <p className="text-amber-800 opacity-90 text-xs">Add the admin dashboard to your home screen for quick standalone access.</p>
@@ -126,7 +127,7 @@ export default function Login() {
       <form onSubmit={handleSubmit} className="space-y-5">
         {/* Email Field */}
         <div>
-          <label htmlFor="email" className="block text-xs font-semibold text-text-primary/80 uppercase tracking-wider mb-2">
+          <label htmlFor="email" className="block text-xs font-semibold text-text-primary/80 mb-2">
             Email Address
           </label>
           <div className="relative">
@@ -159,7 +160,7 @@ export default function Login() {
         {/* Password Field */}
         <div>
           <div className="flex justify-between items-center mb-2">
-            <label htmlFor="password" className="block text-xs font-semibold text-text-primary/80 uppercase tracking-wider">
+            <label htmlFor="password" className="block text-xs font-semibold text-text-primary/80">
               Password
             </label>
             <Link to="/admin/forgot-password" className="text-xs text-secondary hover:text-primary font-medium hover:underline transition-colors">

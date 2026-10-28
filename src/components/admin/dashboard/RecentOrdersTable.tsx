@@ -15,7 +15,7 @@ export default function RecentOrdersTable({ orders }: RecentOrdersTableProps) {
       case 'Failed':
         return <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-red-50 text-red-700 border border-red-100">Failed</span>
       default:
-        return <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-gray-50 text-gray-700 border border-gray-100">{status}</span>
+        return <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-gray-50 text-gray-700 border border-gray-200">{status}</span>
     }
   }
 
@@ -48,13 +48,13 @@ export default function RecentOrdersTable({ orders }: RecentOrdersTableProps) {
   }
 
   return (
-    <div className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
+    <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
       <div className="p-6 flex flex-col sm:flex-row justify-between items-start sm:items-center border-b border-gray-50">
         <div>
           <h3 className="font-heading font-bold text-primary text-lg">Incoming Orders</h3>
           <p className="text-xs text-gray-400">Recent transactions across Web and USSD portals</p>
         </div>
-        <button className="mt-3 sm:mt-0 px-3.5 py-1.5 text-xs font-semibold text-secondary hover:text-primary bg-[#F8FAF8] border border-gray-100 rounded-xl transition-colors cursor-pointer">
+        <button className="mt-3 sm:mt-0 px-3.5 py-1.5 text-xs font-semibold text-secondary hover:text-primary bg-[#F8FAF8] border border-gray-200 rounded-xl transition-colors cursor-pointer">
           View All Orders
         </button>
       </div>

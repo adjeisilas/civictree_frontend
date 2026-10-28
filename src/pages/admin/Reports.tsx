@@ -1,10 +1,12 @@
 import { useState } from 'react'
 import { useReportStats, useSalesReport } from '../../hooks/useReports'
 import { exportReportsToPDF, exportReportsToExcel } from '../../utils/exportUtils'
+import { VOUCHER_TYPES, VOUCHER_TYPE_CODES } from '../../config/voucherTypes'
+import type { ExamType } from '../../types/admin'
 interface MonthlyRevenue {
   month: string
-  wassceNovdec: number
-  bece: number
+  /** Revenue per voucher type, keyed by type code. */
+  byType: Partial<Record<ExamType, number>>
 }
 
 export default function Reports() {
@@ -22,11 +24,19 @@ export default function Reports() {
   const sales = salesData || []
 
   // Monthly Revenue Data
-  const monthlyData: MonthlyRevenue[] = stats.map(s => ({
-    month: s.month,
-    wassceNovdec: s.revenue.WASSCE_NOVDEC || (s.revenue as Record<string, number | undefined>).WASSCE || 0,
-    bece: s.revenue.BECE,
-  }))
+  const monthlyData: MonthlyRevenue[] = stats.map(s => {
+    const revenue = s.revenue as Record<string, number | undefined>
+    return {
+      month: s.month,
+      byType: Object.fromEntries(
+        VOUCHER_TYPE_CODES.map((type) => [
+          type,
+          // `WASSCE` was the old key for WASSCE/NOVDEC
+          revenue[type] ?? (type === 'WASSCE_NOVDEC' ? revenue.WASSCE ?? 0 : 0),
+        ])
+      ),
+    }
+  })
 
   // Operational Trend Data
   const operationalTrends = stats.map(s => ({
@@ -55,7 +65,10 @@ export default function Reports() {
   const ussdDash = (ussdPercent / 100) * 251
 
   // Y-axis labels for reference
-  const rawMax = Math.max(5000, ...monthlyData.flatMap(d => [d.wassceNovdec, d.bece]))
+  const rawMax = Math.max(
+    5000,
+    ...monthlyData.flatMap(d => VOUCHER_TYPE_CODES.map(type => d.byType[type] ?? 0))
+  )
   const maxVal = Math.ceil(rawMax / 1000) * 1000
   const yAxisTicks = Array.from({ length: 6 }, (_, i) => Math.round(maxVal - (maxVal / 5) * i))
 
@@ -98,10 +111,10 @@ export default function Reports() {
       )}
 
       {/* Page Title Header Banner */}
-      <div className="bg-white border border-gray-150 p-6 rounded-2xl shadow-sm">
+      <div className="bg-white border border-gray-200 p-6 rounded-lg">
         <div>
           <h2 className="text-xl sm:text-2xl font-serif font-bold text-primary">Reports & Analytics</h2>
-          <p className="text-[10px] text-gray-400 font-bold uppercase tracking-wider mt-0.5 font-mono">
+          <p className="text-xs text-gray-400 font-bold mt-0.5 font-mono">
             CivicTree Enterprise Results Checker Platform
           </p>
           <p className="text-xs text-gray-500 font-medium leading-relaxed max-w-3xl mt-2 font-sans">
@@ -113,19 +126,19 @@ export default function Reports() {
 
       {/* CHARTS & VISUALISATIONS Section */}
       <div>
-        <h3 className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-4 border-b border-gray-100 pb-2 font-sans select-none">
+        <h3 className="text-xs font-bold text-gray-400 mb-4 border-b border-gray-200 pb-2 font-sans select-none">
           Charts & Visualisations
         </h3>
         
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           
           {/* Chart 1: Revenue by Voucher Type - Monthly Column Chart (2/3 width) */}
-          <div className="lg:col-span-2 bg-white p-6 rounded-2xl border border-gray-150 shadow-sm space-y-4 hover:shadow-md transition-shadow">
+          <div className="lg:col-span-2 bg-white p-6 rounded-lg border border-gray-200 space-y-4 transition-colors">
             <div>
               <h4 className="font-serif font-bold text-primary text-base">
                 Revenue by Voucher Type &mdash; Monthly
               </h4>
-              <p className="text-[10px] text-gray-400 font-bold uppercase tracking-wider mt-0.5">
+              <p className="text-xs text-gray-400 font-bold mt-0.5">
                 GH₵ revenue per exam type over 6 months
               </p>
             </div>
@@ -135,7 +148,7 @@ export default function Reports() {
               {/* Tooltip Overlay */}
               {activeHoverBar && (
                 <div 
-                  className="absolute top-0 bg-[#0c180b] text-[#ebd56b] border border-[#ebd56b]/20 px-2.5 py-1 rounded-lg text-[10px] font-mono font-bold shadow-md z-30 animate-fadeIn"
+                  className="absolute top-0 bg-[#0c180b] text-[#ebd56b] border border-[#ebd56b]/20 px-2.5 py-1 rounded-lg text-xs font-mono font-bold shadow-md z-30 animate-fadeIn"
                   style={{
                     left: `${Math.min(85, Math.max(10, (monthlyData.findIndex(d => d.month === activeHoverBar.month) + 0.5) * 16))}%`,
                     transform: 'translateX(-50%)',
@@ -149,7 +162,7 @@ export default function Reports() {
               <div className="flex h-72 border-b border-gray-200">
                 
                 {/* Y-Axis Scale Marks */}
-                <div className="flex flex-col justify-between text-[9px] font-bold text-gray-400 w-12 pr-2 border-r border-gray-100 select-none pb-1">
+                <div className="flex flex-col justify-between text-[11px] font-bold text-gray-400 w-12 pr-2 border-r border-gray-200 select-none pb-1">
                   {yAxisTicks.map((tick) => (
                     <div key={tick} className="text-right leading-none h-3">GH₵{tick}</div>
                   ))}
@@ -161,7 +174,7 @@ export default function Reports() {
                   {/* Grid background reference lines */}
                   <div className="absolute inset-0 flex flex-col justify-between pointer-events-none pb-1 select-none">
                     {yAxisTicks.slice(0, -1).map((_, idx) => (
-                      <div key={idx} className="border-t border-gray-100/50 w-full h-0" />
+                      <div key={idx} className="border-t border-gray-200/50 w-full h-0" />
                     ))}
                   </div>
 
@@ -169,21 +182,24 @@ export default function Reports() {
                   {monthlyData.map((d) => (
                     <div key={d.month} className="flex items-end justify-center space-x-1.5 sm:space-x-2.5 h-full w-1/6 group relative">
                       
-                      {/* WASSCE / NOVDEC Bar */}
-                      <div 
-                        onMouseEnter={() => setActiveHoverBar({ month: d.month, type: 'WASSCE_NOVDEC', value: d.wassceNovdec })}
-                        onMouseLeave={() => setActiveHoverBar(null)}
-                        className="w-3.5 sm:w-5 bg-primary rounded-t transition-all duration-300 hover:brightness-125 cursor-pointer relative"
-                        style={{ height: `${(d.wassceNovdec / maxVal) * 100}%` }}
-                      />
-
-                      {/* BECE Bar */}
-                      <div 
-                        onMouseEnter={() => setActiveHoverBar({ month: d.month, type: 'BECE', value: d.bece })}
-                        onMouseLeave={() => setActiveHoverBar(null)}
-                        className="w-3.5 sm:w-5 bg-[#dfba60] rounded-t transition-all duration-300 hover:brightness-110 cursor-pointer relative"
-                        style={{ height: `${(d.bece / maxVal) * 100}%` }}
-                      />
+                      {/* One bar per voucher type */}
+                      {VOUCHER_TYPES.map((voucher) => {
+                        const value = d.byType[voucher.type] ?? 0
+                        return (
+                          <div
+                            key={voucher.type}
+                            onMouseEnter={() =>
+                              setActiveHoverBar({ month: d.month, type: voucher.displayName, value })
+                            }
+                            onMouseLeave={() => setActiveHoverBar(null)}
+                            className="w-2.5 sm:w-4 rounded-t transition-all duration-300 hover:brightness-110 cursor-pointer relative"
+                            style={{
+                              height: `${(value / maxVal) * 100}%`,
+                              backgroundColor: voucher.accent.chartColor,
+                            }}
+                          />
+                        )
+                      })}
                     </div>
                   ))}
 
@@ -192,7 +208,7 @@ export default function Reports() {
 
               {/* X-Axis labels */}
               <div className="flex pl-12">
-                <div className="flex-1 flex justify-around pt-2 text-[10px] font-bold text-gray-400 select-none">
+                <div className="flex-1 flex justify-around pt-2 text-xs font-bold text-gray-400 select-none">
                   {monthlyData.map((d) => (
                     <div key={d.month} className="w-1/6 text-center">{d.month}</div>
                   ))}
@@ -200,27 +216,28 @@ export default function Reports() {
               </div>
 
               {/* Legends */}
-              <div className="flex justify-center items-center space-x-6 pt-4 text-[10px] font-bold text-gray-500 select-none">
-                <div className="flex items-center space-x-2">
-                  <span className="w-2.5 h-2.5 rounded-sm bg-primary" />
-                  <span>WASSCE / NOVDEC</span>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <span className="w-2.5 h-2.5 rounded-sm bg-[#dfba60]" />
-                  <span>BECE</span>
-                </div>
+              <div className="flex flex-wrap justify-center items-center gap-x-5 gap-y-2 pt-4 text-xs font-bold text-gray-500 select-none">
+                {VOUCHER_TYPES.map((voucher) => (
+                  <div key={voucher.type} className="flex items-center space-x-2">
+                    <span
+                      className="w-2.5 h-2.5 rounded-sm"
+                      style={{ backgroundColor: voucher.accent.chartColor }}
+                    />
+                    <span>{voucher.displayName}</span>
+                  </div>
+                ))}
               </div>
 
             </div>
           </div>
 
           {/* Chart 2: Order Channels Split - Donut Chart (1/3 width) */}
-          <div className="bg-white p-6 rounded-2xl border border-gray-150 shadow-sm flex flex-col justify-between hover:shadow-md transition-shadow">
+          <div className="bg-white p-6 rounded-lg border border-gray-200 flex flex-col justify-between transition-colors">
             <div>
               <h4 className="font-serif font-bold text-primary text-base">
                 Order Channels Split
               </h4>
-              <p className="text-[10px] text-gray-400 font-bold uppercase tracking-wider mt-0.5">
+              <p className="text-xs text-gray-400 font-bold mt-0.5">
                 Orders by purchasing platform
               </p>
             </div>
@@ -257,14 +274,14 @@ export default function Reports() {
                 </svg>
                 {/* Center Hole Details */}
                 <div className="absolute inset-0 flex flex-col items-center justify-center bg-white rounded-full m-[22px] shadow-inner select-none">
-                  <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Total Share</span>
+                  <span className="text-xs font-bold text-gray-400">Total Share</span>
                   <span className="text-xl font-bold text-primary font-serif">100%</span>
                 </div>
               </div>
             </div>
 
             {/* Legends & Details */}
-            <div className="grid grid-cols-2 gap-2 text-[10px] font-bold text-gray-500 border-t border-gray-50 pt-3 select-none">
+            <div className="grid grid-cols-2 gap-2 text-xs font-bold text-gray-500 border-t border-gray-50 pt-3 select-none">
               <div className="flex items-center space-x-1.5">
                 <span className="w-2.5 h-2.5 rounded-full bg-primary shrink-0" />
                 <span className="truncate">Web Portal ({webPercent}%)</span>
@@ -284,12 +301,12 @@ export default function Reports() {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
         
         {/* Chart 3: Order Success vs Failure Rate Trend (Line chart) */}
-        <div className="bg-white p-6 rounded-2xl border border-gray-150 shadow-sm space-y-4 hover:shadow-md transition-shadow relative">
+        <div className="bg-white p-6 rounded-lg border border-gray-200 space-y-4 transition-colors relative">
           <div>
             <h4 className="font-serif font-bold text-primary text-base">
               Order Success vs Failure Rate Trend
             </h4>
-            <p className="text-[10px] text-gray-400 font-bold uppercase tracking-wider mt-0.5">
+            <p className="text-xs text-gray-400 font-bold mt-0.5">
               Operational success rate vs gateway payment failures
             </p>
           </div>
@@ -298,7 +315,7 @@ export default function Reports() {
             {/* Tooltip Overlay */}
             {activeHoverPoint && (
               <div 
-                className="absolute top-0 left-1/2 -translate-x-1/2 bg-[#0c180b] text-[#ebd56b] border border-[#ebd56b]/20 px-2.5 py-1 rounded-lg text-[10px] font-mono font-bold shadow-md z-30 animate-fadeIn"
+                className="absolute top-0 left-1/2 -translate-x-1/2 bg-[#0c180b] text-[#ebd56b] border border-[#ebd56b]/20 px-2.5 py-1 rounded-lg text-xs font-mono font-bold shadow-md z-30 animate-fadeIn"
               >
                 {activeHoverPoint.month} &mdash; Success: {activeHoverPoint.success}% | Failure: {activeHoverPoint.failure}%
               </div>
@@ -306,7 +323,7 @@ export default function Reports() {
 
             <div className="flex h-56 border-b border-gray-200 relative">
               {/* Y Axis labels */}
-              <div className="flex flex-col justify-between text-[9px] font-bold text-gray-400 w-8 pr-2 border-r border-gray-100 select-none pb-1">
+              <div className="flex flex-col justify-between text-[11px] font-bold text-gray-400 w-8 pr-2 border-r border-gray-200 select-none pb-1">
                 <div>100%</div>
                 <div>75%</div>
                 <div>50%</div>
@@ -318,10 +335,10 @@ export default function Reports() {
               <div className="flex-1 relative">
                 {/* Horizontal reference lines */}
                 <div className="absolute inset-0 flex flex-col justify-between pointer-events-none pb-1 select-none">
-                  <div className="border-t border-gray-100 w-full h-0" />
-                  <div className="border-t border-gray-100 w-full h-0" />
-                  <div className="border-t border-gray-100 w-full h-0" />
-                  <div className="border-t border-gray-100 w-full h-0" />
+                  <div className="border-t border-gray-200 w-full h-0" />
+                  <div className="border-t border-gray-200 w-full h-0" />
+                  <div className="border-t border-gray-200 w-full h-0" />
+                  <div className="border-t border-gray-200 w-full h-0" />
                 </div>
 
                 {/* SVG Lines */}
@@ -365,7 +382,7 @@ export default function Reports() {
                   {operationalTrends.map((t, idx) => (
                     <div
                       key={idx}
-                      className="w-1/6 h-full cursor-pointer hover:bg-gray-500/5 transition-colors border-r border-dashed border-gray-100 last:border-0"
+                      className="w-1/6 h-full cursor-pointer hover:bg-gray-500/5 transition-colors border-r border-dashed border-gray-200 last:border-0"
                       onMouseEnter={() => setActiveHoverPoint({ month: t.month, success: t.success, failure: t.failure })}
                       onMouseLeave={() => setActiveHoverPoint(null)}
                     />
@@ -377,7 +394,7 @@ export default function Reports() {
 
             {/* X Axis Labels */}
             <div className="flex pl-8">
-              <div className="flex-1 flex justify-around pt-2 text-[10px] font-bold text-gray-400 select-none">
+              <div className="flex-1 flex justify-around pt-2 text-xs font-bold text-gray-400 select-none">
                 {operationalTrends.map((d) => (
                   <div key={d.month} className="w-1/6 text-center">{d.month}</div>
                 ))}
@@ -385,7 +402,7 @@ export default function Reports() {
             </div>
 
             {/* Legends */}
-            <div className="flex justify-center space-x-6 pt-4 text-[10px] font-bold text-gray-500 select-none">
+            <div className="flex justify-center space-x-6 pt-4 text-xs font-bold text-gray-500 select-none">
               <div className="flex items-center space-x-2">
                 <span className="w-3 h-0.5 bg-[#10b981] inline-block border-t border-t-[#10b981]" />
                 <span>Success Rate (%)</span>
@@ -400,12 +417,12 @@ export default function Reports() {
         </div>
 
         {/* Chart 4: Customer Acquisition (Stacked Column Chart) */}
-        <div className="bg-white p-6 rounded-2xl border border-gray-150 shadow-sm space-y-4 hover:shadow-md transition-shadow relative">
+        <div className="bg-white p-6 rounded-lg border border-gray-200 space-y-4 transition-colors relative">
           <div>
             <h4 className="font-serif font-bold text-primary text-base">
               New vs Returning Customers
             </h4>
-            <p className="text-[10px] text-gray-400 font-bold uppercase tracking-wider mt-0.5">
+            <p className="text-xs text-gray-400 font-bold mt-0.5">
               Monthly breakdown of customer acquisition and retention
             </p>
           </div>
@@ -414,7 +431,7 @@ export default function Reports() {
             {/* Tooltip Overlay */}
             {activeHoverStack && (
               <div 
-                className="absolute top-0 left-1/2 -translate-x-1/2 bg-[#0c180b] text-[#ebd56b] border border-[#ebd56b]/20 px-2.5 py-1 rounded-lg text-[10px] font-mono font-bold shadow-md z-30 animate-fadeIn"
+                className="absolute top-0 left-1/2 -translate-x-1/2 bg-[#0c180b] text-[#ebd56b] border border-[#ebd56b]/20 px-2.5 py-1 rounded-lg text-xs font-mono font-bold shadow-md z-30 animate-fadeIn"
               >
                 {activeHoverStack.month} &mdash; New: {activeHoverStack.newCustomers} | Returning: {activeHoverStack.returning} (Total: {activeHoverStack.newCustomers + activeHoverStack.returning})
               </div>
@@ -422,7 +439,7 @@ export default function Reports() {
 
             <div className="flex h-56 border-b border-gray-200">
               {/* Y Axis scale marks */}
-              <div className="flex flex-col justify-between text-[9px] font-bold text-gray-400 w-8 pr-2 border-r border-gray-100 select-none pb-1">
+              <div className="flex flex-col justify-between text-[11px] font-bold text-gray-400 w-8 pr-2 border-r border-gray-200 select-none pb-1">
                 <div>500</div>
                 <div>375</div>
                 <div>250</div>
@@ -434,10 +451,10 @@ export default function Reports() {
               <div className="flex-1 flex justify-around items-end px-4 relative">
                 {/* Horizontal reference lines */}
                 <div className="absolute inset-0 flex flex-col justify-between pointer-events-none pb-1 select-none">
-                  <div className="border-t border-gray-100 w-full h-0" />
-                  <div className="border-t border-gray-100 w-full h-0" />
-                  <div className="border-t border-gray-100 w-full h-0" />
-                  <div className="border-t border-gray-100 w-full h-0" />
+                  <div className="border-t border-gray-200 w-full h-0" />
+                  <div className="border-t border-gray-200 w-full h-0" />
+                  <div className="border-t border-gray-200 w-full h-0" />
+                  <div className="border-t border-gray-200 w-full h-0" />
                 </div>
 
                 {customerTrends.map((t) => {
@@ -472,7 +489,7 @@ export default function Reports() {
 
             {/* X Axis Labels */}
             <div className="flex pl-8">
-              <div className="flex-1 flex justify-around pt-2 text-[10px] font-bold text-gray-400 select-none">
+              <div className="flex-1 flex justify-around pt-2 text-xs font-bold text-gray-400 select-none">
                 {customerTrends.map((d) => (
                   <div key={d.month} className="w-1/6 text-center">{d.month}</div>
                 ))}
@@ -480,7 +497,7 @@ export default function Reports() {
             </div>
 
             {/* Legends */}
-            <div className="flex justify-center space-x-6 pt-4 text-[10px] font-bold text-gray-500 select-none">
+            <div className="flex justify-center space-x-6 pt-4 text-xs font-bold text-gray-500 select-none">
               <div className="flex items-center space-x-2">
                 <span className="w-2.5 h-2.5 rounded-sm bg-primary" />
                 <span>New Customers</span>
@@ -498,16 +515,16 @@ export default function Reports() {
 
       {/* EXPORT OPTIONS Section */}
       <div>
-        <h3 className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-4 border-b border-gray-100 pb-2 font-sans select-none">
+        <h3 className="text-xs font-bold text-gray-400 mb-4 border-b border-gray-200 pb-2 font-sans select-none">
           Export Options
         </h3>
         
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           
           {/* Card 1: PDF */}
-          <div className="bg-white p-5 rounded-2xl border border-gray-150 shadow-sm flex flex-col justify-between space-y-4 hover:shadow-md transition-shadow">
+          <div className="bg-white p-5 rounded-lg border border-gray-200 flex flex-col justify-between space-y-4 transition-colors">
             <div>
-              <h4 className="text-[10px] font-bold text-primary uppercase tracking-widest border-b border-gray-50 pb-2">
+              <h4 className="text-xs font-bold text-primary border-b border-gray-50 pb-2">
                 PDF Report
               </h4>
               <ul className="space-y-2.5 text-xs font-medium text-gray-500 font-sans mt-3.5">
@@ -540,9 +557,9 @@ export default function Reports() {
           </div>
 
           {/* Card 2: Excel */}
-          <div className="bg-white p-5 rounded-2xl border border-gray-150 shadow-sm flex flex-col justify-between space-y-4 hover:shadow-md transition-shadow">
+          <div className="bg-white p-5 rounded-lg border border-gray-200 flex flex-col justify-between space-y-4 transition-colors">
             <div>
-              <h4 className="text-[10px] font-bold text-primary uppercase tracking-widest border-b border-gray-50 pb-2">
+              <h4 className="text-xs font-bold text-primary border-b border-gray-50 pb-2">
                 Excel (.xlsx)
               </h4>
               <ul className="space-y-2.5 text-xs font-medium text-gray-500 font-sans mt-3.5">
@@ -574,9 +591,9 @@ export default function Reports() {
           </div>
 
           {/* Card 3: CSV */}
-          <div className="bg-white p-5 rounded-2xl border border-gray-150 shadow-sm flex flex-col justify-between space-y-4 hover:shadow-md transition-shadow">
+          <div className="bg-white p-5 rounded-lg border border-gray-200 flex flex-col justify-between space-y-4 transition-colors">
             <div>
-              <h4 className="text-[10px] font-bold text-primary uppercase tracking-widest border-b border-gray-50 pb-2">
+              <h4 className="text-xs font-bold text-primary border-b border-gray-50 pb-2">
                 CSV
               </h4>
               <ul className="space-y-2.5 text-xs font-medium text-gray-500 font-sans mt-3.5">
@@ -608,9 +625,9 @@ export default function Reports() {
           </div>
 
           {/* Card 4: Scheduled Reports */}
-          <div className="bg-white p-5 rounded-2xl border border-gray-150 shadow-sm flex flex-col justify-between space-y-4 hover:shadow-md transition-shadow">
+          <div className="bg-white p-5 rounded-lg border border-gray-200 flex flex-col justify-between space-y-4 transition-colors">
             <div>
-              <h4 className="text-[10px] font-bold text-primary uppercase tracking-widest border-b border-gray-50 pb-2">
+              <h4 className="text-xs font-bold text-primary border-b border-gray-50 pb-2">
                 Scheduled Reports (Future)
               </h4>
               <ul className="space-y-2.5 text-xs font-medium text-gray-500 font-sans mt-3.5">
@@ -627,7 +644,7 @@ export default function Reports() {
                   setToastMessage('Schedule portal will be integrated in Phase 2 deployment.')
                   setTimeout(() => setToastMessage(null), 3000)
                 }}
-                className="w-full py-2 border border-gray-250 bg-white hover:bg-gray-50 text-gray-500 hover:text-text-primary font-bold rounded-xl text-xs transition-colors cursor-pointer text-center block shadow-sm"
+                className="w-full py-2 border border-gray-250 bg-white hover:bg-gray-50 text-gray-500 hover:text-text-primary font-bold rounded-xl text-xs transition-colors cursor-pointer text-center block"
               >
                 Configure Schedule
               </button>

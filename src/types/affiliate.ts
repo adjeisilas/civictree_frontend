@@ -271,6 +271,7 @@ export interface AffiliateFilters {
 export interface AffiliateSystemConfig {
   wassceNovdecCommission: number
   beceCommission: number
+  ctvetNabtexCommission: number
   minWithdrawalAmount: number
   dailyWithdrawalCap: number
 }

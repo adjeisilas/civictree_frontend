@@ -3,42 +3,51 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import type { ExamType } from '../../types/website';
 import { SectionWrapper, GlassCard, Button, Badge } from '../../components/website/ui';
+import { VOUCHER_TYPES, voucherTypeLabel, resolvePublicPrice } from '../../config/voucherTypes';
 import { BookOpen, CheckCircle2, CircleAlert } from 'lucide-react';
 
 import { usePublicVoucherConfigs } from '../../hooks/useWebsite';
 
-const TABS: { key: ExamType; label: string }[] = [
-  { key: 'BECE', label: 'BECE' },
-  { key: 'WASSCE_NOVDEC', label: 'WASSCE / NOVDEC' },
-];
+const TABS: { key: ExamType; label: string }[] = VOUCHER_TYPES.map((v) => ({
+  key: v.type,
+  label: v.displayName,
+}));
 
-const PRODUCT_INFO = {
+/** Marketing copy per type. Prices come from the API; these are only fallbacks. */
+const PRODUCT_INFO: Record<ExamType, { description: string; fallbackPrice: number }> = {
   WASSCE_NOVDEC: {
-    title: 'WASSCE / NOVDEC',
     description: 'Complete WASSCE / NOVDEC exam package with study materials',
     fallbackPrice: 89.99,
   },
   BECE: {
-    title: 'BECE',
     description: 'Access to BECE exam resources and instant voucher delivery',
     fallbackPrice: 45.99,
   },
-} as const;
+  CTVET_NABTEX: {
+    description: 'CTVET / NABTEX technical and vocational results checker, delivered instantly',
+    fallbackPrice: 45.99,
+  },
+};
 
 export const PricingSection = () => {
   const { data: config } = usePublicVoucherConfigs();
-  const [activeTab, setActiveTab] = useState<ExamType>('WASSCE_NOVDEC');
+  const [activeTab, setActiveTab] = useState<ExamType>(TABS[0].key);
 
-  const currentPrice = activeTab === 'WASSCE_NOVDEC' ? config?.wassceNovdecPrice : config?.becePrice;
-  const isLowStock = activeTab === 'WASSCE_NOVDEC' ? config?.wassceNovdecHasReachedLimit : config?.beceHasReachedLimit;
+  // A type with no price set yet resolves to null rather than falling through to
+  // a marketing fallback, which would advertise a figure the backend never charges
+  const resolvedPrice = resolvePublicPrice(config, activeTab);
+  const isUnpriced = resolvedPrice === null;
+  const live = config?.types?.find((t) => t.type === activeTab);
+
   const info = PRODUCT_INFO[activeTab];
 
   const currentVoucher = {
     examType: activeTab,
-    priceGHS: currentPrice || info.fallbackPrice,
-    isLowStock: isLowStock || false,
+    priceGHS: resolvedPrice ?? info.fallbackPrice,
+    isUnpriced,
+    isLowStock: live?.hasReachedLimit ?? false,
     description: info.description,
-    title: info.title,
+    title: voucherTypeLabel(activeTab),
   };
 
   return (

@@ -27,3 +27,10 @@ dist-ssr
 .env
 .env.*
 !.env.example
+
+# Deployment archives. Build output, rebuilt from source with `npm run build`,
+# and big enough to bloat the repository permanently once committed.
+*.zip
+*.tar
+*.tar.gz
+*.tgz

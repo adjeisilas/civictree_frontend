@@ -226,7 +226,7 @@ export default function AdminAffiliates() {
       </AnimatePresence>
 
       {/* Header */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center bg-[#1a5c18] p-6 sm:p-8 rounded-3xl text-white shadow-md relative overflow-hidden">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center bg-[#1a5c18] p-6 sm:p-8 rounded-xl text-white shadow-md relative overflow-hidden">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(223,186,96,0.15),transparent_60%)]" />
         <div className="z-10">
           <h1 className="text-2xl sm:text-3xl font-heading font-bold tracking-tight">Affiliate Management</h1>
@@ -255,7 +255,7 @@ export default function AdminAffiliates() {
       </div>
 
       {/* Tabs & Search */}
-      <div className="bg-white rounded-3xl shadow-sm border border-gray-100 p-4">
+      <div className="bg-white rounded-xl border border-gray-200 p-4">
         <div className="flex flex-col sm:flex-row gap-4 justify-between items-center">
           <div className="flex space-x-1 overflow-x-auto pb-1 sm:pb-0 w-full sm:w-auto">
             {tabs.map(tab => (
@@ -266,12 +266,12 @@ export default function AdminAffiliates() {
                   activeTab === tab ? 'bg-[#1a5c18] text-white' : 'text-gray-500 hover:bg-gray-100'
                 }`}
               >
-                {tab === 'Config' ? '⚙️ System Config' : tab}
+                {tab === 'Config' ? 'System config' : tab}
                 {tab === 'Pending' && pendingCount > 0 && (
-                  <span className="absolute -top-1 -right-1 w-4 h-4 bg-amber-500 rounded-full text-[10px] font-bold text-white flex items-center justify-center">{pendingCount}</span>
+                  <span className="absolute -top-1 -right-1 w-4 h-4 bg-amber-500 rounded-full text-xs font-bold text-white flex items-center justify-center">{pendingCount}</span>
                 )}
                 {tab === 'Withdrawals' && pendingWithdrawals.length > 0 && (
-                  <span className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 rounded-full text-[10px] font-bold text-white flex items-center justify-center">{pendingWithdrawals.length}</span>
+                  <span className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 rounded-full text-xs font-bold text-white flex items-center justify-center">{pendingWithdrawals.length}</span>
                 )}
               </button>
             ))}
@@ -289,13 +289,13 @@ export default function AdminAffiliates() {
 
       {/* ─── Affiliates Table ────────────────────────────────── */}
       {activeTab !== 'Withdrawals' && activeTab !== 'Config' && (
-        <div className="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden">
+        <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
-                <tr className="bg-gray-50 border-b border-gray-100">
+                <tr className="bg-gray-50 border-b border-gray-200">
                   {['Affiliate', 'Contact', 'USSD Code', 'Sales Generated', 'Available Balance', 'Status', 'Actions'].map(h => (
-                    <th key={h} className="text-left text-xs font-semibold text-gray-500 uppercase tracking-wide px-5 py-3.5">{h}</th>
+                    <th key={h} className="text-left text-xs font-semibold text-gray-500 px-5 py-3.5">{h}</th>
                   ))}
                 </tr>
               </thead>
@@ -425,13 +425,13 @@ export default function AdminAffiliates() {
 
       {/* ─── Withdrawals Table ────────────────────────────────── */}
       {activeTab === 'Withdrawals' && (
-        <div className="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden">
+        <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
-                <tr className="bg-gray-50 border-b border-gray-100">
+                <tr className="bg-gray-50 border-b border-gray-200">
                   {['Affiliate', 'Amount', 'Payment Method', 'Requested', 'Status', 'Actions'].map(h => (
-                    <th key={h} className="text-left text-xs font-semibold text-gray-500 uppercase tracking-wide px-5 py-3.5">{h}</th>
+                    <th key={h} className="text-left text-xs font-semibold text-gray-500 px-5 py-3.5">{h}</th>
                   ))}
                 </tr>
               </thead>
@@ -485,10 +485,10 @@ export default function AdminAffiliates() {
       {activeTab === 'Config' && (
         <div className="space-y-6">
           {/* Commission Rates Card */}
-          <div className="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden">
+          <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
             {/* Card Header */}
-            <div className="flex items-center gap-3 px-6 py-5 border-b border-gray-100 bg-gradient-to-r from-[#1a5c18]/5 to-transparent">
-              <div className="w-10 h-10 rounded-2xl bg-[#1a5c18]/10 flex items-center justify-center">
+            <div className="flex items-center gap-3 px-6 py-5 border-b border-gray-200 bg-gradient-to-r from-[#1a5c18]/5 to-transparent">
+              <div className="w-10 h-10 rounded-lg bg-[#1a5c18]/10 flex items-center justify-center">
                 <svg className="w-5 h-5 text-[#1a5c18]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z" />
                   <path strokeLinecap="round" strokeLinejoin="round" d="M20.488 9H15V3.512A9.025 9.025 0 0120.488 9z" />
@@ -510,17 +510,17 @@ export default function AdminAffiliates() {
 
                 {/* Commission Rate Preview Badges */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-[#1a5c18] to-[#2d7a2a] p-5 text-white">
+                  <div className="relative overflow-hidden rounded-lg bg-gradient-to-br from-[#1a5c18] to-[#2d7a2a] p-5 text-white">
                     <div className="absolute top-0 right-0 w-20 h-20 bg-white/5 rounded-full -translate-y-1/2 translate-x-1/2" />
-                    <p className="text-xs font-semibold text-white/70 uppercase tracking-wider mb-1">WASSCE / NOVDEC Commission</p>
+                    <p className="text-xs font-semibold text-white/70 mb-1">WASSCE / NOVDEC Commission</p>
                     <p className="text-3xl font-black">
                       GHS {(configForm.wassceNovdecCommission).toFixed(2)}
                     </p>
                     <p className="text-xs text-white/60 mt-1">Per voucher sold via USSD extension</p>
                   </div>
-                  <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-amber-500 to-amber-600 p-5 text-white">
+                  <div className="relative overflow-hidden rounded-lg bg-gradient-to-br from-amber-500 to-amber-600 p-5 text-white">
                     <div className="absolute top-0 right-0 w-20 h-20 bg-white/5 rounded-full -translate-y-1/2 translate-x-1/2" />
-                    <p className="text-xs font-semibold text-white/70 uppercase tracking-wider mb-1">BECE Commission</p>
+                    <p className="text-xs font-semibold text-white/70 mb-1">BECE Commission</p>
                     <p className="text-3xl font-black">
                       GHS {(configForm.beceCommission).toFixed(2)}
                     </p>
@@ -530,7 +530,7 @@ export default function AdminAffiliates() {
 
                 {/* Edit Fields */}
                 <div>
-                  <h3 className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-4">Edit Commission Values</h3>
+                  <h3 className="text-xs font-bold text-gray-500 mb-4">Edit Commission Values</h3>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                     <div>
                       <label className="block text-xs font-bold text-gray-700 mb-2">WASSCE / NOVDEC Commission (GHS)</label>
@@ -566,11 +566,11 @@ export default function AdminAffiliates() {
                 </div>
 
                 {/* Divider */}
-                <div className="border-t border-gray-100" />
+                <div className="border-t border-gray-200" />
 
                 {/* Withdrawal Limits */}
                 <div>
-                  <h3 className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-4">Withdrawal Limits</h3>
+                  <h3 className="text-xs font-bold text-gray-500 mb-4">Withdrawal Limits</h3>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                     <div>
                       <label className="block text-xs font-bold text-gray-700 mb-2">Minimum Withdrawal Amount (GHS)</label>
@@ -606,7 +606,7 @@ export default function AdminAffiliates() {
                 </div>
 
                 {/* Save Button */}
-                <div className="flex items-center justify-between pt-2 border-t border-gray-100">
+                <div className="flex items-center justify-between pt-2 border-t border-gray-200">
                   <p className="text-xs text-gray-400">Changes apply immediately to all affiliate accounts.</p>
                   <button
                     onClick={handleSaveConfig}
@@ -635,7 +635,7 @@ export default function AdminAffiliates() {
       {/* ─── Unsuspend Confirmation Modal ───────────────────────── */}
       {unsuspendModal && (
         <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="bg-white rounded-3xl shadow-2xl w-full max-w-sm p-6 text-center">
+          <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="bg-white rounded-xl shadow-2xl w-full max-w-sm p-6 text-center">
             <div className="w-14 h-14 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto mb-4">
               <svg className="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -675,7 +675,7 @@ export default function AdminAffiliates() {
       {/* ─── Approve Modal ─────────────────────────────────────── */}
       {approveModal && (
         <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="bg-white rounded-3xl shadow-2xl w-full max-w-sm p-6">
+          <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="bg-white rounded-xl shadow-2xl w-full max-w-sm p-6">
             <h3 className="text-lg font-bold text-gray-900 mb-1 font-serif">Approve Application</h3>
             <p className="text-xs text-gray-500 mb-5">Approving <span className="font-semibold text-gray-700">{getName(approveModal)}</span>. Assign a USSD code below.</p>
 
@@ -702,7 +702,7 @@ export default function AdminAffiliates() {
       {/* ─── Reject Modal ──────────────────────────────────────── */}
       {rejectModal && (
         <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="bg-white rounded-3xl shadow-2xl w-full max-w-sm p-6">
+          <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="bg-white rounded-xl shadow-2xl w-full max-w-sm p-6">
             <h3 className="text-lg font-bold text-gray-900 mb-1 font-serif">Reject Application</h3>
             <p className="text-xs text-gray-500 mb-5">Provide a reason for rejecting <span className="font-semibold">{getName(rejectModal)}</span>'s application.</p>
 
@@ -727,7 +727,7 @@ export default function AdminAffiliates() {
       {/* ─── Withdrawal Process Modal ──────────────────────────── */}
       {withdrawalModal && (
         <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="bg-white rounded-3xl shadow-2xl w-full max-w-sm p-6">
+          <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="bg-white rounded-xl shadow-2xl w-full max-w-sm p-6">
             <h3 className="text-lg font-bold text-gray-900 mb-1 font-serif">Process Payout Request</h3>
             <p className="text-xs text-gray-500 mb-4">Payout request of <span className="font-bold text-gray-900">GHS {withdrawalModal.amount}</span></p>
 

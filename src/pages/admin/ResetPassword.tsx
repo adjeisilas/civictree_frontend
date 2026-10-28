@@ -90,7 +90,7 @@ export default function ResetPassword() {
       <form onSubmit={handleSubmit} className="space-y-5">
         {/* Password Field */}
         <div>
-          <label htmlFor="password" className="block text-xs font-semibold text-text-primary/80 uppercase tracking-wider mb-2">
+          <label htmlFor="password" className="block text-xs font-semibold text-text-primary/80 mb-2">
             New Password
           </label>
           <div className="relative">
@@ -138,7 +138,7 @@ export default function ResetPassword() {
 
         {/* Confirm Password Field */}
         <div>
-          <label htmlFor="confirmPassword" className="block text-xs font-semibold text-text-primary/80 uppercase tracking-wider mb-2">
+          <label htmlFor="confirmPassword" className="block text-xs font-semibold text-text-primary/80 mb-2">
             Confirm New Password
           </label>
           <div className="relative">

@@ -11,7 +11,12 @@ import AdminDirectWithdrawalModal from '../../components/admin/dashboard/AdminDi
 import { useComprehensiveDashboard } from '../../hooks/useDashboard'
 import { useNavigate } from 'react-router-dom'
 import { usePWAInstall } from '../../hooks/usePWAInstall'
+import { voucherTypeShortLabel } from '../../config/voucherTypes'
+import { formatGhs, formatGhsCompact, formatCount } from '../../utils/format'
+import PageHeader from '../../components/admin/layout/PageHeader'
+import { Banknote, MessageSquare, Smartphone, TriangleAlert, Upload } from 'lucide-react'
 import type { KpiStat } from '../../types/admin'
+import { zeroedByVoucherType } from '../../config/voucherTypes'
 
 export default function Dashboard() {
   const navigate = useNavigate()
@@ -22,106 +27,162 @@ export default function Dashboard() {
 
   if (isLoading) {
     return (
-      <div className="flex flex-col items-center justify-center h-[50vh] space-y-3">
-        <svg className="w-10 h-10 text-primary animate-spin" fill="none" viewBox="0 0 24 24">
-          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
-        </svg>
-        <span className="text-xs font-bold text-gray-400 uppercase tracking-widest animate-pulse">Loading dashboard...</span>
+      <div className="space-y-6">
+        <div>
+          <div className="h-7 w-56 rounded bg-gray-100" />
+          <div className="mt-2 h-4 w-80 rounded bg-gray-50" />
+        </div>
+        <StatsGrid />
       </div>
     )
   }
 
   if (error || !data) {
     return (
-      <div className="bg-red-50 border border-red-200 text-red-800 p-5 rounded-2xl flex items-center space-x-3 shadow-sm">
-        <span className="text-xl">⚠️</span>
-        <p className="text-xs font-semibold">{error ? error.message : 'Failed to fetch dashboard metrics. Please reload.'}</p>
+      <div className="bg-white border border-red-200 rounded-lg p-5 flex items-start gap-3">
+        <TriangleAlert className="w-5 h-5 text-red-600 shrink-0 mt-0.5" strokeWidth={1.75} />
+        <div>
+          <p className="text-sm font-semibold text-text-primary">Could not load the dashboard</p>
+          <p className="text-[13px] text-gray-600 mt-0.5">
+            {error ? error.message : 'The metrics request did not complete. Reload to try again.'}
+          </p>
+        </div>
       </div>
     )
   }
 
-  // Derive KPI Stats
+  // Rates are computed from the figures beside them. Anything the API does not
+  // report - month-on-month movement, delivery rates - has no supporting line
+  // rather than a placeholder: these were previously hardcoded strings such as
+  // "+12.4% from last month", shown to admins as though measured.
+  const asPercent = (part: number, whole: number) =>
+    whole > 0 ? `${((part / whole) * 100).toFixed(1)}% of all orders` : undefined
+
+  const lowStockTypes = Object.entries(data.voucherStockStatus || {})
+    .filter(([, status]) => status.isLowStock)
+    .map(([type]) => voucherTypeShortLabel(type))
+
   const kpiStats: KpiStat[] = [
-    { label: 'Total Revenue', value: `GH¢ ${data.totalRevenue?.toLocaleString() || 0}.00`, change: '+12.4% from last month', trend: 'up' as const, color: 'emerald', icon: 'revenue' },
-    { label: 'Total Orders', value: data.totalOrders?.toLocaleString() || '0', change: '+8.4% from last week', trend: 'up' as const, color: 'gray', icon: 'orders' },
-    { label: 'Successful Orders', value: data.totalSuccessfulOrders?.toLocaleString() || '0', change: '96.1% Success Rate', trend: 'up' as const, color: 'emerald', icon: 'successful' },
-    { label: 'Failed Orders', value: data.totalFailedOrders?.toLocaleString() || '0', change: '3.9% Failure Rate', trend: 'neutral' as const, color: 'red', icon: 'failed' },
-    { label: 'Voucher Stock', value: data.totalVoucherStock?.toLocaleString() || '0', change: 'BECE Checker is low (14%)', trend: 'neutral' as const, color: 'amber', icon: 'stock' },
-    { label: 'Active Customers', value: data.totalCustomers?.toLocaleString() || '0', change: '+5.2% active check', trend: 'up' as const, color: 'blue', icon: 'customers' },
-    { label: 'SMS Delivered', value: data.totalSmsDelivered?.toLocaleString() || '0', change: '100% Delivery Rate', trend: 'up' as const, color: 'teal', icon: 'sms' },
-    { label: 'Avg Order Value', value: `GH¢ ${data.averageOrderValue?.toLocaleString() || 0}.00`, change: 'Consistent with target', trend: 'up' as const, color: 'black', icon: 'avgValue' },
+    {
+      label: 'Total revenue',
+      value: formatGhs(data.totalRevenue),
+      mobileValue: formatGhsCompact(data.totalRevenue),
+      icon: 'revenue',
+    },
+    {
+      label: 'Total orders',
+      value: formatCount(data.totalOrders),
+      icon: 'orders',
+    },
+    {
+      label: 'Successful orders',
+      value: formatCount(data.totalSuccessfulOrders),
+      change: asPercent(data.totalSuccessfulOrders ?? 0, data.totalOrders ?? 0),
+      trend: 'up',
+      icon: 'successful',
+    },
+    {
+      label: 'Failed orders',
+      value: formatCount(data.totalFailedOrders),
+      change: asPercent(data.totalFailedOrders ?? 0, data.totalOrders ?? 0),
+      trend: 'flat',
+      // The one card that should pull the eye, and only when it has to
+      tone: (data.totalFailedOrders ?? 0) > 0 ? 'critical' : 'neutral',
+      icon: 'failed',
+    },
+    {
+      label: 'Vouchers in stock',
+      value: formatCount(data.totalVoucherStock),
+      change: lowStockTypes.length
+        ? `${lowStockTypes.join(', ')} running low`
+        : undefined,
+      trend: 'flat',
+      tone: lowStockTypes.length ? 'critical' : 'neutral',
+      icon: 'stock',
+    },
+    {
+      label: 'Customers',
+      value: formatCount(data.totalCustomers),
+      icon: 'customers',
+    },
+    {
+      label: 'SMS delivered',
+      value: formatCount(data.totalSmsDelivered),
+      icon: 'sms',
+    },
+    {
+      label: 'Average order value',
+      value: formatGhs(data.averageOrderValue),
+      mobileValue: formatGhsCompact(data.averageOrderValue),
+      icon: 'avgValue',
+    },
   ]
 
   return (
     <div className="space-y-6">
       {isInstallable && !dismissed && (
-        <div className="relative bg-gradient-to-r from-amber-500 to-amber-600 text-white p-5 rounded-xl shadow-md flex flex-col md:flex-row justify-between items-start md:items-center gap-4 animate-fade-in border border-amber-400">
-          <div className="flex items-start space-x-3.5">
-            <span className="text-3xl shrink-0">📱</span>
+        <div className="bg-white border border-gray-200 rounded-lg p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div className="flex items-start gap-3">
+            <Smartphone className="w-5 h-5 text-gray-400 shrink-0 mt-0.5" strokeWidth={1.75} />
             <div>
-              <h3 className="font-heading font-bold text-lg leading-tight">Install CivicTree Admin App</h3>
-              <p className="text-white/90 text-xs sm:text-sm mt-1 font-sans">
-                Access the voucher dashboard directly from your home screen with rapid offline load times.
+              <p className="text-sm font-semibold text-text-primary">Install the admin app</p>
+              <p className="text-[13px] text-gray-600 mt-0.5">
+                Open the dashboard from your home screen, and keep working when the connection drops.
               </p>
             </div>
           </div>
-          <div className="flex items-center gap-3 w-full md:w-auto shrink-0 justify-end">
+          <div className="flex items-center gap-2 shrink-0">
             <button
               type="button"
               onClick={() => {
                 setDismissed(true)
                 localStorage.setItem('pwa_install_dismissed_dashboard', 'true')
               }}
-              className="px-4 py-2 bg-white/10 hover:bg-white/20 active:scale-95 text-white text-xs font-bold rounded-xl border border-white/20 transition-all cursor-pointer"
+              className="px-3 py-1.5 text-[13px] font-medium text-gray-600 hover:text-text-primary hover:bg-gray-50 rounded-md transition-colors cursor-pointer"
             >
-              Maybe Later
+              Not now
             </button>
             <button
               type="button"
               onClick={promptToInstall}
-              className="px-4 py-2 bg-[#ffeade] hover:brightness-105 active:scale-[0.98] text-[#371f0d] text-xs font-bold rounded-xl transition-all shadow cursor-pointer"
+              className="px-3.5 py-1.5 bg-primary hover:bg-primary-hover text-white text-[13px] font-semibold rounded-md transition-colors cursor-pointer"
             >
-              Install App
+              Install
             </button>
           </div>
         </div>
       )}
 
-      {/* Welcome Banner */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center bg-primary p-6 sm:p-8 rounded-xl text-white shadow-md relative overflow-hidden">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(235,197,107,0.15),transparent_60%)]" />
-        <div className="z-10">
-          <h2 className="text-2xl sm:text-3xl font-heading font-bold tracking-tight">Welcome, Administrator</h2>
-          <p className="text-white/80 text-xs sm:text-sm mt-1.5 font-sans">
-            Here's what is happening on the platform today. Stock levels, sales, and order stats are fully active.
-          </p>
-        </div>
-        
-        {/* Quick Actions */}
-        <div className="mt-4 sm:mt-0 flex flex-wrap gap-3 z-10">
-          <button onClick={() => setIsWithdrawalModalOpen(true)} className="flex items-center space-x-1.5 px-4 py-2 bg-emerald-500 hover:bg-emerald-600 active:scale-[0.98] text-white text-xs font-bold rounded-xl transition-all shadow cursor-pointer">
-            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
-            <span>Withdraw</span>
-          </button>
-          <button onClick={() => navigate('/admin/vouchers')} className="flex items-center space-x-1.5 px-4 py-2 bg-[#dfba60] active:scale-[0.98] text-primary text-xs font-bold rounded-xl transition-all shadow cursor-pointer">
-            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
-            </svg>
-            <span>Upload Vouchers</span>
-          </button>
-          <button onClick={() => navigate('/admin/sms')} className="flex items-center space-x-1.5 px-4 py-2 bg-white/10 hover:bg-white/20 active:scale-[0.98] text-white text-xs font-bold rounded-xl border border-white/20 transition-all cursor-pointer">
-            <svg className="w-4 h-4 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
-            </svg>
-            <span>Blast SMS</span>
-          </button>
-        </div>
-      </div>
+      <PageHeader
+        title="Dashboard"
+        description="Sales, stock and delivery across the platform."
+        actions={
+          <>
+            <button
+              onClick={() => navigate('/admin/vouchers')}
+              className="inline-flex items-center gap-1.5 px-3 py-2 bg-white border border-gray-200 hover:border-gray-300 hover:bg-gray-50 text-[13px] font-medium text-text-primary rounded-md transition-colors cursor-pointer"
+            >
+              <Upload className="w-4 h-4 text-gray-400" strokeWidth={1.75} />
+              Upload vouchers
+            </button>
+            <button
+              onClick={() => navigate('/admin/sms')}
+              className="inline-flex items-center gap-1.5 px-3 py-2 bg-white border border-gray-200 hover:border-gray-300 hover:bg-gray-50 text-[13px] font-medium text-text-primary rounded-md transition-colors cursor-pointer"
+            >
+              <MessageSquare className="w-4 h-4 text-gray-400" strokeWidth={1.75} />
+              Send SMS
+            </button>
+            <button
+              onClick={() => setIsWithdrawalModalOpen(true)}
+              className="inline-flex items-center gap-1.5 px-3.5 py-2 bg-primary hover:bg-primary-hover text-white text-[13px] font-semibold rounded-md transition-colors cursor-pointer"
+            >
+              <Banknote className="w-4 h-4" strokeWidth={1.75} />
+              Withdraw
+            </button>
+          </>
+        }
+      />
 
-      {/* 8-Metric KPI Grid */}
       <StatsGrid stats={kpiStats} />
 
       {/* Row 1: Revenue Spline & Voucher Sales Donut */}
@@ -130,7 +191,7 @@ export default function Dashboard() {
           <RevenueTrendChart data={data.revenueTrends || []} />
         </div>
         <div className="lg:col-span-1">
-          <VoucherSalesChart data={data.voucherSalesCountByType || { WASSCE_NOVDEC: 0, BECE: 0 }} />
+          <VoucherSalesChart data={data.voucherSalesCountByType || zeroedByVoucherType(0)} />
         </div>
       </div>
 
@@ -149,7 +210,7 @@ export default function Dashboard() {
           <VoucherStockStatus data={data.voucherStockStatus || {}} />
           <ActivityFeed activities={data.recentActivityLogs?.map(log => ({
             id: log.id,
-            message: `${log.user?.fullName || log.user?.email || 'System'} performed ${log.action.replace(/_/g, ' ')}`,
+            message: `${log.user?.fullName || log.user?.email || 'System'} \u2014 ${log.action.replace(/_/g, ' ').toLowerCase()}`,
             timestamp: log.createdAt,
             type: log.action.includes('VOUCHER') ? 'voucher' : log.action.includes('ORDER') ? 'order' : 'system'
           })) || []} />

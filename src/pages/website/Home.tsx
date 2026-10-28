@@ -23,7 +23,7 @@ export default function Home() {
           Purchase Exam Checker <span className="text-secondary">Vouchers</span> Easily
         </h1>
         <p className="text-gray-500 max-w-2xl text-sm sm:text-base mt-6 leading-relaxed">
-          Instantly buy WASSCE/NOVDEC and BECE checker pins online. Safe transactions via Mobile Money or Cards, with immediate SMS delivery.
+          Instantly buy WASSCE/NOVDEC, BECE and CTVET/NABTEX checker pins online. Safe transactions via Mobile Money or Cards, with immediate SMS delivery.
         </p>
 
         <div className="mt-10 flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">

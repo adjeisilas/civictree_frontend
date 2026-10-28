@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { TriangleAlert } from 'lucide-react'
 import UserDetailsPage from '../../components/admin/users/UserDetailsPage'
 import type { AdminUser } from '../../types/admin'
 import { useAdminUsers, useActivityLogs, useCreateUser, useUpdateUser, useUpdateUserStatus, useDeleteUser } from '../../hooks/useUsers'
@@ -169,15 +170,15 @@ export default function Users() {
           <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
           <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
         </svg>
-        <span className="text-xs font-bold text-gray-400 uppercase tracking-widest animate-pulse">Loading administration directories...</span>
+        <span className="text-xs font-bold text-gray-400 animate-pulse">Loading administration directories...</span>
       </div>
     )
   }
 
   if (error) {
     return (
-      <div className="bg-red-50 border border-red-200 text-red-800 p-5 rounded-2xl flex items-center space-x-3 shadow-sm">
-        <span className="text-xl">⚠️</span>
+      <div className="bg-red-50 border border-red-200 text-red-800 p-5 rounded-lg flex items-center space-x-3">
+        <TriangleAlert className="w-5 h-5 shrink-0" strokeWidth={1.75} />
         <p className="text-xs font-semibold">{error.message}</p>
       </div>
     )
@@ -209,12 +210,11 @@ export default function Users() {
       ) : (
         <>
           {/* Main Page Title Header Banner */}
-          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center bg-primary p-6 sm:p-8 rounded-2xl text-white shadow-md relative overflow-hidden">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(235,197,107,0.15),transparent_60%)]" />
-        <div className="z-10 w-full flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center pb-1">
+        <div className="w-full flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
-            <h2 className="text-2xl sm:text-3xl font-serif font-bold tracking-tight">Administrators Directory & Audit Logs</h2>
-            <p className="text-white/80 text-xs sm:text-sm mt-1.5 font-sans max-w-3xl">
+            <h2 className="font-heading text-[26px] leading-tight text-text-primary">Administrators Directory & Audit Logs</h2>
+            <p className="text-[13px] text-gray-600 mt-1 max-w-3xl">
               Manage internal administrative accounts, roles, access permissions, and monitor the global system audit log.
             </p>
           </div>
@@ -258,7 +258,7 @@ export default function Users() {
         {activeTab === 'admins' ? (
           <div className="space-y-6">
             {/* Toolbar Filters */}
-            <div className="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm flex flex-col sm:flex-row justify-between gap-4">
+            <div className="bg-white p-5 rounded-lg border border-gray-200 flex flex-col sm:flex-row justify-between gap-4">
               <div className="relative flex-1">
                 <span className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-gray-400">
                   <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
@@ -299,17 +299,17 @@ export default function Users() {
 
             {/* Administrators Directory Table */}
             {filteredUsers.length === 0 ? (
-              <div className="bg-white p-12 rounded-2xl border border-gray-100 text-center shadow-sm">
+              <div className="bg-white p-12 rounded-lg border border-gray-200 text-center">
                 <svg className="w-12 h-12 mx-auto text-gray-300 mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a3 3 0 11-6 0 3 3 0 016 0z" />
                 </svg>
                 <p className="text-sm font-semibold uppercase text-gray-400 tracking-wider">No administrators matching search criteria</p>
               </div>
             ) : (
-              <div className="overflow-x-auto bg-white border border-gray-100 rounded-xl shadow-sm">
+              <div className="overflow-x-auto bg-white border border-gray-200 rounded-xl">
                 <table className="w-full border-collapse text-left text-xs text-text-primary font-sans">
                   <thead>
-                    <tr className="bg-gray-50/70 text-gray-400 text-[10px] font-bold uppercase border-b border-gray-100">
+                    <tr className="bg-gray-50/70 text-gray-400 text-xs font-bold uppercase border-b border-gray-200">
                       <th className="px-5 py-4">Operator</th>
                       <th className="px-5 py-4">Contact Details</th>
                       <th className="px-5 py-4">Joined</th>
@@ -327,7 +327,7 @@ export default function Users() {
                             </div>
                             <div>
                               <h4 className="font-serif font-bold text-primary text-sm">{usr.name}</h4>
-                              <p className="text-[10px] text-gray-400 font-bold uppercase tracking-wider mt-0.5">{usr.role}</p>
+                              <p className="text-xs text-gray-400 font-bold mt-0.5">{usr.role}</p>
                             </div>
                           </div>
                         </td>
@@ -339,7 +339,7 @@ export default function Users() {
                           {usr.createdAt ? new Date(usr.createdAt).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }) : 'N/A'}
                         </td>
                         <td className="px-5 py-4">
-                          <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[9px] font-bold ${
+                          <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-bold ${
                             usr.status === 'Active' ? 'bg-emerald-50 text-emerald-700 border border-emerald-100' : 'bg-red-50 text-red-700 border border-red-100'
                           }`}>
                             {usr.status}
@@ -397,8 +397,8 @@ export default function Users() {
 
             {/* Users Table Pagination */}
             {usersPagination.totalPages > 1 && (
-              <div className="flex justify-between items-center px-4 py-3 bg-gray-50 border border-gray-150 rounded-xl mt-4">
-                <div className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider">
+              <div className="flex justify-between items-center px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl mt-4">
+                <div className="text-xs font-semibold text-gray-400">
                   Showing <span className="font-bold text-primary">{(usersPagination.page - 1) * usersPagination.limit + 1}</span> to <span className="font-bold text-primary">{Math.min(usersPagination.page * usersPagination.limit, usersPagination.totalResults)}</span> of <span className="font-bold text-primary">{usersPagination.totalResults}</span> administrators
                 </div>
                 <div className="flex space-x-2">
@@ -425,11 +425,11 @@ export default function Users() {
           </div>
         ) : (
           /* System Activity Logs Tab Panel */
-          <div className="bg-white border border-gray-100 rounded-2xl shadow-sm p-6 space-y-4">
+          <div className="bg-white border border-gray-200 rounded-lg p-6 space-y-4">
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-gray-50 pb-4">
               <div>
                 <h4 className="font-serif font-bold text-primary text-base">Global Audit Trail</h4>
-                <p className="text-[10px] text-gray-400 font-semibold mt-0.5">Centralized logs of all system configurations, security audits, and inventory uploads</p>
+                <p className="text-xs text-gray-400 font-semibold mt-0.5">Centralized logs of all system configurations, security audits, and inventory uploads</p>
               </div>
 
               <button
@@ -490,17 +490,17 @@ export default function Users() {
 
             {/* Global Logs Table */}
             {filteredLogs.length === 0 ? (
-              <div className="text-center py-12 text-gray-400 border border-dashed border-gray-150 rounded-2xl">
+              <div className="text-center py-12 text-gray-400 border border-dashed border-gray-200 rounded-lg">
                 <svg className="w-10 h-10 mx-auto text-gray-300 mb-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                 </svg>
-                <p className="text-sm font-semibold uppercase tracking-wider text-gray-400">No global system logs match the parameters</p>
+                <p className="text-sm font-semibold text-gray-400">No global system logs match the parameters</p>
               </div>
             ) : (
-              <div className="overflow-x-auto border border-gray-100 rounded-xl">
+              <div className="overflow-x-auto border border-gray-200 rounded-xl">
                 <table className="w-full border-collapse text-left text-xs text-text-primary font-sans">
                   <thead>
-                    <tr className="bg-gray-50/70 text-gray-400 text-[9px] font-bold uppercase border-b border-gray-100">
+                    <tr className="bg-gray-50/70 text-gray-400 text-[11px] font-bold uppercase border-b border-gray-200">
                       <th className="px-4 py-3.5">Timestamp</th>
                       <th className="px-4 py-3.5">Operator</th>
                       <th className="px-4 py-3.5">Category</th>
@@ -516,11 +516,11 @@ export default function Users() {
                         <td className="px-4 py-3.5">
                           <div className="flex flex-col">
                             <span className="font-bold text-primary">{log.userName}</span>
-                            <span className="text-[9px] text-gray-400 font-mono mt-0.5">{log.role}</span>
+                            <span className="text-[11px] text-gray-400 font-mono mt-0.5">{log.role}</span>
                           </div>
                         </td>
                         <td className="px-4 py-3.5">
-                          <span className={`inline-flex items-center px-2 py-0.5 rounded text-[8px] font-bold uppercase border ${
+                          <span className={`inline-flex items-center px-2 py-0.5 rounded text-[11px] font-bold uppercase border ${
                             log.category === 'Security' ? 'bg-purple-50 text-purple-700 border-purple-100' :
                             log.category === 'Inventory' ? 'bg-amber-50 text-amber-700 border-amber-100' :
                             'bg-blue-50 text-blue-700 border-blue-100'
@@ -530,13 +530,13 @@ export default function Users() {
                         </td>
                         <td className="px-4 py-3.5 text-gray-600 leading-normal max-w-sm">{log.action}</td>
                         <td className="px-4 py-3.5">
-                          <div className="text-[10px] text-gray-400 leading-tight font-mono select-all">
+                          <div className="text-xs text-gray-400 leading-tight font-mono select-all">
                             <p>{log.ipAddress}</p>
-                            <p className="text-[8px] truncate max-w-[120px]" title={log.device}>{log.device}</p>
+                            <p className="text-[11px] truncate max-w-[120px]" title={log.device}>{log.device}</p>
                           </div>
                         </td>
                         <td className="px-4 py-3.5 text-right">
-                          <span className={`inline-flex items-center px-1.5 py-0.5 rounded-full text-[8px] font-bold uppercase ${
+                          <span className={`inline-flex items-center px-1.5 py-0.5 rounded-full text-[11px] font-bold uppercase ${
                             log.status === 'Success' ? 'bg-emerald-50 text-emerald-700 border border-emerald-100' :
                             log.status === 'Failed' ? 'bg-red-50 text-red-700 border border-red-100' :
                             'bg-amber-50 text-amber-700 border-amber-100'
@@ -552,8 +552,8 @@ export default function Users() {
             )}
 
             {/* Pagination Controls */}
-            <div className="flex justify-between items-center px-4 py-3 bg-gray-50 border border-gray-150 rounded-xl mt-4">
-              <div className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider">
+            <div className="flex justify-between items-center px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl mt-4">
+              <div className="text-xs font-semibold text-gray-400">
                 Showing <span className="font-bold text-primary">{(pagination.page - 1) * pagination.limit + 1}</span> to <span className="font-bold text-primary">{Math.min(pagination.page * pagination.limit, pagination.totalResults)}</span> of <span className="font-bold text-primary">{pagination.totalResults}</span> logs
               </div>
               <div className="flex space-x-2">
@@ -583,9 +583,9 @@ export default function Users() {
       {/* Add User Drawer Overlay Modal */}
       {showAddUserModal && (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-xs flex items-center justify-center z-50 animate-fadeIn">
-          <div className="bg-white rounded-2xl w-full max-w-lg border border-gray-100 shadow-2xl p-6 space-y-4 max-h-[90vh] overflow-y-auto m-4 text-xs font-semibold text-gray-600">
+          <div className="bg-white rounded-lg w-full max-w-lg border border-gray-200 shadow-2xl p-6 space-y-4 max-h-[90vh] overflow-y-auto m-4 text-xs font-semibold text-gray-600">
             {/* Modal Header */}
-            <div className="flex justify-between items-center border-b border-gray-100 pb-3">
+            <div className="flex justify-between items-center border-b border-gray-200 pb-3">
               <h3 className="text-base font-serif font-bold text-primary">{editingUser ? 'Edit Dashboard Operator' : 'Add New Dashboard Operator'}</h3>
               <button
                 type="button"
@@ -602,7 +602,7 @@ export default function Users() {
             <form onSubmit={handleSaveUser} className="space-y-4">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-1.5">
-                  <label className="text-gray-400 uppercase tracking-wider text-[9px]">Full Operator Name</label>
+                  <label className="text-gray-400 text-[11px]">Full Operator Name</label>
                   <input
                     type="text"
                     required
@@ -614,7 +614,7 @@ export default function Users() {
                 </div>
 
                 <div className="space-y-1.5">
-                  <label className="text-gray-400 uppercase tracking-wider text-[9px]">Email Address</label>
+                  <label className="text-gray-400 text-[11px]">Email Address</label>
                   <input
                     type="email"
                     required
@@ -628,7 +628,7 @@ export default function Users() {
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-1.5">
-                  <label className="text-gray-400 uppercase tracking-wider text-[9px]">Acquisition Phone Number</label>
+                  <label className="text-gray-400 text-[11px]">Acquisition Phone Number</label>
                   <input
                     type="text"
                     required
@@ -640,7 +640,7 @@ export default function Users() {
                 </div>
 
                 <div className="space-y-1.5">
-                  <label className="text-gray-400 uppercase tracking-wider text-[9px]">System Authority Role</label>
+                  <label className="text-gray-400 text-[11px]">System Authority Role</label>
                   <select
                     value={newUserRole}
                     onChange={(e) => setNewUserRole(e.target.value)}
@@ -652,7 +652,7 @@ export default function Users() {
 
                 {editingUser && (
                   <div className="space-y-1.5">
-                    <label className="text-gray-400 uppercase tracking-wider text-[9px]">Account Status</label>
+                    <label className="text-gray-400 text-[11px]">Account Status</label>
                     <select
                       value={newUserStatus}
                       onChange={(e) => setNewUserStatus(e.target.value)}
@@ -665,7 +665,7 @@ export default function Users() {
                 )}
 
                 <div className="space-y-1.5">
-                  <label className="text-gray-400 uppercase tracking-wider text-[9px]">Account Password {editingUser && '(Leave blank to keep)'}</label>
+                  <label className="text-gray-400 text-[11px]">Account Password {editingUser && '(Leave blank to keep)'}</label>
                   <input
                     type="password"
                     required={!editingUser}
@@ -678,14 +678,14 @@ export default function Users() {
               </div>
 
               <div className="space-y-1.5">
-                <label className="text-gray-400 uppercase tracking-wider text-[9px]">Avatar Color Palette</label>
+                <label className="text-gray-400 text-[11px]">Avatar Color Palette</label>
                 <div className="flex gap-2">
                   {['Forest Green', 'Ocean Blue', 'Sunset Amber', 'Teal Lagoon', 'Grape Purple'].map((color) => (
                     <button
                       key={color}
                       type="button"
                       onClick={() => setNewUserAvatarColor(color)}
-                      className={`px-3 py-1.5 rounded-lg border text-[10px] font-bold transition-all cursor-pointer ${
+                      className={`px-3 py-1.5 rounded-lg border text-xs font-bold transition-all cursor-pointer ${
                         newUserAvatarColor === color 
                           ? 'bg-primary text-white border-primary shadow' 
                           : 'bg-gray-50 border-gray-200 text-gray-500 hover:bg-gray-100'
@@ -697,7 +697,7 @@ export default function Users() {
                 </div>
               </div>
 
-              <div className="pt-3 border-t border-gray-100 flex justify-end gap-3.5">
+              <div className="pt-3 border-t border-gray-200 flex justify-end gap-3.5">
                 <button
                   type="button"
                   onClick={closeModal}

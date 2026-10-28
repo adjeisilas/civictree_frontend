@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useParams, useNavigate, Link } from 'react-router-dom'
+import { Check, TriangleAlert } from 'lucide-react'
 import { Helmet } from 'react-helmet-async'
 import type { StoredPaymentDetails } from '../../types/affiliate'
 import { motion, AnimatePresence } from 'framer-motion'
@@ -68,7 +69,7 @@ export default function AffiliateDetailsPage() {
 
   if (isError || !affiliate) {
     return (
-      <div className="min-h-[50vh] flex flex-col items-center justify-center space-y-4 bg-white rounded-3xl p-8 border border-gray-100 shadow-sm text-center">
+      <div className="min-h-[50vh] flex flex-col items-center justify-center space-y-4 bg-white rounded-xl p-8 border border-gray-200 text-center">
         <div className="w-16 h-16 rounded-full bg-red-50 text-red-500 flex items-center justify-center text-2xl font-bold">!</div>
         <h2 className="text-xl font-bold text-gray-900">Affiliate Profile Not Found</h2>
         <p className="text-gray-500 text-sm max-w-sm">The affiliate profile you are trying to view does not exist or has been removed.</p>
@@ -270,9 +271,9 @@ export default function AffiliateDetailsPage() {
       </div>
 
       {/* Header Profile Card */}
-      <div className="bg-white rounded-3xl p-6 sm:p-8 shadow-sm border border-gray-100 flex flex-col md:flex-row justify-between items-start md:items-center gap-6 relative overflow-hidden">
+      <div className="bg-white rounded-xl p-6 sm:p-8 border border-gray-200 flex flex-col md:flex-row justify-between items-start md:items-center gap-6 relative overflow-hidden">
         <div className="flex items-center space-x-5 z-10">
-          <div className="w-20 h-20 rounded-2xl bg-[#1a5c18] text-white text-2xl font-bold flex items-center justify-center shadow-lg shadow-[#1a5c18]/20 shrink-0">
+          <div className="w-20 h-20 rounded-lg bg-[#1a5c18] text-white text-2xl font-bold flex items-center justify-center shadow-lg shadow-[#1a5c18]/20 shrink-0">
             {fullName.split(' ').map(n => n[0]).join('').slice(0, 2)}
           </div>
           <div>
@@ -301,8 +302,8 @@ export default function AffiliateDetailsPage() {
         </div>
 
         {/* USSD Extension Code Banner */}
-        <div className="bg-[#f0faf0] border border-[#1a5c18]/20 rounded-2xl p-4 min-w-[200px] text-center shrink-0 w-full md:w-auto">
-          <p className="text-[11px] font-bold uppercase tracking-wider text-[#1a5c18] mb-1">Assigned USSD Code</p>
+        <div className="bg-[#f0faf0] border border-[#1a5c18]/20 rounded-lg p-4 min-w-[200px] text-center shrink-0 w-full md:w-auto">
+          <p className="text-[11px] font-bold text-[#1a5c18] mb-1">Assigned USSD Code</p>
           <p className="text-xl font-mono font-bold text-gray-900">{affiliate.ussdCode || 'Not Assigned'}</p>
           <button
             onClick={() => setUssdModalOpen(true)}
@@ -315,20 +316,20 @@ export default function AffiliateDetailsPage() {
 
       {/* Metrics Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
-        <div className="bg-white rounded-3xl p-6 shadow-sm border border-gray-100">
-          <p className="text-xs text-gray-400 font-semibold uppercase tracking-wider">Vouchers Sold</p>
+        <div className="bg-white rounded-xl p-6 border border-gray-200">
+          <p className="text-xs text-gray-400 font-semibold">Vouchers Sold</p>
           <p className="text-3xl font-bold text-gray-900 mt-2 font-heading">{(affiliate.totalVouchersSold ?? 0).toLocaleString()}</p>
           <p className="text-xs text-gray-400 mt-1">Total vouchers completed</p>
         </div>
 
-        <div className="bg-white rounded-3xl p-6 shadow-sm border border-gray-100">
-          <p className="text-xs text-gray-400 font-semibold uppercase tracking-wider">Total Sales Generated</p>
+        <div className="bg-white rounded-xl p-6 border border-gray-200">
+          <p className="text-xs text-gray-400 font-semibold">Total Sales Generated</p>
           <p className="text-3xl font-bold text-[#1a5c18] mt-2 font-heading">GHS {salesGenerated.toLocaleString()}</p>
           <p className="text-xs text-gray-400 mt-1">Revenue via USSD channel</p>
         </div>
 
-        <div className="bg-white rounded-3xl p-6 shadow-sm border border-gray-100">
-          <p className="text-xs text-gray-400 font-semibold uppercase tracking-wider">Available Balance</p>
+        <div className="bg-white rounded-xl p-6 border border-gray-200">
+          <p className="text-xs text-gray-400 font-semibold">Available Balance</p>
           <p className="text-3xl font-bold text-amber-600 mt-2 font-heading">GHS {(affiliate.availableBalance ?? 0).toLocaleString()}</p>
           <p className="text-xs text-gray-400 mt-1">Commission available for payout</p>
         </div>
@@ -338,8 +339,8 @@ export default function AffiliateDetailsPage() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
         {/* Business & Profile Details */}
-        <div className="lg:col-span-2 bg-white rounded-3xl p-6 sm:p-8 shadow-sm border border-gray-100 space-y-6">
-          <h2 className="text-lg font-bold text-gray-900 font-serif border-b border-gray-100 pb-4">Personal & Business Details</h2>
+        <div className="lg:col-span-2 bg-white rounded-xl p-6 sm:p-8 border border-gray-200 space-y-6">
+          <h2 className="text-lg font-bold text-gray-900 font-serif border-b border-gray-200 pb-4">Personal & Business Details</h2>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 text-sm">
             <div>
@@ -371,7 +372,7 @@ export default function AffiliateDetailsPage() {
           </div>
 
           {affiliate.rejectionReason && (
-            <div className="bg-red-50 border border-red-100 rounded-2xl p-4 text-xs text-red-700">
+            <div className="bg-red-50 border border-red-100 rounded-lg p-4 text-xs text-red-700">
               <p className="font-bold mb-1">Rejection Reason</p>
               <p>{affiliate.rejectionReason}</p>
             </div>
@@ -379,16 +380,16 @@ export default function AffiliateDetailsPage() {
         </div>
 
         {/* Payout Account Box — shows both MoMo and Bank */}
-        <div className="bg-white rounded-3xl p-6 sm:p-8 shadow-sm border border-gray-100 space-y-5">
-          <h2 className="text-lg font-bold text-gray-900 font-serif border-b border-gray-100 pb-4">Payout Accounts</h2>
+        <div className="bg-white rounded-xl p-6 sm:p-8 border border-gray-200 space-y-5">
+          <h2 className="text-lg font-bold text-gray-900 font-serif border-b border-gray-200 pb-4">Payout Accounts</h2>
 
           {/* Mobile Money */}
           <div>
             <div className="flex items-center gap-2 mb-3">
-              <span className="text-[11px] font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2.5 py-1 rounded-full">📱 Mobile Money</span>
+              <span className="text-[11px] font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2.5 py-1 rounded-full">Mobile Money</span>
             </div>
             {affiliate.momoNumber || (affiliate.paymentDetails as StoredPaymentDetails)?.phoneNumber ? (
-              <div className="space-y-2.5 bg-gray-50 rounded-2xl p-4 text-xs">
+              <div className="space-y-2.5 bg-gray-50 rounded-lg p-4 text-xs">
                 <div>
                   <span className="text-gray-400 block">Network</span>
                   <span className="font-bold text-gray-800 text-sm">{affiliate.momoNetwork || (affiliate.paymentDetails as StoredPaymentDetails)?.network || '—'}</span>
@@ -403,17 +404,17 @@ export default function AffiliateDetailsPage() {
                 </div>
               </div>
             ) : (
-              <div className="bg-gray-50 rounded-2xl p-4 text-xs text-gray-400 italic">No Mobile Money account saved.</div>
+              <div className="bg-gray-50 rounded-lg p-4 text-xs text-gray-400 italic">No Mobile Money account saved.</div>
             )}
           </div>
 
           {/* Bank Account */}
           <div>
             <div className="flex items-center gap-2 mb-3">
-              <span className="text-[11px] font-bold text-blue-700 bg-blue-50 border border-blue-200 px-2.5 py-1 rounded-full">🏦 Bank Account</span>
+              <span className="text-[11px] font-bold text-blue-700 bg-blue-50 border border-blue-200 px-2.5 py-1 rounded-full">Bank Account</span>
             </div>
             {affiliate.bankAccountNumber || (affiliate.paymentDetails as StoredPaymentDetails)?.accountNumber ? (
-              <div className="space-y-2.5 bg-gray-50 rounded-2xl p-4 text-xs">
+              <div className="space-y-2.5 bg-gray-50 rounded-lg p-4 text-xs">
                 <div>
                   <span className="text-gray-400 block">Bank Name</span>
                   <span className="font-bold text-gray-800 text-sm">{affiliate.bankName || (affiliate.paymentDetails as StoredPaymentDetails)?.bankName || '—'}</span>
@@ -428,11 +429,11 @@ export default function AffiliateDetailsPage() {
                 </div>
               </div>
             ) : (
-              <div className="bg-gray-50 rounded-2xl p-4 text-xs text-gray-400 italic">No Bank Account saved.</div>
+              <div className="bg-gray-50 rounded-lg p-4 text-xs text-gray-400 italic">No Bank Account saved.</div>
             )}
           </div>
 
-          <div className="bg-amber-50 border border-amber-200 rounded-2xl p-4 text-xs text-amber-800">
+          <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 text-xs text-amber-800">
             Payout details are used automatically when processing commission withdrawal requests.
           </div>
         </div>
@@ -441,7 +442,7 @@ export default function AffiliateDetailsPage() {
       {/* ─── Approve Modal ─────────────────────────────────────── */}
       {approveModalOpen && (
         <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="bg-white rounded-3xl shadow-2xl w-full max-w-sm p-6">
+          <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="bg-white rounded-xl shadow-2xl w-full max-w-sm p-6">
             <h3 className="text-lg font-bold text-gray-900 mb-1 font-serif">Approve Application</h3>
             <p className="text-xs text-gray-500 mb-5">Assign a USSD extension code to activate <span className="font-semibold text-gray-800">{fullName}</span>.</p>
 
@@ -468,7 +469,7 @@ export default function AffiliateDetailsPage() {
       {/* ─── Reject Modal ──────────────────────────────────────── */}
       {rejectModalOpen && (
         <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="bg-white rounded-3xl shadow-2xl w-full max-w-sm p-6">
+          <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="bg-white rounded-xl shadow-2xl w-full max-w-sm p-6">
             <h3 className="text-lg font-bold text-gray-900 mb-1 font-serif">Reject Application</h3>
             <p className="text-xs text-gray-500 mb-5">Provide a reason for rejecting <span className="font-semibold">{fullName}</span>'s application.</p>
 
@@ -493,7 +494,7 @@ export default function AffiliateDetailsPage() {
       {/* ─── Edit USSD Modal ────────────────────────────────────── */}
       {ussdModalOpen && (
         <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="bg-white rounded-3xl shadow-2xl w-full max-w-sm p-6">
+          <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="bg-white rounded-xl shadow-2xl w-full max-w-sm p-6">
             <h3 className="text-lg font-bold text-gray-900 mb-1 font-serif">Edit USSD Code</h3>
             <p className="text-xs text-gray-500 mb-5">Update the USSD extension code assigned to <span className="font-semibold">{fullName}</span>.</p>
 
@@ -517,7 +518,7 @@ export default function AffiliateDetailsPage() {
       {/* ─── Suspend Modal ─────────────────────────────────────── */}
       {suspendModalOpen && (
         <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="bg-white rounded-3xl shadow-2xl w-full max-w-sm p-6">
+          <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="bg-white rounded-xl shadow-2xl w-full max-w-sm p-6">
             <h3 className="text-lg font-bold text-gray-900 mb-1 font-serif">Suspend Account</h3>
             <p className="text-xs text-gray-500 mb-4">Provide a reason for suspending <span className="font-semibold">{fullName}</span>'s account.</p>
 
@@ -555,11 +556,11 @@ export default function AffiliateDetailsPage() {
       {/* ─── Confirmation Modal ─────────────────────────────────── */}
       {confirmModal && (
         <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="bg-white rounded-3xl shadow-2xl w-full max-w-sm p-6 text-center">
+          <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="bg-white rounded-xl shadow-2xl w-full max-w-sm p-6 text-center">
             <div className={`w-14 h-14 rounded-full flex items-center justify-center mx-auto mb-4 font-bold text-xl ${
               confirmModal.status === 'DEACTIVATED' ? 'bg-red-100 text-red-600' : 'bg-emerald-100 text-emerald-600'
             }`}>
-              {confirmModal.status === 'DEACTIVATED' ? '!' : '✓'}
+              {confirmModal.status === 'DEACTIVATED' ? <TriangleAlert className="w-5 h-5" strokeWidth={2} /> : <Check className="w-5 h-5" strokeWidth={2.5} />}
             </div>
             <h3 className="text-lg font-bold text-gray-900 mb-2 font-serif">{confirmModal.label} Account?</h3>
             <p className="text-xs text-gray-500 mb-2">
@@ -568,7 +569,7 @@ export default function AffiliateDetailsPage() {
             </p>
             {confirmModal.status === 'DEACTIVATED' && (
               <p className="text-xs text-red-600 bg-red-50 border border-red-200 rounded-xl px-3 py-2 mb-4">
-                ⚠️ Deactivation is a strong action. The affiliate will lose all access and be notified.
+                Deactivation is a strong action. The affiliate will lose all access and be notified.
               </p>
             )}
 
@@ -591,7 +592,7 @@ export default function AffiliateDetailsPage() {
       {/* ─── Delete Modal ───────────────────────────────────────── */}
       {deleteModalOpen && (
         <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="bg-white rounded-3xl shadow-2xl w-full max-w-sm p-6 text-center">
+          <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="bg-white rounded-xl shadow-2xl w-full max-w-sm p-6 text-center">
             <div className="w-14 h-14 rounded-full bg-red-100 text-red-600 flex items-center justify-center mx-auto mb-4 font-bold text-xl">!</div>
             <h3 className="text-lg font-bold text-gray-900 mb-2 font-serif">Delete Affiliate Profile</h3>
             <p className="text-xs text-gray-500 mb-6">Are you sure you want to delete <span className="font-semibold text-gray-800">{fullName}</span>? This action is permanent and cannot be undone.</p>

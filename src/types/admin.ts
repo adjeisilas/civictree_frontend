@@ -1,6 +1,6 @@
 // ─── Shared Enums ────────────────────────────────────────────────────────────
 
-export type ExamType = 'WASSCE_NOVDEC' | 'BECE'
+export type ExamType = 'WASSCE_NOVDEC' | 'BECE' | 'CTVET_NABTEX'
 export type VoucherStatus = 'Available' | 'Reserved' | 'Sold' | 'Delivered'
 export type PaymentStatus = 'Paid' | 'Pending' | 'Failed'
 export type DeliveryStatus = 'Sent' | 'Pending' | 'Not sent'
@@ -31,6 +31,8 @@ export interface GlobalVoucherConfig {
   wassceNovdecLimit: number
   becePrice: number
   beceLimit: number
+  ctvetNabtexPrice: number
+  ctvetNabtexLimit: number
 }
 
 export interface VoucherStats {
@@ -164,11 +166,23 @@ export interface Customer {
 export interface KpiStat {
   label: string
   value: string | number
+  /**
+   * Shorter form of `value` for narrow screens, where two cards sit abreast.
+   * Only needed for long figures such as money.
+   */
+  mobileValue?: string
+  /**
+   * Supporting line under the figure. Leave it out when the data does not
+   * support a comparison — an omitted line beats an invented statistic.
+   */
   change?: string
-  trend?: 'up' | 'down' | 'neutral'
+  trend?: 'up' | 'down' | 'flat'
   icon?: string
-  /** Matches the colours StatsCard accepts for its top border */
-  color?: 'emerald' | 'gray' | 'red' | 'amber' | 'blue' | 'teal' | 'black' | 'success' | 'primary' | 'accent'
+  /**
+   * Colour is reserved for meaning. 'critical' marks a figure needing
+   * attention; anything else stays neutral.
+   */
+  tone?: 'neutral' | 'critical'
 }
 
 export interface ActivityItem {
@@ -303,7 +317,7 @@ export interface SmsHistoryItem {
 
 export interface SendBulkSmsPayload {
   body: string
-  recipientType: 'ALL' | 'SUCCESSFUL' | 'FAILED_ONLY' | 'BECE' | 'WASSCE_NOVDEC'
+  recipientType: 'ALL' | 'SUCCESSFUL' | 'FAILED_ONLY' | ExamType
   title: string
   // Optional metadata for frontend tracking or backwards compatibility
   voucherType?: string
@@ -384,10 +398,7 @@ export interface PlatformSettings {
   paymentCallback: string
   
   // Result Release Dates
-  releaseDates?: {
-    WASSCE_NOVDEC: string
-    BECE: string
-  }
+  releaseDates?: Partial<Record<ExamType, string>>
 }
 
 export type UpdateSettingsPayload = Partial<PlatformSettings>

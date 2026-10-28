@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { formatGhs } from '../../../utils/format'
 
 interface DataPoint {
   month: string
@@ -13,7 +14,15 @@ export default function RevenueTrendChart({ data = [] }: { data: Array<{ month: 
   // Map backend data to visual data points. 
   // We use 800 width, 220 height container.
   // Left margin 40, right margin 40. Width = 720. Gap = 720 / max(1, len-1)
-  const maxRevenue = Math.max(...data.map(d => d.revenue), 12000)
+  // Rounded up to a readable step so the axis labels land on round numbers
+  const peak = Math.max(...data.map(d => d.revenue), 0)
+  const step = Math.max(1000, Math.pow(10, Math.floor(Math.log10(Math.max(peak, 1)))) / 2)
+  const maxRevenue = Math.max(step * 4, Math.ceil(peak / step) * step)
+
+  // Labels are derived from the same maximum the line is plotted against. They
+  // used to be hardcoded at 12,000 down to 4,000, so the axis disagreed with
+  // the curve for any revenue above 12,000 - and read "4,000" where zero sits.
+  const yAxisTicks = Array.from({ length: 5 }, (_, i) => (maxRevenue / 4) * (4 - i))
   
   const chartData: DataPoint[] = data.map((item, index) => {
     const x = 40 + (index * (720 / Math.max(1, data.length - 1)))
@@ -53,7 +62,7 @@ export default function RevenueTrendChart({ data = [] }: { data: Array<{ month: 
   `
 
   return (
-    <div className="bg-white p-6 rounded-xl border border-gray-100 shadow-sm flex flex-col justify-between h-96 relative">
+    <div className="bg-white p-6 rounded-xl border border-gray-200 flex flex-col justify-between h-96 relative">
       <div>
         <div className="flex justify-between items-start">
           <div>
@@ -70,21 +79,19 @@ export default function RevenueTrendChart({ data = [] }: { data: Array<{ month: 
       {/* SVG Container */}
       <div className="relative flex-1 mt-6 h-56">
         {/* Y-Axis scale indicator */}
-        <div className="absolute left-0 top-0 bottom-8 flex flex-col justify-between text-[10px] font-semibold text-gray-400 select-none">
-          <span>GH₵ 12,000</span>
-          <span>GH₵ 10,000</span>
-          <span>GH₵ 8,000</span>
-          <span>GH₵ 6,000</span>
-          <span>GH₵ 4,000</span>
+        <div className="absolute left-0 top-0 bottom-8 flex flex-col justify-between text-xs font-semibold text-gray-400 select-none">
+          {yAxisTicks.map((tick) => (
+            <span key={tick}>{formatGhs(tick)}</span>
+          ))}
         </div>
 
         {/* Ambient Horizontal Grid lines */}
         <div className="absolute left-16 right-0 top-1 bottom-8 flex flex-col justify-between pointer-events-none">
-          <div className="border-b border-gray-100 w-full" />
-          <div className="border-b border-gray-100 w-full" />
-          <div className="border-b border-gray-100 w-full" />
-          <div className="border-b border-gray-100 w-full" />
-          <div className="border-b border-gray-100 w-full" />
+          <div className="border-b border-gray-200 w-full" />
+          <div className="border-b border-gray-200 w-full" />
+          <div className="border-b border-gray-200 w-full" />
+          <div className="border-b border-gray-200 w-full" />
+          <div className="border-b border-gray-200 w-full" />
         </div>
 
         {/* Vector SVG */}
@@ -155,7 +162,7 @@ export default function RevenueTrendChart({ data = [] }: { data: Array<{ month: 
               }}
             >
               <div className="bg-text-primary text-white rounded-lg px-3 py-1.5 shadow-md flex flex-col items-center min-w-[110px] text-center border border-white/10 glassmorphism-dark">
-                <span className="text-[10px] font-semibold text-accent uppercase leading-none mb-0.5">
+                <span className="text-xs font-semibold text-accent uppercase leading-none mb-0.5">
                   {hoveredPoint.month}
                 </span>
                 <span className="text-xs font-bold text-white leading-none">
@@ -169,7 +176,7 @@ export default function RevenueTrendChart({ data = [] }: { data: Array<{ month: 
         </div>
 
         {/* X-Axis labels */}
-        <div className="absolute left-16 right-0 bottom-1 flex justify-between px-2 text-[10px] font-bold text-gray-400 select-none">
+        <div className="absolute left-16 right-0 bottom-1 flex justify-between px-2 text-xs font-bold text-gray-400 select-none">
           {chartData.map((item) => (
             <span key={item.month}>{item.month}</span>
           ))}

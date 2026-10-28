@@ -1,6 +1,7 @@
 import { useMutation, useQuery } from '@tanstack/react-query'
 import { apiClient } from '../lib/apiClient'
 import { ENDPOINTS } from '../services/endpoints'
+import type { ExamType } from '../types/admin'
 import type { InitiatePurchasePayload, InitiatePurchaseResponse, VoucherProduct } from '../types/website'
 
 interface ContactFormPayload {
@@ -47,12 +48,24 @@ export function useProducts() {
   })
 }
 
+/** One entry per voucher type on sale, in the order the site should show them. */
+export interface PublicVoucherType {
+  type: ExamType
+  displayName: string
+  price: number
+  hasReachedLimit: boolean
+}
+
 export interface PublicVoucherConfigResponse {
   currency: string
+  /** Prefer this over the per-type fields below, which exist for older clients. */
+  types?: PublicVoucherType[]
   wassceNovdecPrice: number
   wassceNovdecHasReachedLimit: boolean
   becePrice: number
   beceHasReachedLimit: boolean
+  ctvetNabtexPrice?: number
+  ctvetNabtexHasReachedLimit?: boolean
 }
 
 /** Fetches the public pricing and availability configuration from the backend. */

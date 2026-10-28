@@ -2,6 +2,7 @@ import { useQuery } from '@tanstack/react-query'
 import { apiClient } from '../lib/apiClient'
 import { ENDPOINTS } from '../services/endpoints'
 import type { Order } from '../types/admin'
+import type { ExamType } from '../types/admin'
 
 export interface ComprehensiveDashboardData {
   totalRevenue: number
@@ -14,7 +15,7 @@ export interface ComprehensiveDashboardData {
   totalSmsDelivered: number
   averageOrderValue: number
   revenueTrends: Array<{ month: string, revenue: number }>
-  voucherSalesCountByType: { WASSCE_NOVDEC: number, BECE: number }
+  voucherSalesCountByType: Partial<Record<ExamType, number>>
   ordersCountByChannel: { WEB: number, USSD: number }
   dailyOrdersCount: Array<{ day: string, count: number }>
   recentOrders: Order[]

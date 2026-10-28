@@ -99,8 +99,8 @@ export default function TwoFactorCard() {
     'w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-primary transition-all'
 
   return (
-    <div className="bg-white p-6 rounded-2xl border border-gray-150 shadow-sm space-y-4">
-      <h3 className="text-[10px] font-bold text-gray-400 uppercase tracking-widest border-b border-gray-50 pb-2">
+    <div className="bg-white p-6 rounded-lg border border-gray-200 space-y-4">
+      <h3 className="text-xs font-bold text-gray-400 border-b border-gray-50 pb-2">
         Two-Step Verification
       </h3>
 
@@ -180,7 +180,7 @@ export default function TwoFactorCard() {
           {!status?.enabled && setupData && (
             <form onSubmit={handleEnable} className="space-y-3">
               <p className="text-xs text-gray-600">1. Scan this code with your authenticator app:</p>
-              <img src={setupData.qrCodeDataUrl} alt="Two-step verification QR code" className="w-44 h-44 border border-gray-100 rounded-xl" />
+              <img src={setupData.qrCodeDataUrl} alt="Two-step verification QR code" className="w-44 h-44 border border-gray-200 rounded-xl" />
               <p className="text-[11px] text-gray-500">
                 Cannot scan? Enter this key by hand:{' '}
                 <span className="font-mono text-gray-700 break-all">{setupData.manualEntryKey}</span>

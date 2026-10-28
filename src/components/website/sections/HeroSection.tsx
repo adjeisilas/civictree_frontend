@@ -10,10 +10,10 @@ export const HeroSection: React.FC = () => {
       subtitle: "E-VOUCHER",
       highlight: "*713*5912#",
       ussd: true,
-      description: "Dial the code to buy BECE and WASSCE/NOVDEC Checkers",
+      description: "Dial the code to buy BECE, WASSCE/NOVDEC and CTVET/NABTEX Checkers",
     },
     {
-      title: "BECE & WASSCE/NOVDEC",
+      title: "BECE, WASSCE & CTVET",
       subtitle: "Results Checker",
       highlight: "*713*5912#",
       description: "And follow the prompts to complete your purchase.",

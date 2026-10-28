@@ -24,7 +24,7 @@ export default function PaymentMethodsChart() {
   const chartHeight = 160
 
   return (
-    <div className="bg-white p-6 rounded-xl border border-gray-100 shadow-sm flex flex-col justify-between h-96 relative">
+    <div className="bg-white p-6 rounded-xl border border-gray-200 flex flex-col justify-between h-96 relative">
       <div>
         <h3 className="font-serif font-bold text-primary text-lg">Payment Methods</h3>
         <p className="text-xs text-gray-400">Order volumes by payment gateway provider</p>
@@ -32,7 +32,7 @@ export default function PaymentMethodsChart() {
 
       <div className="relative flex-1 mt-6 h-48">
         {/* Y Axis Indicators */}
-        <div className="absolute left-0 top-0 bottom-6 flex flex-col justify-between text-[9px] font-bold text-gray-400 select-none">
+        <div className="absolute left-0 top-0 bottom-6 flex flex-col justify-between text-[11px] font-bold text-gray-400 select-none">
           <span>600</span>
           <span>400</span>
           <span>200</span>
@@ -41,10 +41,10 @@ export default function PaymentMethodsChart() {
 
         {/* Grid lines */}
         <div className="absolute left-10 right-0 top-1 bottom-6 flex flex-col justify-between pointer-events-none">
-          <div className="border-b border-gray-100 w-full" />
-          <div className="border-b border-gray-100 w-full" />
-          <div className="border-b border-gray-100 w-full" />
-          <div className="border-b border-gray-100/50 w-full" />
+          <div className="border-b border-gray-200 w-full" />
+          <div className="border-b border-gray-200 w-full" />
+          <div className="border-b border-gray-200 w-full" />
+          <div className="border-b border-gray-200/50 w-full" />
         </div>
 
         {/* SVG Bars */}
@@ -90,7 +90,7 @@ export default function PaymentMethodsChart() {
                 top: `${((chartHeight - (hoveredBar.count / maxVal) * chartHeight) / chartHeight) * 100 - 25}%`,
               }}
             >
-              <div className="bg-text-primary text-white text-[10px] font-bold rounded px-2 py-1 shadow-md -translate-x-1/4 -translate-y-1/2 whitespace-nowrap glassmorphism-dark">
+              <div className="bg-text-primary text-white text-xs font-bold rounded px-2 py-1 shadow-md -translate-x-1/4 -translate-y-1/2 whitespace-nowrap glassmorphism-dark">
                 {hoveredBar.label}: {hoveredBar.count}
               </div>
             </div>
@@ -98,7 +98,7 @@ export default function PaymentMethodsChart() {
         </div>
 
         {/* X Axis Labels */}
-        <div className="absolute left-10 right-0 bottom-1 flex justify-between px-3 text-[10px] font-bold text-gray-400 select-none">
+        <div className="absolute left-10 right-0 bottom-1 flex justify-between px-3 text-xs font-bold text-gray-400 select-none">
           {data.map((item) => (
             <span key={item.id} className="w-[45px] text-center">
               {item.label.split(' ')[0]}

@@ -5,6 +5,7 @@ import { ChevronDown } from 'lucide-react';
 
 const products = [
   { label: 'BECE Voucher', href: '/pricing' },
+  { label: 'CTVET/NABTEX Voucher', href: '/pricing' },
   { label: 'WASSCE Voucher', href: '/pricing' },
   { label: 'NOVDEC Voucher', href: '/pricing' },
   { label: 'BECE/WASSCE Timetable', href: '/timetable' },

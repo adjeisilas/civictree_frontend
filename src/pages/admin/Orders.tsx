@@ -1,9 +1,12 @@
 import { useState, useMemo } from 'react'
+import { TriangleAlert } from 'lucide-react'
 import OrderFilters from '../../components/admin/orders/OrderFilters'
 import OrderDetailsPage from '../../components/admin/orders/OrderDetailsPage'
 import type { Order, DateRangePreset } from '../../types/admin'
 import { useOrders, useOrderStats, useResendSms, useReallocateKey, useProcessRefund } from '../../hooks/useOrders'
 import type { OrderFilters as ApiOrderFilters } from '../../types/admin'
+import type { ExamType } from '../../types/admin'
+import { VOUCHER_TYPES } from '../../config/voucherTypes'
 
 export default function Orders() {
   // Select active order for details view
@@ -11,7 +14,7 @@ export default function Orders() {
 
   // Filters state
   const [searchQuery, setSearchQuery] = useState('')
-  const [filterType, setFilterType] = useState<'ALL' | 'WASSCE_NOVDEC' | 'BECE'>('ALL')
+  const [filterType, setFilterType] = useState<'ALL' | ExamType>('ALL')
   const [filterChannel, setFilterChannel] = useState<'ALL' | 'WEB' | 'USSD'>('ALL')
   const [filterPayment, setFilterPayment] = useState<'ALL' | 'Successful' | 'Pending' | 'Failed'>('ALL')
   const [filterDelivery, setFilterDelivery] = useState<'ALL' | 'Delivered' | 'Failed' | 'Delayed'>('ALL')
@@ -85,7 +88,7 @@ export default function Orders() {
     setCurrentPage(1)
   }
 
-  const handleFilterTypeChange = (type: 'ALL' | 'WASSCE_NOVDEC' | 'BECE') => {
+  const handleFilterTypeChange = (type: 'ALL' | ExamType) => {
     setFilterType(type)
     setCurrentPage(1)
   }
@@ -177,24 +180,24 @@ export default function Orders() {
   const getPaymentBadge = (status: Order['paymentStatus']) => {
     switch (status) {
       case 'Paid':
-        return <span className="inline-flex items-center px-2.5 py-0.5 rounded text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-100 uppercase">Paid</span>
+        return <span className="inline-flex items-center px-2.5 py-0.5 rounded text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-100 uppercase">Paid</span>
       case 'Pending':
-        return <span className="inline-flex items-center px-2.5 py-0.5 rounded text-[10px] font-bold bg-amber-50 text-amber-700 border border-amber-100 uppercase">Pending</span>
+        return <span className="inline-flex items-center px-2.5 py-0.5 rounded text-xs font-bold bg-amber-50 text-amber-700 border border-amber-100 uppercase">Pending</span>
       case 'Failed':
-        return <span className="inline-flex items-center px-2.5 py-0.5 rounded text-[10px] font-bold bg-red-50 text-red-700 border border-red-100 uppercase">Failed</span>
+        return <span className="inline-flex items-center px-2.5 py-0.5 rounded text-xs font-bold bg-red-50 text-red-700 border border-red-100 uppercase">Failed</span>
       default:
-        return <span className="inline-flex items-center px-2.5 py-0.5 rounded text-[10px] font-bold bg-gray-50 text-gray-700 border border-gray-100 uppercase">{status}</span>
+        return <span className="inline-flex items-center px-2.5 py-0.5 rounded text-xs font-bold bg-gray-50 text-gray-700 border border-gray-200 uppercase">{status}</span>
     }
   }
 
   const getDeliveryBadge = (status: Order['deliveryStatus']) => {
     switch (status) {
       case 'Sent':
-        return <span className="inline-flex items-center px-2.5 py-0.5 rounded text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-100 uppercase">Sent</span>
+        return <span className="inline-flex items-center px-2.5 py-0.5 rounded text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-100 uppercase">Sent</span>
       case 'Pending':
-        return <span className="inline-flex items-center px-2.5 py-0.5 rounded text-[10px] font-bold bg-amber-50 text-amber-700 border border-amber-100 uppercase">Pending</span>
+        return <span className="inline-flex items-center px-2.5 py-0.5 rounded text-xs font-bold bg-amber-50 text-amber-700 border border-amber-100 uppercase">Pending</span>
       case 'Not sent':
-        return <span className="inline-flex items-center px-2.5 py-0.5 rounded text-[10px] font-bold bg-red-50 text-red-700 border border-red-100 uppercase">Not sent</span>
+        return <span className="inline-flex items-center px-2.5 py-0.5 rounded text-xs font-bold bg-red-50 text-red-700 border border-red-100 uppercase">Not sent</span>
     }
   }
 
@@ -218,15 +221,15 @@ export default function Orders() {
           <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
           <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
         </svg>
-        <span className="text-xs font-bold text-gray-400 uppercase tracking-widest animate-pulse">Loading orders log...</span>
+        <span className="text-xs font-bold text-gray-400 animate-pulse">Loading orders log...</span>
       </div>
     )
   }
 
   if (error) {
     return (
-      <div className="bg-red-50 border border-red-200 text-red-800 p-5 rounded-2xl flex items-center space-x-3 shadow-sm">
-        <span className="text-xl">⚠️</span>
+      <div className="bg-red-50 border border-red-200 text-red-800 p-5 rounded-lg flex items-center space-x-3">
+        <TriangleAlert className="w-5 h-5 shrink-0" strokeWidth={1.75} />
         <p className="text-xs font-semibold">{error.message}</p>
       </div>
     )
@@ -235,11 +238,10 @@ export default function Orders() {
   return (
     <div className="space-y-6">
       {/* Page Title Header banner */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center bg-primary p-6 sm:p-8 rounded-2xl text-white shadow-md relative overflow-hidden">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(235,197,107,0.15),transparent_60%)]" />
-        <div className="z-10">
-          <h2 className="text-2xl sm:text-3xl font-serif font-bold tracking-tight font-serif">Order Management</h2>
-          <p className="text-white/80 text-xs sm:text-sm mt-1.5 font-sans">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center pb-1">
+        <div >
+          <h2 className="font-heading text-[26px] leading-tight text-text-primary">Order Management</h2>
+          <p className="text-[13px] text-gray-600 mt-1">
             Complete visibility and control over every transaction placed via the website or USSD channel, with full filtering, search, and admin action capabilities.
           </p>
         </div>
@@ -248,8 +250,8 @@ export default function Orders() {
       {/* Aggregate Stats Cards Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
         {/* Card 1: Revenue & Volume */}
-        <div className="bg-white p-5 rounded-xl border border-gray-100 shadow-sm border-t-4 border-t-blue-500 hover:shadow-md transition-shadow flex flex-col justify-between">
-          <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-3">Revenue & Volume</p>
+        <div className="bg-white p-5 rounded-xl border border-gray-200 border-t-4 border-t-blue-500 transition-colors flex flex-col justify-between">
+          <p className="text-xs font-bold text-gray-400 mb-3">Revenue & Volume</p>
           <div className="space-y-2 flex-grow">
             <div className="flex justify-between items-center pb-2 border-b border-gray-50"><span className="text-[11px] font-bold text-gray-400">Total Revenue</span><span className="font-bold text-blue-600 text-sm">GHC {rev.toLocaleString()}</span></div>
             <div className="flex justify-between items-center pb-2 border-b border-gray-50"><span className="text-[11px] font-bold text-gray-400">Vouchers Sold</span><span className="font-bold text-gray-700 text-sm">{sold.toLocaleString()}</span></div>
@@ -258,8 +260,8 @@ export default function Orders() {
         </div>
 
         {/* Card 2: Order Statuses */}
-        <div className="bg-white p-5 rounded-xl border border-gray-100 shadow-sm border-t-4 border-t-emerald-500 hover:shadow-md transition-shadow flex flex-col justify-between">
-          <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-3">Payment Statuses</p>
+        <div className="bg-white p-5 rounded-xl border border-gray-200 border-t-4 border-t-emerald-500 transition-colors flex flex-col justify-between">
+          <p className="text-xs font-bold text-gray-400 mb-3">Payment Statuses</p>
           <div className="space-y-2 flex-grow">
             <div className="flex justify-between items-center pb-2 border-b border-gray-50"><span className="text-[11px] font-bold text-gray-400">Successful</span><span className="font-bold text-emerald-600 text-sm">{orderStats?.summary?.totalOrdersSuccessful?.toLocaleString() || 0}</span></div>
             <div className="flex justify-between items-center pb-2 border-b border-gray-50"><span className="text-[11px] font-bold text-gray-400">Pending</span><span className="font-bold text-amber-500 text-sm">{orderStats?.summary?.totalOrdersPending?.toLocaleString() || 0}</span></div>
@@ -268,23 +270,35 @@ export default function Orders() {
         </div>
 
         {/* Card 3: Breakdown (Voucher / Channel) */}
-        <div className="bg-white p-5 rounded-xl border border-gray-100 shadow-sm border-t-4 border-t-purple-500 hover:shadow-md transition-shadow flex flex-col justify-between">
-          <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-3">Sales Breakdown</p>
+        <div className="bg-white p-5 rounded-xl border border-gray-200 border-t-4 border-t-purple-500 transition-colors flex flex-col justify-between">
+          <p className="text-xs font-bold text-gray-400 mb-3">Sales Breakdown</p>
           <div className="grid grid-cols-2 gap-4 flex-grow">
             <div className="space-y-1.5 border-r border-gray-50 pr-2">
-              <div className="flex justify-between items-center"><span className="text-[10px] font-bold text-gray-400">WASSCE/NOVDEC</span><span className="font-bold text-gray-700 text-xs">{(((orderStats?.byVoucherType as Record<string, number | undefined>)?.WASSCE_NOVDEC || 0) + ((orderStats?.byVoucherType as Record<string, number | undefined>)?.WASSCE || 0) + ((orderStats?.byVoucherType as Record<string, number | undefined>)?.NOVDEC || 0)).toLocaleString()}</span></div>
-              <div className="flex justify-between items-center"><span className="text-[10px] font-bold text-gray-400">BECE</span><span className="font-bold text-gray-700 text-xs">{orderStats?.byVoucherType?.BECE?.toLocaleString() || 0}</span></div>
+              {VOUCHER_TYPES.map((voucher) => {
+                const counts = orderStats?.byVoucherType as Record<string, number | undefined> | undefined
+                // `WASSCE` and `NOVDEC` were the old keys for WASSCE/NOVDEC
+                const legacy = voucher.type === 'WASSCE_NOVDEC'
+                  ? (counts?.WASSCE || 0) + (counts?.NOVDEC || 0)
+                  : 0
+                const total = (counts?.[voucher.type] || 0) + legacy
+                return (
+                  <div key={voucher.type} className="flex justify-between items-center">
+                    <span className="text-xs font-bold text-gray-400">{voucher.shortName}</span>
+                    <span className="font-bold text-gray-700 text-xs">{total.toLocaleString()}</span>
+                  </div>
+                )
+              })}
             </div>
             <div className="space-y-1.5 pl-1">
-              <div className="flex justify-between items-center"><span className="text-[10px] font-bold text-gray-400">Web</span><span className="font-bold text-blue-600 text-xs">{orderStats?.byChannel?.WEB?.toLocaleString() || 0}</span></div>
-              <div className="flex justify-between items-center"><span className="text-[10px] font-bold text-gray-400">USSD</span><span className="font-bold text-orange-600 text-xs">{orderStats?.byChannel?.USSD?.toLocaleString() || 0}</span></div>
+              <div className="flex justify-between items-center"><span className="text-xs font-bold text-gray-400">Web</span><span className="font-bold text-blue-600 text-xs">{orderStats?.byChannel?.WEB?.toLocaleString() || 0}</span></div>
+              <div className="flex justify-between items-center"><span className="text-xs font-bold text-gray-400">USSD</span><span className="font-bold text-orange-600 text-xs">{orderStats?.byChannel?.USSD?.toLocaleString() || 0}</span></div>
             </div>
           </div>
         </div>
 
         {/* Card 4: Delivery Status */}
-        <div className="bg-white p-5 rounded-xl border border-gray-100 shadow-sm border-t-4 border-t-amber-500 hover:shadow-md transition-shadow flex flex-col justify-between">
-          <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-3">Delivery Rates</p>
+        <div className="bg-white p-5 rounded-xl border border-gray-200 border-t-4 border-t-amber-500 transition-colors flex flex-col justify-between">
+          <p className="text-xs font-bold text-gray-400 mb-3">Delivery Rates</p>
           <div className="space-y-2 flex-grow">
             <div className="flex justify-between items-center pb-2 border-b border-gray-50"><span className="text-[11px] font-bold text-gray-400">Sent (Delivered)</span><span className="font-bold text-emerald-600 text-sm">{orderStats?.deliverySuccessRate?.SENT?.toLocaleString() || 0}</span></div>
             <div className="flex justify-between items-center pb-2 border-b border-gray-50"><span className="text-[11px] font-bold text-gray-400">Failed Delivery</span><span className="font-bold text-red-500 text-sm">{orderStats?.deliverySuccessRate?.FAILED?.toLocaleString() || 0}</span></div>
@@ -315,7 +329,7 @@ export default function Orders() {
       />
 
       {/* Table grid portal */}
-      <div className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden flex flex-col justify-between">
+      <div className="bg-white rounded-xl border border-gray-200 overflow-hidden flex flex-col justify-between">
         <div className="p-6 flex justify-between items-center border-b border-gray-50 bg-[#FCFDFB]">
           <h3 className="font-serif font-bold text-primary text-base">All Orders</h3>
           <span className="text-xs font-bold text-amber-800 bg-accent/20 border border-accent/25 px-2.5 py-0.5 rounded-full select-none">
@@ -343,7 +357,7 @@ export default function Orders() {
             <tbody className="divide-y divide-gray-50 text-xs font-medium">
               {paginatedOrders.length === 0 ? (
                 <tr>
-                  <td colSpan={11} className="text-center py-10 text-gray-400 font-semibold uppercase tracking-wider">
+                  <td colSpan={11} className="text-center py-10 text-gray-400 font-semibold">
                     No orders found matching the filter criteria
                   </td>
                 </tr>
@@ -357,7 +371,7 @@ export default function Orders() {
                     <td className="px-6 py-4 text-gray-500">{item.quantity}</td>
                     <td className="px-6 py-4 font-bold">GHC {(Number(item.amount) || 0).toFixed(0)}</td>
                     <td className="px-6 py-4">
-                      <span className={`inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold border ${
+                      <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-bold border ${
                         item.channel === 'Web' 
                           ? 'bg-blue-50 text-blue-700 border-blue-100' 
                           : 'bg-orange-50 text-orange-700 border-orange-100'
@@ -371,7 +385,7 @@ export default function Orders() {
                     <td className="px-6 py-4 text-right">
                       <button
                         onClick={() => setSelectedOrder(item)}
-                        className="px-3 py-1.5 text-xs font-semibold text-secondary hover:text-primary bg-gray-50 hover:bg-gray-100 border border-gray-100 rounded-lg transition-colors cursor-pointer"
+                        className="px-3 py-1.5 text-xs font-semibold text-secondary hover:text-primary bg-gray-50 hover:bg-gray-100 border border-gray-200 rounded-lg transition-colors cursor-pointer"
                       >
                         View Details
                       </button>

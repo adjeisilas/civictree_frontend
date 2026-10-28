@@ -120,18 +120,17 @@ export default function Notifications() {
       )}
 
       {/* Page Title Header */}
-      <div className="bg-primary p-6 sm:p-8 rounded-2xl text-white shadow-md relative overflow-hidden">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(235,197,107,0.15),transparent_60%)]" />
-        <div className="z-10 relative flex justify-between items-center flex-wrap gap-4">
+      <div className="pb-1">
+        <div className="flex justify-between items-center flex-wrap gap-4">
           <div className="space-y-1.5">
-            <h2 className="text-2xl sm:text-3xl font-serif font-bold tracking-tight">Notifications Center</h2>
-            <p className="text-white/80 text-xs sm:text-sm font-sans max-w-2xl">
+            <h2 className="font-heading text-[26px] leading-tight text-text-primary">Notifications Center</h2>
+            <p className="text-[13px] text-gray-600 mt-1 max-w-2xl">
               Monitor systems alerts, outbound gateway warnings, customer checkout actions, and critical voucher inventory thresholds.
             </p>
           </div>
           
           {counts.unread > 0 && (
-            <span className="text-[10px] font-bold text-primary bg-[#dfba60] px-3 py-1 rounded-full uppercase tracking-wider shadow-md animate-pulse">
+            <span className="text-xs font-semibold text-amber-900 bg-amber-100 border border-amber-200 px-2.5 py-1 rounded-full animate-pulse">
               {counts.unread} Action required
             </span>
           )}
@@ -143,8 +142,8 @@ export default function Notifications() {
         
         {/* Left Side: Filter Sidebar */}
         <div className="space-y-4 lg:col-span-1">
-          <div className="bg-white p-5 rounded-2xl border border-gray-150 shadow-sm space-y-4">
-            <h3 className="text-[10px] font-bold text-gray-400 uppercase tracking-widest border-b border-gray-50 pb-2">
+          <div className="bg-white p-5 rounded-lg border border-gray-200 space-y-4">
+            <h3 className="text-xs font-bold text-gray-400 border-b border-gray-50 pb-2">
               Categories & Filters
             </h3>
 
@@ -156,7 +155,7 @@ export default function Notifications() {
                 }`}
               >
                 <span>All Notifications</span>
-                <span className="bg-gray-100 px-2 py-0.5 rounded-full text-[9px] font-bold">{counts.all}</span>
+                <span className="bg-gray-100 px-2 py-0.5 rounded-full text-[11px] font-bold">{counts.all}</span>
               </button>
 
               {notificationTypes.map((typeObj) => {
@@ -171,7 +170,7 @@ export default function Notifications() {
                   >
                     <span>{typeObj.name}</span>
                     {typeObj.unreadCount > 0 && (
-                      <span className={`px-2 py-0.5 rounded-full text-[9px] font-bold ${isActive ? 'bg-primary/20 text-primary' : 'bg-amber-100 text-amber-700'}`}>
+                      <span className={`px-2 py-0.5 rounded-full text-[11px] font-bold ${isActive ? 'bg-primary/20 text-primary' : 'bg-amber-100 text-amber-700'}`}>
                         {typeObj.unreadCount}
                       </span>
                     )}
@@ -186,7 +185,7 @@ export default function Notifications() {
         <div className="lg:col-span-3 space-y-4">
           
           {/* Action Header bar */}
-          <div className="bg-white p-4 rounded-2xl border border-gray-150 shadow-sm flex flex-col sm:flex-row justify-between items-center gap-4">
+          <div className="bg-white p-4 rounded-lg border border-gray-200 flex flex-col sm:flex-row justify-between items-center gap-4">
             
             {/* Search Input bar */}
             <div className="relative w-full sm:w-80">
@@ -203,7 +202,7 @@ export default function Notifications() {
             </div>
 
             {/* Clear/Mark actions */}
-            <div className="flex gap-3 text-[10px] font-bold uppercase select-none">
+            <div className="flex gap-3 text-xs font-bold uppercase select-none">
               {counts.unread > 0 && (
                 <button
                   onClick={handleMarkAllRead}
@@ -243,7 +242,7 @@ export default function Notifications() {
                           {notif.title}
                         </h4>
                         
-                        <span className={`text-[8px] font-bold uppercase px-2 py-0.5 rounded-full border tracking-wide select-none ${style.badge}`}>
+                        <span className={`text-[11px] font-bold uppercase px-2 py-0.5 rounded-full border tracking-wide select-none ${style.badge}`}>
                           {notif.category}
                         </span>
 
@@ -257,7 +256,7 @@ export default function Notifications() {
                       </p>
 
                       <div className="flex items-center gap-4 pt-1 flex-wrap">
-                        <span className="text-[10px] text-gray-400 font-mono">{notif.time}</span>
+                        <span className="text-xs text-gray-400 font-mono">{notif.time}</span>
                         
                         {notif.actionLabel && notif.actionPath && (
                           <button
@@ -265,7 +264,7 @@ export default function Notifications() {
                               e.stopPropagation()
                               navigate(notif.actionPath!)
                             }}
-                            className="text-[10px] font-bold text-primary hover:text-secondary flex items-center gap-1 transition-colors cursor-pointer"
+                            className="text-xs font-bold text-primary hover:text-secondary flex items-center gap-1 transition-colors cursor-pointer"
                           >
                             <span>{notif.actionLabel}</span>
                             <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
@@ -284,7 +283,7 @@ export default function Notifications() {
                             e.stopPropagation()
                             handleMarkAsRead(notif.id)
                           }}
-                          className="p-1 rounded-lg text-gray-400 hover:text-primary hover:bg-gray-50 border border-transparent hover:border-gray-150 transition-all cursor-pointer"
+                          className="p-1 rounded-lg text-gray-400 hover:text-primary hover:bg-gray-50 border border-transparent hover:border-gray-200 transition-all cursor-pointer"
                           title="Mark as read"
                         >
                           <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
@@ -298,23 +297,23 @@ export default function Notifications() {
                 )
               })
             ) : (
-              <div className="bg-white py-12 rounded-2xl border border-gray-150 text-center space-y-3">
-                <div className="w-12 h-12 bg-gray-50 text-gray-400 border border-gray-100 flex items-center justify-center rounded-full mx-auto shadow-sm">
+              <div className="bg-white py-12 rounded-lg border border-gray-200 text-center space-y-3">
+                <div className="w-12 h-12 bg-gray-50 text-gray-400 border border-gray-200 flex items-center justify-center rounded-full mx-auto">
                   <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0a2 2 0 01-2 2H6a2 2 0 01-2-2m16 0V9a2 2 0 00-2-2H6a2 2 0 00-2 2v2m16 4h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 15H4" />
                   </svg>
                 </div>
                 <div className="space-y-1">
                   <h4 className="text-xs font-bold text-text-primary">No notifications found</h4>
-                  <p className="text-[10px] text-gray-400 font-medium">There are no warnings or events matching your criteria.</p>
+                  <p className="text-xs text-gray-400 font-medium">There are no warnings or events matching your criteria.</p>
                 </div>
               </div>
             )}
           </div>
 
           {/* Pagination Controls */}
-          <div className="flex justify-between items-center px-4 py-3 bg-gray-50 border border-gray-150 rounded-xl mt-4">
-            <div className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider">
+          <div className="flex justify-between items-center px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl mt-4">
+            <div className="text-xs font-semibold text-gray-400">
               Showing <span className="font-bold text-primary">{(pagination.page - 1) * pagination.limit + 1}</span> to <span className="font-bold text-primary">{Math.min(pagination.page * pagination.limit, pagination.totalResults)}</span> of <span className="font-bold text-primary">{pagination.totalResults}</span> notifications
             </div>
             <div className="flex space-x-2">

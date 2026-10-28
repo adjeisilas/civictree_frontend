@@ -3,11 +3,12 @@ import { apiClient } from '../lib/apiClient'
 import { ENDPOINTS } from '../services/endpoints'
 import type { PlatformSettings } from '../types/admin'
 
-/** The release-dates endpoint takes ISO timestamps, or null to clear a date. */
-export interface UpdateReleaseDatesPayload {
-  wassceNovdecReleaseDate: string | null
-  beceReleaseDate: string | null
-}
+/**
+ * The release-dates endpoint takes ISO timestamps, or null to clear a date.
+ * One field per voucher type, named as the API names them
+ * (`beceReleaseDate`, `wassceNovdecReleaseDate`, `ctvetNabtexReleaseDate`).
+ */
+export type UpdateReleaseDatesPayload = Record<string, string | null>
 
 /** Fetches the current platform settings. */
 export function useSettings() {

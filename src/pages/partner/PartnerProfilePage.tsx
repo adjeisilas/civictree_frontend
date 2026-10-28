@@ -13,8 +13,8 @@ export default function PartnerProfilePage() {
   const { mutate: updateProfile, isPending: isUpdating } = useUpdatePartnerProfile()
   const { mutate: changePassword, isPending: isChangingPassword } = useChangePartnerPassword()
 
-  const [partnerName, setPartnerName] = useState(profile?.partnerName || 'Apex Capital & Technology Partners')
-  const [legalEntityName, setLegalEntityName] = useState(profile?.legalEntityName || 'Apex Capital Ventures Ltd (Ghana)')
+  const [partnerName, setPartnerName] = useState(profile?.partnerName || '')
+  const [legalEntityName, setLegalEntityName] = useState(profile?.legalEntityName || '')
   const [email, setEmail] = useState(profile?.email || 'partners@apexcap.gh')
   const [phone, setPhone] = useState(profile?.phone || '+233 24 555 8921')
   const [updateSuccess, setUpdateSuccess] = useState(false)

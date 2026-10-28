@@ -58,7 +58,7 @@ export default function UserDetailsPage({ user, activities, pagination, onPageCh
   return (
     <div className="space-y-6 animate-fadeIn">
       {/* Top Breadcrumb Header */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white p-4 rounded-xl border border-gray-100 shadow-sm">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white p-4 rounded-xl border border-gray-200">
         <button
           onClick={onBack}
           className="flex items-center space-x-2 text-xs font-bold text-gray-500 hover:text-primary transition-colors cursor-pointer select-none"
@@ -72,23 +72,22 @@ export default function UserDetailsPage({ user, activities, pagination, onPageCh
       </div>
 
       {/* Profile Info Header Banner */}
-      <div className="bg-primary p-6 sm:p-8 rounded-2xl text-white shadow-md relative overflow-hidden">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(235,197,107,0.15),transparent_60%)]" />
-        <div className="z-10 relative flex flex-col md:flex-row items-center md:items-start justify-between gap-6">
+      <div className="pb-1">
+        <div className="flex flex-col md:flex-row items-center md:items-start justify-between gap-6">
           <div className="flex flex-col md:flex-row items-center gap-5 text-center md:text-left">
-            <div className={`w-20 h-20 rounded-full flex items-center justify-center border-4 border-white/20 font-serif font-bold text-3xl shadow-lg ${getAvatarClasses(user.avatarColor || 'Forest Green')}`}>
+            <div className={`w-20 h-20 rounded-full flex items-center justify-center border-4 border-gray-200 font-serif font-bold text-3xl shadow-lg ${getAvatarClasses(user.avatarColor || 'Forest Green')}`}>
               {user?.name?.charAt(0) || 'A'}
             </div>
             
             <div className="space-y-1">
               <div className="flex flex-col md:flex-row items-center gap-2 justify-center md:justify-start">
                 <h3 className="text-2xl font-serif font-bold tracking-tight">{user.name}</h3>
-                <span className="text-[10px] font-bold text-[#a1781b] bg-[#dfba60]/25 border border-[#dfba60]/30 px-2.5 py-0.5 rounded-full uppercase tracking-wider">
+                <span className="text-xs font-bold text-[#a1781b] bg-[#dfba60]/25 border border-[#dfba60]/30 px-2.5 py-0.5 rounded-full">
                   {user.role}
                 </span>
               </div>
-              <p className="text-white/80 text-xs font-sans font-medium">{user.professionalTitle}</p>
-              <p className="text-white/60 text-[10px] font-mono">First login: {user.firstLogin}</p>
+              <p className="text-gray-600 text-xs font-sans font-medium">{user.professionalTitle}</p>
+              <p className="text-gray-500 text-xs font-mono">First login: {user.firstLogin}</p>
             </div>
           </div>
 
@@ -116,22 +115,22 @@ export default function UserDetailsPage({ user, activities, pagination, onPageCh
         {/* Left: Settings Panel */}
         <div className="space-y-6">
           {/* Core Info & Management */}
-          <div className="bg-white border border-gray-150 p-6 rounded-2xl shadow-sm space-y-4">
+          <div className="bg-white border border-gray-200 p-6 rounded-lg space-y-4">
             <div className="flex justify-between items-center border-b border-gray-50 pb-2.5">
-              <h4 className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Operator Settings</h4>
+              <h4 className="text-xs font-bold text-gray-400">Operator Settings</h4>
             </div>
 
             <div className="space-y-4 text-xs font-sans">
               <div>
-                <span className="text-gray-400 font-semibold uppercase tracking-wide text-[9px]">Email Address</span>
+                <span className="text-gray-400 font-semibold text-[11px]">Email Address</span>
                 <p className="font-bold text-gray-700 mt-0.5">{user.email}</p>
               </div>
               <div>
-                <span className="text-gray-400 font-semibold uppercase tracking-wide text-[9px]">Primary Phone</span>
+                <span className="text-gray-400 font-semibold text-[11px]">Primary Phone</span>
                 <p className="font-mono font-bold text-gray-600 mt-0.5">{user.phone || 'N/A'}</p>
               </div>
               <div>
-                <span className="text-gray-400 font-semibold uppercase tracking-wide text-[9px]">Last Online Active</span>
+                <span className="text-gray-400 font-semibold text-[11px]">Last Online Active</span>
                 <p className="font-bold text-primary mt-0.5">{user.lastActive || 'N/A'}</p>
               </div>
             </div>
@@ -140,11 +139,11 @@ export default function UserDetailsPage({ user, activities, pagination, onPageCh
 
         {/* Right: Operator Specific Activity logs */}
         <div className="lg:col-span-2 space-y-6">
-          <div className="bg-white border border-gray-150 p-6 rounded-2xl shadow-sm space-y-4">
+          <div className="bg-white border border-gray-200 p-6 rounded-lg space-y-4">
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 border-b border-gray-50 pb-4">
               <div>
                 <h4 className="font-serif font-bold text-primary text-base">Operator Audit Logs</h4>
-                <p className="text-[10px] text-gray-400 font-semibold mt-0.5">Chronological system operations performed by this account</p>
+                <p className="text-xs text-gray-400 font-semibold mt-0.5">Chronological system operations performed by this account</p>
               </div>
 
               {/* Sort toggle */}
@@ -192,17 +191,17 @@ export default function UserDetailsPage({ user, activities, pagination, onPageCh
 
             {/* Logs Table / List */}
             {filteredLogs.length === 0 ? (
-              <div className="text-center py-10 text-gray-400 border border-dashed border-gray-150 rounded-xl">
+              <div className="text-center py-10 text-gray-400 border border-dashed border-gray-200 rounded-xl">
                 <svg className="w-8 h-8 mx-auto text-gray-300 mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                 </svg>
-                <p className="text-xs font-semibold uppercase tracking-wider text-gray-400">No activity logs match the criteria</p>
+                <p className="text-xs font-semibold text-gray-400">No activity logs match the criteria</p>
               </div>
             ) : (
-              <div className="overflow-x-auto border border-gray-100 rounded-xl">
+              <div className="overflow-x-auto border border-gray-200 rounded-xl">
                 <table className="w-full border-collapse text-left text-xs text-text-primary font-sans">
                   <thead>
-                    <tr className="bg-gray-50/70 text-gray-400 text-[9px] font-bold uppercase border-b border-gray-100">
+                    <tr className="bg-gray-50/70 text-gray-400 text-[11px] font-bold uppercase border-b border-gray-200">
                       <th className="px-4 py-3">Timestamp</th>
                       <th className="px-4 py-3">Category</th>
                       <th className="px-4 py-3">Action Description</th>
@@ -215,7 +214,7 @@ export default function UserDetailsPage({ user, activities, pagination, onPageCh
                       <tr key={log.id} className="hover:bg-gray-50/30 transition-colors">
                         <td className="px-4 py-3 font-mono text-gray-400 font-semibold">{log.timestamp}</td>
                         <td className="px-4 py-3">
-                          <span className={`inline-flex items-center px-2 py-0.5 rounded text-[8px] font-bold uppercase border ${
+                          <span className={`inline-flex items-center px-2 py-0.5 rounded text-[11px] font-bold uppercase border ${
                             log.category === 'Security' ? 'bg-purple-50 text-purple-700 border-purple-100' :
                             log.category === 'Inventory' ? 'bg-amber-50 text-amber-700 border-amber-100' :
                             'bg-blue-50 text-blue-700 border-blue-100'
@@ -225,13 +224,13 @@ export default function UserDetailsPage({ user, activities, pagination, onPageCh
                         </td>
                         <td className="px-4 py-3 text-gray-600 leading-normal max-w-xs">{log.action}</td>
                         <td className="px-4 py-3">
-                          <div className="text-[10px] text-gray-400 leading-tight font-mono select-all">
+                          <div className="text-xs text-gray-400 leading-tight font-mono select-all">
                             <p>{log.ipAddress}</p>
-                            <p className="text-[8px] truncate max-w-[100px]" title={log.device}>{log.device}</p>
+                            <p className="text-[11px] truncate max-w-[100px]" title={log.device}>{log.device}</p>
                           </div>
                         </td>
                         <td className="px-4 py-3 text-right">
-                          <span className={`inline-flex items-center px-1.5 py-0.5 rounded-full text-[8px] font-bold uppercase ${
+                          <span className={`inline-flex items-center px-1.5 py-0.5 rounded-full text-[11px] font-bold uppercase ${
                             log.status === 'Success' ? 'bg-emerald-50 text-emerald-700 border border-emerald-100' :
                             log.status === 'Failed' ? 'bg-red-50 text-red-700 border border-red-100' :
                             'bg-amber-50 text-amber-700 border-amber-100'
@@ -247,8 +246,8 @@ export default function UserDetailsPage({ user, activities, pagination, onPageCh
             )}
 
             {/* Pagination Controls */}
-            <div className="flex justify-between items-center px-4 py-3 bg-gray-50 border border-gray-150 rounded-xl mt-4">
-              <div className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider">
+            <div className="flex justify-between items-center px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl mt-4">
+              <div className="text-xs font-semibold text-gray-400">
                 Showing <span className="font-bold text-primary">{(pagination.page - 1) * pagination.limit + 1}</span> to <span className="font-bold text-primary">{Math.min(pagination.page * pagination.limit, pagination.totalResults)}</span> of <span className="font-bold text-primary">{pagination.totalResults}</span> logs
               </div>
               <div className="flex space-x-2">

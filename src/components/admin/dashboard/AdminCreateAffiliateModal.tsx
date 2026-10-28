@@ -110,12 +110,12 @@ export default function AdminCreateAffiliateModal({ isOpen, onClose, onSuccess }
 
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
-      <div className="bg-white rounded-3xl w-full max-w-2xl shadow-2xl overflow-hidden flex flex-col max-h-[92vh]">
+      <div className="bg-white rounded-xl w-full max-w-2xl shadow-2xl overflow-hidden flex flex-col max-h-[92vh]">
         
         {/* Header */}
-        <div className="px-6 py-5 border-b border-gray-100 flex items-center justify-between bg-gradient-to-r from-[#1a5c18] to-[#2d7a2a] text-white">
+        <div className="px-6 py-5 border-b border-gray-200 flex items-center justify-between bg-gradient-to-r from-[#1a5c18] to-[#2d7a2a] text-white">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-2xl bg-white/10 flex items-center justify-center">
+            <div className="w-10 h-10 rounded-lg bg-white/10 flex items-center justify-center">
               <UserPlus className="w-5 h-5 text-white" />
             </div>
             <div>
@@ -160,7 +160,7 @@ export default function AdminCreateAffiliateModal({ isOpen, onClose, onSuccess }
               
               {/* Error Alert */}
               {error && (
-                <div className="bg-red-50 border border-red-200 text-red-700 p-4 rounded-2xl text-xs sm:text-sm flex items-start gap-3 shadow-sm">
+                <div className="bg-red-50 border border-red-200 text-red-700 p-4 rounded-lg text-xs sm:text-sm flex items-start gap-3">
                   <AlertCircle size={18} className="mt-0.5 shrink-0 text-red-500" />
                   <div>
                     <p className="font-bold mb-0.5">Failed to create affiliate account</p>
@@ -171,7 +171,7 @@ export default function AdminCreateAffiliateModal({ isOpen, onClose, onSuccess }
 
               {/* Section 1: Identity */}
               <div>
-                <h3 className="text-xs font-bold text-gray-500 uppercase tracking-widest border-b border-gray-100 pb-2 mb-4 flex items-center gap-1.5">
+                <h3 className="text-xs font-bold text-gray-500 border-b border-gray-200 pb-2 mb-4 flex items-center gap-1.5">
                   <span>1. Personal & Business Details</span>
                 </h3>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -217,7 +217,7 @@ export default function AdminCreateAffiliateModal({ isOpen, onClose, onSuccess }
                       <input
                         type="email"
                         required
-                        placeholder="e.g. john.m@gmail.com"
+                        placeholder="e.g. name@example.com"
                         value={formData.email}
                         onChange={e => handleInputChange('email', e.target.value)}
                         className="w-full pl-10 pr-3.5 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-[#1a5c18] focus:ring-2 focus:ring-[#1a5c18]/10 transition-all"
@@ -242,7 +242,7 @@ export default function AdminCreateAffiliateModal({ isOpen, onClose, onSuccess }
 
               {/* Section 2: Activation & Credentials */}
               <div>
-                <h3 className="text-xs font-bold text-gray-500 uppercase tracking-widest border-b border-gray-100 pb-2 mb-4 flex items-center gap-1.5">
+                <h3 className="text-xs font-bold text-gray-500 border-b border-gray-200 pb-2 mb-4 flex items-center gap-1.5">
                   <span>2. Portal Credentials & Activation</span>
                 </h3>
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
@@ -297,7 +297,7 @@ export default function AdminCreateAffiliateModal({ isOpen, onClose, onSuccess }
 
               {/* Section 3: Payout Account */}
               <div>
-                <h3 className="text-xs font-bold text-gray-500 uppercase tracking-widest border-b border-gray-100 pb-2 mb-3 flex items-center gap-1.5">
+                <h3 className="text-xs font-bold text-gray-500 border-b border-gray-200 pb-2 mb-3 flex items-center gap-1.5">
                   <span>3. Commission Payout Method</span>
                 </h3>
 
@@ -305,7 +305,7 @@ export default function AdminCreateAffiliateModal({ isOpen, onClose, onSuccess }
                   <button
                     type="button"
                     onClick={() => handleInputChange('payoutMethod', 'MOBILE_MONEY')}
-                    className={`flex items-center justify-center gap-2.5 p-3 rounded-2xl border-2 transition-all cursor-pointer ${
+                    className={`flex items-center justify-center gap-2.5 p-3 rounded-lg border-2 transition-all cursor-pointer ${
                       formData.payoutMethod === 'MOBILE_MONEY'
                         ? 'border-emerald-600 bg-emerald-50/50 text-emerald-800 font-bold shadow-sm'
                         : 'border-gray-100 hover:border-gray-200 text-gray-500 font-medium'
@@ -317,7 +317,7 @@ export default function AdminCreateAffiliateModal({ isOpen, onClose, onSuccess }
                   <button
                     type="button"
                     onClick={() => handleInputChange('payoutMethod', 'BANK_ACCOUNT')}
-                    className={`flex items-center justify-center gap-2.5 p-3 rounded-2xl border-2 transition-all cursor-pointer ${
+                    className={`flex items-center justify-center gap-2.5 p-3 rounded-lg border-2 transition-all cursor-pointer ${
                       formData.payoutMethod === 'BANK_ACCOUNT'
                         ? 'border-blue-600 bg-blue-50/50 text-blue-800 font-bold shadow-sm'
                         : 'border-gray-100 hover:border-gray-200 text-gray-500 font-medium'
@@ -329,7 +329,7 @@ export default function AdminCreateAffiliateModal({ isOpen, onClose, onSuccess }
                 </div>
 
                 {formData.payoutMethod === 'MOBILE_MONEY' && (
-                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 p-4 bg-gray-50 rounded-2xl border border-gray-100 animate-in fade-in">
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 p-4 bg-gray-50 rounded-lg border border-gray-200 animate-in fade-in">
                     <div>
                       <label className="block text-xs font-bold text-gray-600 mb-1">Network</label>
                       <select
@@ -366,7 +366,7 @@ export default function AdminCreateAffiliateModal({ isOpen, onClose, onSuccess }
                 )}
 
                 {formData.payoutMethod === 'BANK_ACCOUNT' && (
-                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 p-4 bg-gray-50 rounded-2xl border border-gray-100 animate-in fade-in">
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 p-4 bg-gray-50 rounded-lg border border-gray-200 animate-in fade-in">
                     <div>
                       <label className="block text-xs font-bold text-gray-600 mb-1">Bank Name</label>
                       <input
@@ -402,7 +402,7 @@ export default function AdminCreateAffiliateModal({ isOpen, onClose, onSuccess }
               </div>
 
               {/* Submit Buttons */}
-              <div className="flex items-center justify-end gap-3 pt-4 border-t border-gray-100">
+              <div className="flex items-center justify-end gap-3 pt-4 border-t border-gray-200">
                 <button
                   type="button"
                   onClick={onClose}

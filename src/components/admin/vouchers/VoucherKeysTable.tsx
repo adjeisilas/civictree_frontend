@@ -3,6 +3,7 @@ import { Eye, Loader2 } from 'lucide-react'
 import type { ExamType } from '../../../types/admin'
 import { apiClient } from '../../../lib/apiClient'
 import { ENDPOINTS } from '../../../services/endpoints'
+import { VOUCHER_TYPES } from '../../../config/voucherTypes'
 
 export interface VoucherKey {
   id?: string
@@ -24,7 +25,7 @@ interface VoucherKeysTableProps {
 export default function VoucherKeysTable({ keys, onDeleteKey, showOnlyAllocated = false }: VoucherKeysTableProps) {
   // Search & Filter state
   const [searchQuery, setSearchQuery] = useState('')
-  const [filterType, setFilterType] = useState<'ALL' | 'WASSCE_NOVDEC' | 'BECE'>('ALL')
+  const [filterType, setFilterType] = useState<'ALL' | ExamType>('ALL')
   const [filterStatus, setFilterStatus] = useState<'ALL' | 'Available' | 'Reserved' | 'Sold' | 'Delivered'>('ALL')
   
   // Pagination state
@@ -99,31 +100,31 @@ export default function VoucherKeysTable({ keys, onDeleteKey, showOnlyAllocated 
     switch (status) {
       case 'Available':
         return (
-          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-100">
+          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-100">
             Available
           </span>
         )
       case 'Reserved':
         return (
-          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-amber-50 text-amber-700 border border-amber-100">
+          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-amber-50 text-amber-700 border border-amber-100">
             Reserved
           </span>
         )
       case 'Sold':
         return (
-          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-indigo-50 text-indigo-700 border border-indigo-100">
+          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-indigo-50 text-indigo-700 border border-indigo-100">
             Sold
           </span>
         )
       case 'Delivered':
         return (
-          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-teal-50 text-teal-700 border border-teal-100 animate-pulse">
+          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-teal-50 text-teal-700 border border-teal-100 animate-pulse">
             Delivered
           </span>
         )
       default:
         return (
-          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-gray-50 text-gray-500 border border-gray-200">
+          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-gray-50 text-gray-500 border border-gray-200">
             {status}
           </span>
         )
@@ -131,7 +132,7 @@ export default function VoucherKeysTable({ keys, onDeleteKey, showOnlyAllocated 
   }
 
   return (
-    <div className="bg-white rounded-xl border border-gray-150 shadow-sm overflow-hidden flex flex-col justify-between">
+    <div className="bg-white rounded-xl border border-gray-200 overflow-hidden flex flex-col justify-between">
       {/* Filtering Header Toolbar */}
       <div className="p-6 border-b border-gray-50 space-y-4">
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center space-y-3 sm:space-y-0">
@@ -145,7 +146,7 @@ export default function VoucherKeysTable({ keys, onDeleteKey, showOnlyAllocated 
                 : 'Search by serial number; PINs are hidden until revealed'}
             </p>
           </div>
-          <span className="text-xs font-bold text-gray-400 bg-gray-50 px-3 py-1.5 rounded-xl border border-gray-100">
+          <span className="text-xs font-bold text-gray-400 bg-gray-50 px-3 py-1.5 rounded-xl border border-gray-200">
             {filteredKeys.length} matching keys
           </span>
         </div>
@@ -179,8 +180,9 @@ export default function VoucherKeysTable({ keys, onDeleteKey, showOnlyAllocated 
             className="px-3 py-2 border border-gray-200 rounded-xl focus:outline-none focus:border-primary bg-white font-semibold text-gray-600 text-xs cursor-pointer"
           >
             <option value="ALL">All Categories</option>
-            <option value="WASSCE_NOVDEC">WASSCE / NOVDEC</option>
-            <option value="BECE">BECE Only</option>
+            {VOUCHER_TYPES.map((v) => (
+              <option key={v.type} value={v.type}>{v.displayName}</option>
+            ))}
           </select>
 
           {/* Status Filter */}
@@ -228,7 +230,7 @@ export default function VoucherKeysTable({ keys, onDeleteKey, showOnlyAllocated 
           <tbody className="divide-y divide-gray-50 text-xs font-medium">
             {paginatedKeys.length === 0 ? (
               <tr>
-                <td colSpan={6} className="text-center py-10 text-gray-400 font-semibold uppercase tracking-wider">
+                <td colSpan={6} className="text-center py-10 text-gray-400 font-semibold">
                   No matching checker keys found
                 </td>
               </tr>
@@ -265,13 +267,13 @@ export default function VoucherKeysTable({ keys, onDeleteKey, showOnlyAllocated 
                       <div className="flex justify-end space-x-1.5">
                         <button
                           onClick={handleConfirmDelete}
-                          className="bg-red-500 hover:bg-red-600 text-white font-bold px-2.5 py-1 rounded text-[10px] shadow cursor-pointer"
+                          className="bg-red-500 hover:bg-red-600 text-white font-bold px-2.5 py-1 rounded text-xs shadow cursor-pointer"
                         >
                           Confirm
                         </button>
                         <button
                           onClick={() => setConfirmDeleteSerial(null)}
-                          className="bg-gray-100 hover:bg-gray-200 text-gray-500 font-bold px-2.5 py-1 rounded text-[10px] cursor-pointer"
+                          className="bg-gray-100 hover:bg-gray-200 text-gray-500 font-bold px-2.5 py-1 rounded text-xs cursor-pointer"
                         >
                           No
                         </button>

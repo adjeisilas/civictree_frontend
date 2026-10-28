@@ -10,13 +10,13 @@ interface SalesChartProps {
 
 export default function SalesChart({ data, peakSalesText }: SalesChartProps) {
   return (
-    <div className="lg:col-span-2 bg-white p-6 rounded-xl border border-gray-100 shadow-sm flex flex-col justify-between">
+    <div className="lg:col-span-2 bg-white p-6 rounded-xl border border-gray-200 flex flex-col justify-between">
       <div className="flex justify-between items-center mb-4">
         <div>
           <h3 className="font-heading font-bold text-primary text-lg">Sales Trend (Last 7 Days)</h3>
           <p className="text-xs text-gray-400">Visual representations of transaction volume</p>
         </div>
-        <span className="text-xs font-bold text-secondary bg-[#F8FAF8] px-3 py-1.5 rounded-xl border border-gray-100">
+        <span className="text-xs font-bold text-secondary bg-[#F8FAF8] px-3 py-1.5 rounded-xl border border-gray-200">
           {peakSalesText} Peak
         </span>
       </div>
@@ -25,10 +25,10 @@ export default function SalesChart({ data, peakSalesText }: SalesChartProps) {
       <div className="h-56 w-full relative mt-4 flex items-end">
         {/* Ambient grid lines */}
         <div className="absolute inset-0 flex flex-col justify-between pointer-events-none">
-          <div className="border-b border-gray-100/80 w-full h-0" />
-          <div className="border-b border-gray-100/80 w-full h-0" />
-          <div className="border-b border-gray-100/80 w-full h-0" />
-          <div className="border-b border-gray-100/80 w-full h-0" />
+          <div className="border-b border-gray-200/80 w-full h-0" />
+          <div className="border-b border-gray-200/80 w-full h-0" />
+          <div className="border-b border-gray-200/80 w-full h-0" />
+          <div className="border-b border-gray-200/80 w-full h-0" />
         </div>
 
         {/* SVG Area & Line Chart */}
@@ -67,7 +67,7 @@ export default function SalesChart({ data, peakSalesText }: SalesChartProps) {
         </svg>
 
         {/* X-Axis Labels */}
-        <div className="absolute left-0 right-0 bottom-[-22px] flex justify-between px-2 text-[10px] font-semibold text-gray-400 select-none">
+        <div className="absolute left-0 right-0 bottom-[-22px] flex justify-between px-2 text-xs font-semibold text-gray-400 select-none">
           {data.map((item) => (
             <span key={item.day}>{item.day}</span>
           ))}

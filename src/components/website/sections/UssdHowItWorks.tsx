@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { CheckCircle2 } from 'lucide-react';
+import { VOUCHER_TYPES } from '../../../config/voucherTypes';
 
 interface WizardStepData {
   id: number;
@@ -35,11 +36,14 @@ export const UssdHowItWorks: React.FC = () => {
       subLabel: 'Select Exam',
       title: 'Choose Examination Model',
       description:
-        'An interactive menu overlay will prompt you on screen. Choose results checker type (BECE or WASSCE/NOVDEC).',
+        'An interactive menu overlay will prompt you on screen. Choose the results checker you need.',
       utilityNode: (
         <div className="inline-block bg-bg-secondary border border-border rounded-lg p-4 font-mono text-sm text-text-primary shadow-sm space-y-1">
-          <div>1) BECE</div>
-          <div className="text-primary font-semibold">2) WASSCE / NOVDEC</div>
+          {VOUCHER_TYPES.map((voucher, index) => (
+            <div key={voucher.type} className={index === 0 ? 'text-primary font-semibold' : undefined}>
+              {index + 1}) {voucher.displayName}
+            </div>
+          ))}
         </div>
       ),
     },

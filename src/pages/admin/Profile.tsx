@@ -130,38 +130,26 @@ export default function Profile() {
       )}
 
       {/* Profile Overview Header Card */}
-      <div className="bg-primary p-6 sm:p-8 rounded-2xl text-white shadow-md relative overflow-hidden">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(235,197,107,0.15),transparent_60%)]" />
+      <div className="pb-1">
         
-        <div className="z-10 relative flex flex-col md:flex-row items-center md:items-start justify-between gap-6">
+        <div className="flex flex-col md:flex-row items-center md:items-start justify-between gap-6">
           <div className="flex flex-col md:flex-row items-center gap-5 text-center md:text-left">
             {/* Round Avatar Container */}
-            <div className={`w-20 h-20 rounded-full flex items-center justify-center border-4 border-white/20 font-serif font-bold text-3xl transition-colors shadow-lg ${avatarColors[selectedAvatarColor].bg.split(' ')[0]} ${avatarColors[selectedAvatarColor].bg.split(' ')[2]}`}>
+            <div className={`w-20 h-20 rounded-full flex items-center justify-center border-4 border-gray-200 font-serif font-bold text-3xl transition-colors shadow-lg ${avatarColors[selectedAvatarColor].bg.split(' ')[0]} ${avatarColors[selectedAvatarColor].bg.split(' ')[2]}`}>
               {profileName.charAt(0)}
             </div>
             
             <div className="space-y-1">
               <div className="flex flex-col md:flex-row items-center gap-2">
-                <h2 className="text-2xl font-serif font-bold tracking-tight">{profileName}</h2>
-                <span className="text-[10px] font-bold text-[#a1781b] bg-[#dfba60]/25 border border-[#dfba60]/30 px-2 py-0.5 rounded-full uppercase tracking-wider">
+                <h1 className="font-heading text-[26px] leading-tight text-text-primary">{profileName}</h1>
+                <span className="text-xs font-bold text-[#a1781b] bg-[#dfba60]/25 border border-[#dfba60]/30 px-2 py-0.5 rounded-full">
                   {user?.role || 'Super Admin'}
                 </span>
               </div>
-              <p className="text-white/80 text-xs font-sans font-medium">{profileTitle}</p>
-              <p className="text-white/60 text-[10px] font-mono">Member since: January 18, 2025</p>
+              <p className="text-gray-600 text-xs font-sans font-medium">{profileTitle}</p>
             </div>
           </div>
 
-          <div className="flex flex-row md:flex-col gap-4 text-xs font-bold shrink-0 self-center md:self-start">
-            <div className="bg-white/10 backdrop-blur-md border border-white/10 px-4 py-3 rounded-xl text-center shadow-inner">
-              <span className="block text-white/50 uppercase tracking-widest text-[8px] mb-0.5">Voucher Approvals</span>
-              <span className="text-base font-serif text-accent">14,920</span>
-            </div>
-            <div className="bg-white/10 backdrop-blur-md border border-white/10 px-4 py-3 rounded-xl text-center shadow-inner">
-              <span className="block text-white/50 uppercase tracking-widest text-[8px] mb-0.5">Campaigns Sent</span>
-              <span className="text-base font-serif text-accent">85</span>
-            </div>
-          </div>
         </div>
       </div>
 
@@ -172,8 +160,8 @@ export default function Profile() {
         <div className="space-y-6">
           
           {/* Avatar Theme Selection */}
-          <div className="bg-white p-6 rounded-2xl border border-gray-150 shadow-sm space-y-4">
-            <h3 className="text-[10px] font-bold text-gray-400 uppercase tracking-widest border-b border-gray-50 pb-2">
+          <div className="bg-white p-6 rounded-lg border border-gray-200 space-y-4">
+            <h3 className="text-xs font-bold text-gray-400 border-b border-gray-50 pb-2">
               Select Avatar Profile Theme
             </h3>
             
@@ -191,14 +179,14 @@ export default function Profile() {
                 </button>
               ))}
             </div>
-            <p className="text-[9px] text-gray-400 leading-normal">
+            <p className="text-[11px] text-gray-400 leading-normal">
               Selecting a theme changes the avatar background highlight color across the sidebar card, header menu, and profile headers.
             </p>
           </div>
 
           {/* Activity Feed */}
-          <div className="bg-white p-6 rounded-2xl border border-gray-150 shadow-sm space-y-4">
-            <h3 className="text-[10px] font-bold text-gray-400 uppercase tracking-widest border-b border-gray-50 pb-2">
+          <div className="bg-white p-6 rounded-lg border border-gray-200 space-y-4">
+            <h3 className="text-xs font-bold text-gray-400 border-b border-gray-50 pb-2">
               Recent System Activity logs
             </h3>
             
@@ -215,7 +203,7 @@ export default function Profile() {
                     }`} />
                     <div className="space-y-0.5">
                       <p className="text-text-primary">{log.action}</p>
-                      <p className="text-[9px] text-gray-400">
+                      <p className="text-[11px] text-gray-400">
                         {log.timestamp} &middot; IP {log.ipAddress} &middot; {log.device}
                       </p>
                     </div>
@@ -233,15 +221,15 @@ export default function Profile() {
         <div className="lg:col-span-2 space-y-6">
           
           {/* General Account Details */}
-          <div className="bg-white p-6 rounded-2xl border border-gray-150 shadow-sm space-y-4">
-            <h3 className="text-[10px] font-bold text-gray-400 uppercase tracking-widest border-b border-gray-50 pb-2">
+          <div className="bg-white p-6 rounded-lg border border-gray-200 space-y-4">
+            <h3 className="text-xs font-bold text-gray-400 border-b border-gray-50 pb-2">
               Profile & Contact Information
             </h3>
 
             <form onSubmit={handleSaveProfile} className="space-y-4 text-xs font-semibold text-gray-600">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-1.5">
-                  <label className="text-gray-400 uppercase tracking-wider text-[9px]">Full Name</label>
+                  <label className="text-gray-400 text-[11px]">Full Name</label>
                   <input
                     type="text"
                     required
@@ -252,7 +240,7 @@ export default function Profile() {
                 </div>
                 
                 <div className="space-y-1.5">
-                  <label className="text-gray-400 uppercase tracking-wider text-[9px]">Email Address</label>
+                  <label className="text-gray-400 text-[11px]">Email Address</label>
                   <input
                     type="email"
                     required
@@ -265,7 +253,7 @@ export default function Profile() {
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-1.5">
-                  <label className="text-gray-400 uppercase tracking-wider text-[9px]">Primary Phone</label>
+                  <label className="text-gray-400 text-[11px]">Primary Phone</label>
                   <input
                     type="text"
                     required
@@ -276,7 +264,7 @@ export default function Profile() {
                 </div>
                 
                 <div className="space-y-1.5">
-                  <label className="text-gray-400 uppercase tracking-wider text-[9px]">Professional Title</label>
+                  <label className="text-gray-400 text-[11px]">Professional Title</label>
                   <input
                     type="text"
                     required
@@ -288,7 +276,7 @@ export default function Profile() {
               </div>
 
               <div className="space-y-1.5">
-                <label className="text-gray-400 uppercase tracking-wider text-[9px]">Personal Bio Description</label>
+                <label className="text-gray-400 text-[11px]">Personal Bio Description</label>
                 <textarea
                   rows={3}
                   value={profileBio}
@@ -320,18 +308,18 @@ export default function Profile() {
           </div>
 
           {/* Password & Security Configurations */}
-          <div className="bg-white p-6 rounded-2xl border border-gray-150 shadow-sm space-y-4">
-            <h3 className="text-[10px] font-bold text-gray-400 uppercase tracking-widest border-b border-gray-50 pb-2">
+          <div className="bg-white p-6 rounded-lg border border-gray-200 space-y-4">
+            <h3 className="text-xs font-bold text-gray-400 border-b border-gray-50 pb-2">
               Credentials & Password Security
             </h3>
 
             <form onSubmit={handleUpdatePassword} className="space-y-4 text-xs font-semibold text-gray-600">
               {passwordError && (
-                <p className="text-[10px] text-red-600 font-bold bg-red-50 p-2.5 rounded-lg border border-red-100">{passwordError}</p>
+                <p className="text-xs text-red-600 font-bold bg-red-50 p-2.5 rounded-lg border border-red-100">{passwordError}</p>
               )}
               
               <div className="space-y-1.5 relative">
-                <label className="text-gray-400 uppercase tracking-wider text-[9px]">Current Password</label>
+                <label className="text-gray-400 text-[11px]">Current Password</label>
                 <div className="relative">
                   <input
                     type={showCurrentPassword ? 'text' : 'password'}
@@ -364,7 +352,7 @@ export default function Profile() {
                 
                 {/* New Password */}
                 <div className="space-y-1.5 relative">
-                  <label className="text-gray-400 uppercase tracking-wider text-[9px]">New Password</label>
+                  <label className="text-gray-400 text-[11px]">New Password</label>
                   <div className="relative">
                     <input
                       type={showNewPassword ? 'text' : 'password'}
@@ -395,7 +383,7 @@ export default function Profile() {
 
                 {/* Confirm Password */}
                 <div className="space-y-1.5 relative">
-                  <label className="text-gray-400 uppercase tracking-wider text-[9px]">Confirm New Password</label>
+                  <label className="text-gray-400 text-[11px]">Confirm New Password</label>
                   <div className="relative">
                     <input
                       type={showConfirmPassword ? 'text' : 'password'}
@@ -428,8 +416,8 @@ export default function Profile() {
 
               {/* Strength Meter Grid */}
               {newPassword && (
-                <div className="space-y-1.5 p-3.5 bg-gray-50 border border-gray-150 rounded-xl">
-                  <div className="flex justify-between items-center text-[10px] font-bold">
+                <div className="space-y-1.5 p-3.5 bg-gray-50 border border-gray-200 rounded-xl">
+                  <div className="flex justify-between items-center text-xs font-bold">
                     <span className="text-gray-400">Password Strength:</span>
                     <span className={strength.textClass}>{strength.text}</span>
                   </div>
@@ -439,7 +427,7 @@ export default function Profile() {
                     <div className={`h-full flex-1 transition-all duration-300 ${strength.score >= 3 ? strength.color : 'bg-transparent'}`} />
                     <div className={`h-full flex-1 transition-all duration-300 ${strength.score >= 4 ? strength.color : 'bg-transparent'}`} />
                   </div>
-                  <ul className="text-[9px] text-gray-400 font-semibold list-disc list-inside space-y-0.5 leading-normal pt-1 border-t border-gray-200/50 mt-1.5">
+                  <ul className="text-[11px] text-gray-400 font-semibold list-disc list-inside space-y-0.5 leading-normal pt-1 border-t border-gray-200/50 mt-1.5">
                     <li className={newPassword.length >= 6 ? 'text-emerald-500' : ''}>At least 6 characters</li>
                     <li className={/[A-Z]/.test(newPassword) ? 'text-emerald-500' : ''}>Contains an uppercase letter</li>
                     <li className={/[0-9]/.test(newPassword) ? 'text-emerald-500' : ''}>Contains a digit number</li>

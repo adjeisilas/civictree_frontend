@@ -8,6 +8,7 @@ import { apiErrorMessage } from '../../utils/apiError';
 import { CheckCircle2, Minus, Plus, ChevronLeft, ChevronRight } from 'lucide-react';
 
 import { useInitiatePurchase, usePublicVoucherConfigs } from '../../hooks/useWebsite';
+import { VOUCHER_TYPES, voucherTypeLabel, resolvePublicPrice } from '../../config/voucherTypes';
 
 const phoneRegex = /^0[0-9]{9}$/;
 
@@ -16,10 +17,10 @@ const STEPS = [
   { num: 2, label: 'Voucher' },
 ] as const;
 
-const EXAM_OPTIONS: { value: ExamType; label: string }[] = [
-  { value: 'BECE', label: 'BECE' },
-  { value: 'WASSCE_NOVDEC', label: 'WASSCE / NOVDEC' },
-];
+const EXAM_OPTIONS: { value: ExamType; label: string }[] = VOUCHER_TYPES.map((v) => ({
+  value: v.type,
+  label: v.displayName,
+}));
 
 interface CheckoutState {
   step: 1 | 2;
@@ -70,9 +71,11 @@ export const BuyVoucherPage = () => {
 
   const { data: config } = usePublicVoucherConfigs();
 
-  const unitPrice = state.exam === 'WASSCE_NOVDEC'
-    ? (config?.wassceNovdecPrice ?? 89.99)
-    : (config?.becePrice ?? 45.99);
+  // Per type. The previous two-way check charged anything that was not
+  // WASSCE/NOVDEC the BECE price.
+  const resolvedPrice = state.exam ? resolvePublicPrice(config, state.exam) : null;
+  const isUnpriced = resolvedPrice === null;
+  const unitPrice = resolvedPrice ?? 0;
   const total = unitPrice * state.quantity;
 
   const validateStep1 = () => {
@@ -193,7 +196,7 @@ export const BuyVoucherPage = () => {
                 <div className="flex justify-between">
                   <span className="text-text-secondary">Exam</span>
                   <span className="font-semibold text-text-primary">
-                    {state.exam === 'WASSCE_NOVDEC' ? 'WASSCE/NOVDEC' : state.exam}
+                    {voucherTypeLabel(state.exam)}
                   </span>
                 </div>
                 <div className="flex justify-between">
@@ -469,7 +472,7 @@ export const BuyVoucherPage = () => {
                           <div className="flex justify-between text-sm font-sans text-text-secondary mb-1">
                             <span>Unit Price</span>
                             <span className="font-semibold text-text-primary">
-                              GHS {unitPrice.toFixed(2)}
+                              {isUnpriced ? 'Price not set' : `GHS ${unitPrice.toFixed(2)}`}
                             </span>
                           </div>
                           <div className="flex justify-between font-sans font-bold text-lg">
@@ -524,7 +527,7 @@ export const BuyVoucherPage = () => {
                   <div className="flex justify-between">
                     <span className="text-text-secondary">Exam</span>
                     <span className="font-semibold text-text-primary truncate ml-2">
-                      {state.exam ? (state.exam === 'WASSCE_NOVDEC' ? 'WASSCE/NOVDEC' : state.exam) : '—'}
+                      {state.exam ? voucherTypeLabel(state.exam) : '—'}
                     </span>
                   </div>
                   <div className="flex justify-between">

@@ -79,9 +79,9 @@ export default function AdminDirectWithdrawalModal({ isOpen, onClose }: AdminDir
 
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
-      <div className="bg-white rounded-2xl w-full max-w-md shadow-xl overflow-hidden flex flex-col max-h-[90vh]">
+      <div className="bg-white rounded-lg w-full max-w-md shadow-xl overflow-hidden flex flex-col max-h-[90vh]">
         {/* Header */}
-        <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between bg-gray-50">
+        <div className="px-6 py-4 border-b border-gray-200 flex items-center justify-between bg-gray-50">
           <h2 className="text-lg font-bold text-gray-900 flex items-center gap-2">
             <DollarSign className="w-5 h-5 text-primary" />
             Direct Admin Withdrawal
@@ -126,7 +126,7 @@ export default function AdminDirectWithdrawalModal({ isOpen, onClose }: AdminDir
 
               {/* Amount */}
               <div>
-                <label className="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-2">
+                <label className="block text-xs font-bold text-gray-700 mb-2">
                   Amount to Withdraw (GH¢)
                 </label>
                 <input
@@ -143,7 +143,7 @@ export default function AdminDirectWithdrawalModal({ isOpen, onClose }: AdminDir
 
               {/* Payout Method */}
               <div>
-                <label className="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-2">
+                <label className="block text-xs font-bold text-gray-700 mb-2">
                   Payout Method
                 </label>
                 <div className="grid grid-cols-2 gap-3">
@@ -176,9 +176,9 @@ export default function AdminDirectWithdrawalModal({ isOpen, onClose }: AdminDir
 
               {/* Mobile Money Fields */}
               {formData.payoutMethod === 'MOBILE_MONEY' && (
-                <div className="space-y-4 pt-2 border-t border-gray-100 animate-in fade-in slide-in-from-top-2">
+                <div className="space-y-4 pt-2 border-t border-gray-200 animate-in fade-in slide-in-from-top-2">
                   <div>
-                    <label className="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-2">Network</label>
+                    <label className="block text-xs font-bold text-gray-700 mb-2">Network</label>
                     <select
                       required
                       value={formData.momoNetwork}
@@ -191,7 +191,7 @@ export default function AdminDirectWithdrawalModal({ isOpen, onClose }: AdminDir
                     </select>
                   </div>
                   <div>
-                    <label className="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-2">Phone Number</label>
+                    <label className="block text-xs font-bold text-gray-700 mb-2">Phone Number</label>
                     <input
                       type="tel"
                       required
@@ -202,7 +202,7 @@ export default function AdminDirectWithdrawalModal({ isOpen, onClose }: AdminDir
                     />
                   </div>
                   <div>
-                    <label className="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-2">Account Name</label>
+                    <label className="block text-xs font-bold text-gray-700 mb-2">Account Name</label>
                     <input
                       type="text"
                       required
@@ -217,9 +217,9 @@ export default function AdminDirectWithdrawalModal({ isOpen, onClose }: AdminDir
 
               {/* Bank Fields */}
               {formData.payoutMethod === 'BANK_ACCOUNT' && (
-                <div className="space-y-4 pt-2 border-t border-gray-100 animate-in fade-in slide-in-from-top-2">
+                <div className="space-y-4 pt-2 border-t border-gray-200 animate-in fade-in slide-in-from-top-2">
                   <div>
-                    <label className="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-2">Bank Name</label>
+                    <label className="block text-xs font-bold text-gray-700 mb-2">Bank Name</label>
                     <input
                       type="text"
                       required
@@ -230,7 +230,7 @@ export default function AdminDirectWithdrawalModal({ isOpen, onClose }: AdminDir
                     />
                   </div>
                   <div>
-                    <label className="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-2">Account Number</label>
+                    <label className="block text-xs font-bold text-gray-700 mb-2">Account Number</label>
                     <input
                       type="text"
                       required
@@ -241,7 +241,7 @@ export default function AdminDirectWithdrawalModal({ isOpen, onClose }: AdminDir
                     />
                   </div>
                   <div>
-                    <label className="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-2">Account Name</label>
+                    <label className="block text-xs font-bold text-gray-700 mb-2">Account Name</label>
                     <input
                       type="text"
                       required
@@ -255,7 +255,7 @@ export default function AdminDirectWithdrawalModal({ isOpen, onClose }: AdminDir
               )}
 
               {/* Confirm with password: this sends real money */}
-              <div className="pt-4 border-t border-gray-100">
+              <div className="pt-4 border-t border-gray-200">
                 <label className="block text-xs font-bold text-gray-700 mb-1.5">Confirm with your password</label>
                 <input
                   type="password"
@@ -283,7 +283,7 @@ export default function AdminDirectWithdrawalModal({ isOpen, onClose }: AdminDir
               </div>
 
               {/* Submit Button */}
-              <div className="pt-4 border-t border-gray-100">
+              <div className="pt-4 border-t border-gray-200">
                 <button
                   type="submit"
                   disabled={isPending || !formData.amount || !formData.currentPassword || (twoFactorStatus?.enabled === true && formData.twoFactorCode.length < 6)}

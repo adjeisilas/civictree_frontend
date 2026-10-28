@@ -40,7 +40,7 @@ export default function ChannelPieChart({ data }: { data: { WEB: number, USSD: n
   ]
 
   return (
-    <div className="bg-white p-6 rounded-xl border border-gray-100 shadow-sm flex flex-col justify-between h-96">
+    <div className="bg-white p-6 rounded-xl border border-gray-200 flex flex-col justify-between h-96">
       <div>
         <h3 className="font-serif font-bold text-primary text-lg">Orders by Channel</h3>
         <p className="text-xs text-gray-400">Web client vs USSD shortcode portals</p>
@@ -73,7 +73,7 @@ export default function ChannelPieChart({ data }: { data: { WEB: number, USSD: n
         {/* Hover Center Overlay Tag */}
         {hoveredSector && (
           <div className="absolute pointer-events-none bg-text-primary text-white rounded-lg px-2.5 py-1 shadow-md text-center max-w-[120px] glassmorphism-dark">
-            <div className="text-[9px] uppercase font-bold text-accent leading-none">
+            <div className="text-[11px] uppercase font-bold text-accent leading-none">
               {hoveredSector.id}
             </div>
             <div className="text-[11px] font-bold mt-0.5 leading-none">
@@ -101,7 +101,7 @@ export default function ChannelPieChart({ data }: { data: { WEB: number, USSD: n
                 className="w-3 h-3 rounded-full"
                 style={{ backgroundColor: sec.color }}
               />
-              <span className="text-xs font-bold text-gray-500 uppercase tracking-wider">
+              <span className="text-xs font-bold text-gray-500">
                 {sec.id}
               </span>
             </div>

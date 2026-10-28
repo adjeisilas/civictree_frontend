@@ -11,7 +11,7 @@ interface StockDistributionProps {
 
 export default function StockDistribution({ levels }: StockDistributionProps) {
   return (
-    <div className="bg-white p-6 rounded-xl border border-gray-100 shadow-sm flex flex-col justify-between">
+    <div className="bg-white p-6 rounded-xl border border-gray-200 flex flex-col justify-between">
       <div>
         <h3 className="font-heading font-bold text-primary text-lg">Stock Distribution</h3>
         <p className="text-xs text-gray-400">Available vouchers by examination provider</p>

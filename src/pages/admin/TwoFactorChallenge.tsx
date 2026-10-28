@@ -82,7 +82,7 @@ export default function TwoFactorChallenge() {
       <form onSubmit={handleSubmit} className="space-y-6">
         {useRecoveryCode ? (
           <div>
-            <label htmlFor="recovery-code" className="block text-xs font-semibold text-text-primary/80 uppercase tracking-wider mb-2">
+            <label htmlFor="recovery-code" className="block text-xs font-semibold text-text-primary/80 mb-2">
               Recovery code
             </label>
             <input

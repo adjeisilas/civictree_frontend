@@ -6,6 +6,9 @@ import type { VoucherKey } from '../../components/admin/vouchers/VoucherKeysTabl
 import VoucherUploadModal from '../../components/admin/vouchers/VoucherUploadModal'
 import VoucherConfigSetup from '../../components/admin/vouchers/VoucherConfigSetup'
 import { useVoucherKeys, useVoucherConfigs, useUploadHistory, useDeleteVoucher, useUpdateVoucherConfig, useUploadBulkVouchers, useUploadSingleVoucher, useVoucherOverview, useSoldVouchers } from '../../hooks/useVouchers'
+import type { ExamType } from '../../types/admin'
+import { Check, Dot, TriangleAlert, X } from 'lucide-react'
+import { VOUCHER_TYPES, VOUCHER_TYPE_CODES, voucherTypeLabel } from '../../config/voucherTypes'
 type TabType = 'overview' | 'upload' | 'inventory' | 'sold' | 'history' | 'alerts' | 'setup'
 
 export default function Vouchers() {
@@ -28,36 +31,35 @@ export default function Vouchers() {
   const error = errorConfigs || errorKeys || errorSold || errorHistory || errorOverview ? 'Failed to fetch voucher database.' : null
 
   // Fulfillment Simulator state
-  const [simulationType, setSimulationType] = useState<'WASSCE_NOVDEC' | 'BECE'>('WASSCE_NOVDEC')
+  const [simulationType, setSimulationType] = useState<ExamType>('WASSCE_NOVDEC')
   const [simulationAction, setSimulationAction] = useState<'Sold' | 'Delivered'>('Delivered')
   const [simLog, setSimLog] = useState<{ step: number; message: string; status: 'pending' | 'success' | 'failed' }[]>([])
   const [simRunning, setSimRunning] = useState(false)
   const [simResultKey, setSimResultKey] = useState<VoucherKey | null>(null)
 
   // Calculations for stats
-  const stats = useMemo(() => {
-    if (!overviewStats || !overviewStats.WASSCE_NOVDEC) {
-      return [
-        { type: 'WASSCE_NOVDEC', available: 0, sold: 0, total: 0 },
-        { type: 'BECE', available: 0, sold: 0, total: 0 },
-      ]
-    }
-    return [
-      { type: 'WASSCE_NOVDEC', ...overviewStats.WASSCE_NOVDEC },
-      { type: 'BECE', ...overviewStats.BECE },
-    ]
-  }, [overviewStats])
+  // One row per voucher type, zeroed until the overview arrives
+  const stats = useMemo(
+    () =>
+      VOUCHER_TYPE_CODES.map((type) => ({
+        type,
+        available: overviewStats?.[type]?.available ?? 0,
+        sold: overviewStats?.[type]?.sold ?? 0,
+        total: overviewStats?.[type]?.total ?? 0,
+      })),
+    [overviewStats]
+  )
 
   // Low stock alarms computation
   const activeAlerts = useMemo(() => {
-    const alerts: { type: 'WASSCE_NOVDEC' | 'BECE'; remaining: number; limit: number }[] = []
+    const alerts: { type: ExamType; remaining: number; limit: number }[] = []
     if (!overviewStats) return alerts
 
     configs.forEach(c => {
-      const stat = overviewStats[c.type as 'WASSCE_NOVDEC' | 'BECE']
+      const stat = overviewStats[c.type as ExamType]
       const remaining = stat ? stat.available : 0
       if (remaining <= c.minLimit) {
-        alerts.push({ type: c.type as 'WASSCE_NOVDEC' | 'BECE', remaining, limit: c.minLimit })
+        alerts.push({ type: c.type as ExamType, remaining, limit: c.minLimit })
       }
     })
     return alerts
@@ -65,7 +67,7 @@ export default function Vouchers() {
 
   // Handle uploading keys (from bulk CSV modal or manual entry)
   const handleUpload = (
-    defaultType: 'WASSCE_NOVDEC' | 'BECE',
+    defaultType: ExamType,
     keys: Omit<VoucherKey, 'importDate'>[],
     _summary: { fileName: string; total: number; success: number; failed: number },
     file: File | null
@@ -84,7 +86,7 @@ export default function Vouchers() {
   }
 
   // Handle configuration settings threshold update
-  const handleUpdateConfig = (type: 'WASSCE_NOVDEC' | 'BECE', price: number, minLimit: number) => {
+  const handleUpdateConfig = (type: ExamType, price: number, minLimit: number) => {
     updateConfig({ type, price, minLimit })
   }
 
@@ -105,10 +107,10 @@ export default function Vouchers() {
     setSimLog([])
 
     const steps = [
-      { step: 1, message: `Locating next available ${simulationType} voucher...`, status: 'pending' as const },
+      { step: 1, message: `Locating next available ${voucherTypeLabel(simulationType)} voucher...`, status: 'pending' as const },
       { step: 2, message: `Reserving selected voucher key...`, status: 'pending' as const },
       { step: 3, message: `Delivering serial and PIN details to customer...`, status: 'pending' as const },
-      { step: 4, message: `Updating database status: Available ➔ ${simulationAction}...`, status: 'pending' as const }
+      { step: 4, message: `Updating database status: Available to ${simulationAction}...`, status: 'pending' as const }
     ]
 
     setSimLog([steps[0]])
@@ -119,7 +121,7 @@ export default function Vouchers() {
       
       if (!availableKey) {
         setSimLog(prev => [
-          { step: 1, message: `Locating failed: No Available keys in stock for ${simulationType}!`, status: 'failed' },
+          { step: 1, message: `Locating failed: No Available keys in stock for ${voucherTypeLabel(simulationType)}!`, status: 'failed' },
           ...prev.slice(1)
         ])
         setSimRunning(false)
@@ -177,15 +179,15 @@ export default function Vouchers() {
           <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
           <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
         </svg>
-        <span className="text-xs font-bold text-gray-400 uppercase tracking-widest animate-pulse">Loading voucher inventory...</span>
+        <span className="text-xs font-bold text-gray-400 animate-pulse">Loading voucher inventory...</span>
       </div>
     )
   }
 
   if (error) {
     return (
-      <div className="bg-red-50 border border-red-200 text-red-800 p-5 rounded-2xl flex items-center space-x-3 shadow-sm">
-        <span className="text-xl">⚠️</span>
+      <div className="bg-red-50 border border-red-200 text-red-800 p-5 rounded-lg flex items-center space-x-3">
+        <TriangleAlert className="w-5 h-5 shrink-0" strokeWidth={1.75} />
         <p className="text-xs font-semibold">{error}</p>
       </div>
     )
@@ -194,11 +196,10 @@ export default function Vouchers() {
   return (
     <div className="space-y-6">
       {/* Upper header action banner */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center bg-primary p-6 sm:p-8 rounded-2xl text-white shadow-md relative overflow-hidden">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(235,197,107,0.15),transparent_60%)]" />
-        <div className="z-10">
-          <h2 className="text-2xl sm:text-3xl font-serif font-bold tracking-tight">Voucher Management</h2>
-          <p className="text-white/80 text-xs sm:text-sm mt-1.5 font-sans">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center pb-1">
+        <div >
+          <h2 className="font-heading text-[26px] leading-tight text-text-primary">Voucher Management</h2>
+          <p className="text-[13px] text-gray-600 mt-1">
             Oversee exam checker inventory, configure pricing levels, import files, and review logs.
           </p>
         </div>
@@ -214,7 +215,7 @@ export default function Vouchers() {
       </div>
 
       {/* Sub-navigation bar tabs */}
-      <div className="flex flex-wrap border-b border-gray-200 text-xs font-bold text-gray-400 select-none bg-white rounded-xl p-1 shadow-sm border border-gray-150 gap-1">
+      <div className="flex flex-wrap border-b border-gray-200 text-xs font-bold text-gray-400 select-none bg-white rounded-xl p-1 border border-gray-200 gap-1">
         <button
           onClick={() => setActiveTab('overview')}
           className={`px-4 py-2.5 rounded-lg transition-all cursor-pointer ${
@@ -286,7 +287,7 @@ export default function Vouchers() {
                   className="bg-red-50 border border-red-150 p-4 rounded-xl flex items-center justify-between text-red-800 text-xs font-semibold animate-pulse"
                 >
                   <div className="flex items-center space-x-2.5">
-                    <span className="text-base">⚠️</span>
+                    <TriangleAlert className="w-4 h-4 shrink-0" strokeWidth={1.75} />
                     <span>
                       <strong>{alert.type} Stock Running Low:</strong> Remaining Stock is <strong>{alert.remaining}</strong> (Alarm Threshold configured: &lt; {alert.limit})
                     </span>
@@ -305,7 +306,7 @@ export default function Vouchers() {
           {/* Statistics Grid */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             {/* Stats Table (2/3 width) */}
-            <div className="lg:col-span-2 bg-white p-6 rounded-2xl border border-gray-150 shadow-sm space-y-4">
+            <div className="lg:col-span-2 bg-white p-6 rounded-lg border border-gray-200 space-y-4">
               <div>
                 <h3 className="font-serif font-bold text-primary text-lg">Inventory Statistics Summary</h3>
                 <p className="text-xs text-gray-400">Total imported voucher stock counts grouped by category status</p>
@@ -313,7 +314,7 @@ export default function Vouchers() {
               <div className="overflow-x-auto">
                 <table className="w-full text-left text-xs border-collapse font-sans font-semibold">
                   <thead>
-                    <tr className="bg-gray-50 border-b border-gray-100 text-gray-400 uppercase font-bold">
+                    <tr className="bg-gray-50 border-b border-gray-200 text-gray-400 uppercase font-bold">
                       <th className="px-4 py-3.5">Voucher Type</th>
                       <th className="px-4 py-3.5">Available (Total Uploaded)</th>
                       <th className="px-4 py-3.5">Sold (Allocated)</th>
@@ -323,7 +324,7 @@ export default function Vouchers() {
                   <tbody className="divide-y divide-gray-100 text-text-primary">
                     {stats.map(row => (
                       <tr key={row.type} className="hover:bg-gray-50/50">
-                        <td className="px-4 py-3.5 font-bold font-serif text-sm text-primary">{row.type}</td>
+                        <td className="px-4 py-3.5 font-bold font-serif text-sm text-primary">{voucherTypeLabel(row.type)}</td>
                         <td className="px-4 py-3.5 text-gray-500 font-mono text-sm">{row.total}</td>
                         <td className="px-4 py-3.5 text-gray-500 font-mono text-sm">{row.sold}</td>
                         <td className="px-4 py-3.5">
@@ -343,7 +344,7 @@ export default function Vouchers() {
             </div>
 
             {/* Simulated Checkout Fulfillment logic block */}
-            <div className="bg-white p-6 rounded-2xl border border-gray-150 shadow-sm flex flex-col justify-between">
+            <div className="bg-white p-6 rounded-lg border border-gray-200 flex flex-col justify-between">
               <div className="space-y-2">
                 <h3 className="font-serif font-bold text-primary text-lg">Fulfillment Simulator</h3>
                 <p className="text-xs text-gray-400">
@@ -351,19 +352,20 @@ export default function Vouchers() {
                 </p>
                 <div className="space-y-3 pt-3">
                   <div className="space-y-1">
-                    <label className="text-[10px] font-bold text-gray-400 uppercase">Exam Voucher Type</label>
+                    <label className="text-xs font-bold text-gray-400 uppercase">Exam Voucher Type</label>
                     <select
                       value={simulationType}
                       onChange={(e) => setSimulationType(e.target.value as typeof simulationType)}
                       disabled={simRunning}
                       className="w-full px-2.5 py-1.5 border border-gray-200 rounded-lg text-xs font-semibold text-text-primary bg-white focus:outline-none"
                     >
-                      <option value="WASSCE_NOVDEC">WASSCE / NOVDEC Checker</option>
-                      <option value="BECE">BECE Checker</option>
+                      {VOUCHER_TYPES.map((v) => (
+                        <option key={v.type} value={v.type}>{v.displayName} Checker</option>
+                      ))}
                     </select>
                   </div>
                   <div className="space-y-1">
-                    <label className="text-[10px] font-bold text-gray-400 uppercase">Success Status</label>
+                    <label className="text-xs font-bold text-gray-400 uppercase">Success Status</label>
                     <select
                       value={simulationAction}
                       onChange={(e) => setSimulationAction(e.target.value as typeof simulationAction)}
@@ -385,30 +387,30 @@ export default function Vouchers() {
               </div>
 
               {/* Simulation Logging logs view */}
-              <div className="mt-4 pt-3 border-t border-gray-100 flex-1 flex flex-col justify-end min-h-[140px]">
+              <div className="mt-4 pt-3 border-t border-gray-200 flex-1 flex flex-col justify-end min-h-[140px]">
                 {simLog.length > 0 ? (
-                  <div className="space-y-2 text-[10px] font-mono leading-relaxed bg-gray-50 p-3 rounded-xl border border-gray-100 flex-1">
+                  <div className="space-y-2 text-xs font-mono leading-relaxed bg-gray-50 p-3 rounded-xl border border-gray-200 flex-1">
                     {simLog.map((log, idx) => (
                       <div key={idx} className="flex items-start gap-1.5">
                         <span className={
                           log.status === 'success' ? 'text-emerald-600' :
                           log.status === 'failed' ? 'text-red-500' : 'text-amber-500 animate-pulse'
                         }>
-                          {log.status === 'success' ? '✔' : log.status === 'failed' ? '✖' : '●'}
+                          {log.status === 'success' ? <Check className="w-3.5 h-3.5" strokeWidth={2.5} /> : log.status === 'failed' ? <X className="w-3.5 h-3.5" strokeWidth={2.5} /> : <Dot className="w-3.5 h-3.5" strokeWidth={2.5} />}
                         </span>
                         <span className="text-gray-600">{log.message}</span>
                       </div>
                     ))}
                     {simResultKey && (
-                      <div className="mt-2.5 p-2 bg-emerald-50 border border-emerald-100 rounded text-emerald-800 text-[9px] space-y-0.5">
-                        <p className="font-bold">✓ DELIVERED CHECKER DETAILS:</p>
+                      <div className="mt-2.5 p-2 bg-emerald-50 border border-emerald-100 rounded text-emerald-800 text-[11px] space-y-0.5">
+                        <p className="font-semibold">Delivered checker details</p>
                         <p><strong>Serial:</strong> {simResultKey.serial}</p>
                         <p><strong>PIN:</strong> {simResultKey.pin}</p>
                       </div>
                     )}
                   </div>
                 ) : (
-                  <p className="text-[10px] text-gray-400 text-center italic py-10 select-none">
+                  <p className="text-xs text-gray-400 text-center italic py-10 select-none">
                     Log will appear here during simulated checkout
                   </p>
                 )}
@@ -419,13 +421,13 @@ export default function Vouchers() {
       )}
 
       {activeTab === 'upload' && (
-        <div className="bg-white p-6 rounded-2xl border border-gray-150 shadow-sm space-y-6">
+        <div className="bg-white p-6 rounded-lg border border-gray-200 space-y-6">
           <div>
             <h3 className="font-serif font-bold text-primary text-lg">Upload Stock Directory</h3>
             <p className="text-xs text-gray-400">Import CSV bulk stock or enter single keys into database inventory</p>
           </div>
           
-          <div className="p-8 border-2 border-dashed border-gray-200 rounded-2xl flex flex-col items-center justify-center text-center hover:bg-gray-50/50 transition-colors">
+          <div className="p-8 border-2 border-dashed border-gray-200 rounded-lg flex flex-col items-center justify-center text-center hover:bg-gray-50/50 transition-colors">
             <svg className="w-12 h-12 text-primary/40 mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5">
               <path strokeLinecap="round" strokeLinejoin="round" d="M9 13h6m-3-3v6m-9 1V4a2 2 0 012-2h6l2 2h6a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2z" />
             </svg>
@@ -452,7 +454,7 @@ export default function Vouchers() {
       )}
 
       {activeTab === 'history' && (
-        <div className="bg-white p-6 rounded-2xl border border-gray-150 shadow-sm space-y-4">
+        <div className="bg-white p-6 rounded-lg border border-gray-200 space-y-4">
           <div>
             <h3 className="font-serif font-bold text-primary text-lg">Voucher Upload Logs History</h3>
             <p className="text-xs text-gray-400">Chronological archive of all imported files and bulk entries</p>
@@ -460,7 +462,7 @@ export default function Vouchers() {
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs border-collapse font-sans font-semibold">
               <thead>
-                <tr className="bg-gray-50 border-b border-gray-100 text-gray-400 uppercase font-bold select-none">
+                <tr className="bg-gray-50 border-b border-gray-200 text-gray-400 uppercase font-bold select-none">
                   <th className="px-4 py-3.5">File Name</th>
                   <th className="px-4 py-3.5">Voucher Type</th>
                   <th className="px-4 py-3.5">Uploaded By</th>
@@ -502,7 +504,7 @@ export default function Vouchers() {
 
       {activeTab === 'alerts' && (
         <div className="space-y-6">
-          <div className="bg-white p-6 rounded-2xl border border-gray-150 shadow-sm space-y-2">
+          <div className="bg-white p-6 rounded-lg border border-gray-200 space-y-2">
             <h3 className="font-serif font-bold text-primary text-lg">Configurable Alarm Thresholds</h3>
             <p className="text-xs text-gray-400">
               Configure system alerts settings. Adjust the unit prices and low stock alert thresholds for WASSCE/NOVDEC and BECE checker categories.
@@ -516,7 +518,7 @@ export default function Vouchers() {
                 type={c.type}
                 price={c.price}
                 minLimit={c.minLimit}
-                count={overviewStats ? (overviewStats[c.type as 'WASSCE_NOVDEC' | 'BECE']?.available || 0) : 0}
+                count={overviewStats ? (overviewStats[c.type as ExamType]?.available || 0) : 0}
                 onUpdateConfig={handleUpdateConfig}
               />
             ))}

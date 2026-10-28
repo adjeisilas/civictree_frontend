@@ -68,8 +68,8 @@ export default function OrderDetailsPage({
     if (order.paymentStatus === 'Paid' && order.deliveryStatus === 'Sent') {
       // Flow 1: Successful Path
       return (
-        <div className="bg-white p-5 rounded-xl border border-gray-100 shadow-sm space-y-3">
-          <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Order Status Flow</p>
+        <div className="bg-white p-5 rounded-xl border border-gray-200 space-y-3">
+          <p className="text-xs font-bold text-gray-400">Order Status Flow</p>
           <div className="flex flex-wrap items-center gap-2 text-xs font-semibold text-gray-500">
             <span className="px-2.5 py-1 rounded bg-emerald-50 text-emerald-700 border border-emerald-100">1. Payment Initiated</span>
             <span>&rarr;</span>
@@ -88,28 +88,28 @@ export default function OrderDetailsPage({
     } else if (order.paymentStatus === 'Failed') {
       // Flow 2: Failed Payment Path
       return (
-        <div className="bg-white p-5 rounded-xl border border-gray-100 shadow-sm space-y-3">
-          <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Order Status Flow</p>
+        <div className="bg-white p-5 rounded-xl border border-gray-200 space-y-3">
+          <p className="text-xs font-bold text-gray-400">Order Status Flow</p>
           <div className="flex flex-wrap items-center gap-2 text-xs font-semibold text-gray-500">
             <span className="px-2.5 py-1 rounded bg-red-50 text-red-700 border border-red-100">3. Payment Failed</span>
             <span>&rarr;</span>
             <span className="px-2.5 py-1 rounded bg-amber-50 text-amber-700 border border-amber-200">Marked Failed - No Voucher Assigned</span>
             <span>&rarr;</span>
-            <span className="px-2.5 py-1 rounded bg-gray-50 text-gray-500 border border-gray-100">Admin notified</span>
+            <span className="px-2.5 py-1 rounded bg-gray-50 text-gray-500 border border-gray-200">Admin notified</span>
           </div>
         </div>
       )
     } else {
       // Flow 3: No Stock Path
       return (
-        <div className="bg-white p-5 rounded-xl border border-gray-100 shadow-sm space-y-3">
-          <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Order Status Flow</p>
+        <div className="bg-white p-5 rounded-xl border border-gray-200 space-y-3">
+          <p className="text-xs font-bold text-gray-400">Order Status Flow</p>
           <div className="flex flex-wrap items-center gap-2 text-xs font-semibold text-gray-500">
             <span className="px-2.5 py-1 rounded bg-red-50 text-red-700 border border-red-100">4. No Stock Available</span>
             <span>&rarr;</span>
             <span className="px-2.5 py-1 rounded bg-amber-50 text-amber-700 border border-amber-250 animate-pulse">Queued: Awaiting Stock</span>
             <span>&rarr;</span>
-            <span className="px-2.5 py-1 rounded bg-gray-50 text-gray-500 border border-gray-100">SMS: Delay Notification Sent</span>
+            <span className="px-2.5 py-1 rounded bg-gray-50 text-gray-500 border border-gray-200">SMS: Delay Notification Sent</span>
           </div>
         </div>
       )
@@ -118,34 +118,34 @@ export default function OrderDetailsPage({
 
   const getPaymentBadge = (status: Order['paymentStatus']) => {
     if (isRefunded) {
-      return <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-red-100 text-red-800 border border-red-200">Refunded</span>
+      return <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-red-100 text-red-800 border border-red-200">Refunded</span>
     }
     switch (status) {
       case 'Paid':
-        return <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-100">Paid</span>
+        return <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-100">Paid</span>
       case 'Failed':
-        return <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-red-50 text-red-700 border border-red-100">Failed</span>
+        return <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-red-50 text-red-700 border border-red-100">Failed</span>
     }
   }
 
   const getDeliveryBadge = (status: Order['deliveryStatus']) => {
     if (isRefunded) {
-      return <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-gray-150 text-gray-500 border border-gray-200">Void</span>
+      return <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-gray-150 text-gray-500 border border-gray-200">Void</span>
     }
     switch (status) {
       case 'Sent':
-        return <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-100">Sent</span>
+        return <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-100">Sent</span>
       case 'Pending':
-        return <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-amber-50 text-amber-700 border border-amber-200">Pending</span>
+        return <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-amber-50 text-amber-700 border border-amber-200">Pending</span>
       case 'Not sent':
-        return <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-red-50 text-red-700 border border-red-100">Not sent</span>
+        return <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-red-50 text-red-700 border border-red-100">Not sent</span>
     }
   }
 
   return (
     <div className="space-y-6 text-sm">
       {/* Back Header navigation */}
-      <div className="flex items-center space-x-3 bg-white p-4 rounded-xl border border-gray-100 shadow-sm">
+      <div className="flex items-center space-x-3 bg-white p-4 rounded-xl border border-gray-200">
         <button
           onClick={onBack}
           className="p-2 hover:bg-gray-100 text-gray-500 hover:text-gray-700 rounded-xl transition-colors cursor-pointer inline-flex items-center"
@@ -171,7 +171,7 @@ export default function OrderDetailsPage({
         {/* Left Columns: Core Data & Refund Section */}
         <div className="lg:col-span-2 space-y-6">
           {/* Customer and transaction data card */}
-          <div className="bg-white p-6 rounded-xl border border-gray-100 shadow-sm space-y-5">
+          <div className="bg-white p-6 rounded-xl border border-gray-200 space-y-5">
             <div className="flex justify-between items-center border-b border-gray-50 pb-4">
               <h3 className="font-serif font-bold text-primary text-lg">Order Details</h3>
               <div className="flex space-x-2">
@@ -182,8 +182,8 @@ export default function OrderDetailsPage({
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-xs text-gray-500 font-semibold font-sans">
               <div className="space-y-3">
-                <h4 className="font-bold text-text-primary uppercase tracking-wider text-[10px]">Core Order Fields</h4>
-                <div className="space-y-2 border border-gray-150 p-4 rounded-xl bg-gray-50/50 text-text-primary">
+                <h4 className="font-bold text-text-primary text-xs">Core Order Fields</h4>
+                <div className="space-y-2 border border-gray-200 p-4 rounded-xl bg-gray-50/50 text-text-primary">
                   <div className="flex justify-between">
                     <span className="text-gray-400">Customer Name</span>
                     <span>{order.customerName}</span>
@@ -210,14 +210,14 @@ export default function OrderDetailsPage({
                   </div>
                   <div className="flex justify-between">
                     <span className="text-gray-400">Channel</span>
-                    <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-blue-50 text-blue-700 border border-blue-100">{order.channel}</span>
+                    <span className="px-2 py-0.5 rounded text-xs font-bold bg-blue-50 text-blue-700 border border-blue-100">{order.channel}</span>
                   </div>
                 </div>
               </div>
 
               <div className="space-y-3">
-                <h4 className="font-bold text-text-primary uppercase tracking-wider text-[10px]">Transaction Fields</h4>
-                <div className="space-y-2 border border-gray-150 p-4 rounded-xl bg-gray-50/50 text-text-primary">
+                <h4 className="font-bold text-text-primary text-xs">Transaction Fields</h4>
+                <div className="space-y-2 border border-gray-200 p-4 rounded-xl bg-gray-50/50 text-text-primary">
                   <div className="flex justify-between">
                     <span className="text-gray-400">Payment Method</span>
                     <span>{order.paymentMethod || 'MoMo'}</span>
@@ -228,7 +228,7 @@ export default function OrderDetailsPage({
                   </div>
                   <div className="flex justify-between">
                     <span className="text-gray-400">Payment Reference</span>
-                    <span className="font-mono text-[10px] text-gray-500">{order.gatewayRef || 'TXN-000000'}</span>
+                    <span className="font-mono text-xs text-gray-500">{order.gatewayRef || 'TXN-000000'}</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-gray-400">Response Code</span>
@@ -248,8 +248,8 @@ export default function OrderDetailsPage({
 
             {/* Delivery Fields */}
             <div className="space-y-3 pt-2">
-              <h4 className="font-bold text-text-primary uppercase tracking-wider text-[10px]">Delivery Fields</h4>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 border border-gray-150 p-4 rounded-xl bg-gray-50/50 text-text-primary text-xs font-semibold">
+              <h4 className="font-bold text-text-primary text-xs">Delivery Fields</h4>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 border border-gray-200 p-4 rounded-xl bg-gray-50/50 text-text-primary text-xs font-semibold">
                 <div className="space-y-2">
                   <div className="flex justify-between">
                     <span className="text-gray-400">SMS Dispatch Timestamp</span>
@@ -275,7 +275,7 @@ export default function OrderDetailsPage({
           </div>
 
           {/* Refund Section */}
-          <div className="bg-white p-6 rounded-xl border border-gray-100 shadow-sm space-y-5">
+          <div className="bg-white p-6 rounded-xl border border-gray-200 space-y-5">
             <div className="flex justify-between items-center border-b border-gray-50 pb-4">
               <div>
                 <h3 className="font-serif font-bold text-red-600 text-lg">Order Refund Controls</h3>
@@ -375,7 +375,7 @@ export default function OrderDetailsPage({
         {/* Right Column: Key details & Logs */}
         <div className="lg:col-span-1 space-y-6">
           {/* Action Tools Card */}
-          <div className="bg-white p-6 rounded-xl border border-gray-100 shadow-sm space-y-4">
+          <div className="bg-white p-6 rounded-xl border border-gray-200 space-y-4">
             <h3 className="font-serif font-bold text-primary text-base border-b border-gray-50 pb-2">Quick Actions</h3>
             
             <div className="space-y-2.5">
@@ -405,7 +405,7 @@ export default function OrderDetailsPage({
               <button
                 onClick={() => onReallocateKey(order.id)}
                 disabled={order.paymentStatus !== 'Paid' || isRefunded}
-                className="w-full py-2.5 border border-gray-200 bg-white text-gray-500 font-bold rounded-xl hover:text-text-primary hover:bg-gray-100 transition-colors disabled:opacity-50 cursor-pointer shadow-sm text-center block"
+                className="w-full py-2.5 border border-gray-200 bg-white text-gray-500 font-bold rounded-xl hover:text-text-primary hover:bg-gray-100 transition-colors disabled:opacity-50 cursor-pointer text-center block"
               >
                 Reallocate Checker Key
               </button>
@@ -414,7 +414,7 @@ export default function OrderDetailsPage({
 
           {/* Allocated Keys (Visual block) */}
           {order.allocatedKeys && order.allocatedKeys.length > 0 && (
-            <div className="bg-white p-6 rounded-xl border border-gray-100 shadow-sm space-y-4">
+            <div className="bg-white p-6 rounded-xl border border-gray-200 space-y-4">
               <h3 className="font-serif font-bold text-primary text-base border-b border-gray-50 pb-2">Allocated Keys ({order.allocatedKeys.length})</h3>
               
               <div className="space-y-3">
@@ -423,7 +423,7 @@ export default function OrderDetailsPage({
                   return (
                     <div key={key.serial} className={`bg-gray-50 border p-3.5 rounded-xl flex items-center justify-between text-text-primary ${isRefunded ? 'opacity-55' : ''}`}>
                       <div>
-                        <div className="text-[10px] text-gray-400 font-bold uppercase tracking-wider">SERIAL: {key.serial}</div>
+                        <div className="text-xs text-gray-400 font-bold">SERIAL: {key.serial}</div>
                         <div className="font-mono text-sm mt-1 tracking-widest font-bold">
                           {isRevealed ? key.pin : '•••• •••• ••••'}
                         </div>
@@ -453,9 +453,9 @@ export default function OrderDetailsPage({
           )}
 
           {/* SMS Timeline logs */}
-          <div className="bg-white p-6 rounded-xl border border-gray-100 shadow-sm space-y-4">
+          <div className="bg-white p-6 rounded-xl border border-gray-200 space-y-4">
             <h3 className="font-serif font-bold text-primary text-base border-b border-gray-50 pb-2">SMS Node Status Logs</h3>
-            <div className="bg-gray-950 font-mono text-[10px] p-4 rounded-xl space-y-2 border border-white/5 max-h-44 overflow-y-auto shadow-inner leading-relaxed select-text">
+            <div className="bg-gray-950 font-mono text-xs p-4 rounded-xl space-y-2 border border-white/5 max-h-44 overflow-y-auto shadow-inner leading-relaxed select-text">
               {smsLog.map((log, idx) => (
                 <div key={idx} className="text-gray-300">{log}</div>
               ))}

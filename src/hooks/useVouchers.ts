@@ -2,6 +2,7 @@ import { useMutation, useQueryClient, useQuery } from '@tanstack/react-query'
 import { apiClient } from '../lib/apiClient'
 import { ENDPOINTS } from '../services/endpoints'
 import { type ExamType, type UploadLog, type VoucherConfig, type VoucherKey, type GlobalVoucherConfig } from '../types/admin'
+import { VOUCHER_TYPES, voucherTypeDefinition } from '../config/voucherTypes'
 
 /**
  * Mutation hook to delete a single voucher key by its ID.
@@ -60,12 +61,12 @@ export function useUpdateVoucherConfig() {
         const currentConfig = Array.isArray(raw) ? raw[0] : raw
         const updatedConfig = { ...currentConfig }
 
-        if (payload.type === 'WASSCE_NOVDEC') {
-          updatedConfig.wassceNovdecPrice = payload.price!
-          updatedConfig.wassceNovdecLimit = payload.minLimit!
-        } else if (payload.type === 'BECE') {
-          updatedConfig.becePrice = payload.price!
-          updatedConfig.beceLimit = payload.minLimit!
+        // Write into whichever pair of fields this type uses
+        const definition = voucherTypeDefinition(payload.type)
+        if (definition) {
+          const target = updatedConfig as unknown as Record<string, number>
+          target[definition.priceField] = payload.price!
+          target[definition.limitField] = payload.minLimit!
         }
 
         const putRes = await apiClient.put<{ success: boolean; data: VoucherConfig }>(ENDPOINTS.VOUCHERS.CONFIGS, updatedConfig)
@@ -202,10 +203,12 @@ export function useVoucherConfigs() {
           const d = Array.isArray(raw) ? raw[0] : raw
           if (!d) return []
           
-          return [
-            { type: 'WASSCE_NOVDEC', price: d.wassceNovdecPrice, minLimit: d.wassceNovdecLimit },
-            { type: 'BECE', price: d.becePrice, minLimit: d.beceLimit },
-          ] as VoucherConfig[]
+          const fields = d as unknown as Record<string, number | undefined>
+          return VOUCHER_TYPES.map((v) => ({
+            type: v.type,
+            price: fields[v.priceField] ?? 0,
+            minLimit: fields[v.limitField] ?? 0,
+          })) as VoucherConfig[]
         }),
   })
 }
@@ -268,9 +271,7 @@ export interface VoucherOverviewStat {
   total: number
 }
 
-export interface VoucherOverviewResponse {
-  WASSCE_NOVDEC: VoucherOverviewStat
-  BECE: VoucherOverviewStat
+export type VoucherOverviewResponse = Partial<Record<ExamType, VoucherOverviewStat>> & {
   totals: VoucherOverviewStat
 }
 

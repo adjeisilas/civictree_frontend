@@ -4,6 +4,7 @@ import type { VoucherKey } from './VoucherKeysTable'
 import { useCheckBulkDuplicates } from '../../../hooks/useVouchers'
 import type { CheckBulkDuplicatesResponse } from '../../../hooks/useVouchers'
 import type { ExamType } from '../../../types/admin'
+import { VOUCHER_TYPES } from '../../../config/voucherTypes'
 
 interface VoucherUploadModalProps {
   isOpen: boolean
@@ -22,6 +23,9 @@ const CSV_TYPE_ALIASES: Record<string, ExamType> = {
   WASSCE: 'WASSCE_NOVDEC',
   NOVDEC: 'WASSCE_NOVDEC',
   WASSCE_NOVDEC: 'WASSCE_NOVDEC',
+  CTVET: 'CTVET_NABTEX',
+  NABTEX: 'CTVET_NABTEX',
+  CTVET_NABTEX: 'CTVET_NABTEX',
   BECE: 'BECE',
 }
 
@@ -392,7 +396,7 @@ export default function VoucherUploadModal({ isOpen, onClose, existingKeys, onUp
       />
 
       {/* Modal Container */}
-      <div className="bg-white rounded-xl border border-gray-150 shadow-xl max-w-lg w-full z-10 overflow-hidden transform transition-all flex flex-col max-h-[85vh]">
+      <div className="bg-white rounded-xl border border-gray-200 shadow-xl max-w-lg w-full z-10 overflow-hidden transform transition-all flex flex-col max-h-[85vh]">
         {/* Header */}
         <div className="p-6 bg-primary text-white flex justify-between items-center shrink-0">
           <div>
@@ -411,7 +415,7 @@ export default function VoucherUploadModal({ isOpen, onClose, existingKeys, onUp
 
         {/* Tab Selection */}
         {!showResultsSummary && (
-          <div className="flex border-b border-gray-100 text-sm font-semibold text-gray-500 bg-gray-50/50 shrink-0">
+          <div className="flex border-b border-gray-200 text-sm font-semibold text-gray-500 bg-gray-50/50 shrink-0">
             <button
               onClick={() => { setActiveTab('csv'); setFileError(null); }}
               className={`flex-1 py-3 text-center transition-colors cursor-pointer border-b-2 ${
@@ -449,19 +453,19 @@ export default function VoucherUploadModal({ isOpen, onClose, existingKeys, onUp
           {showResultsSummary ? (
             /* Verification Results Summary View */
             <div className="space-y-4">
-              <div className="p-4 bg-gray-50 border border-gray-150 rounded-xl space-y-3">
+              <div className="p-4 bg-gray-50 border border-gray-200 rounded-xl space-y-3">
                 <h4 className="font-serif font-bold text-primary text-sm">Upload Status Audit</h4>
                 <div className="grid grid-cols-3 gap-2 text-center text-xs font-mono font-bold">
-                  <div className="bg-white p-2 rounded border border-gray-150">
-                    <p className="text-gray-400 uppercase text-[9px]">Total Parsed</p>
+                  <div className="bg-white p-2 rounded border border-gray-200">
+                    <p className="text-gray-400 uppercase text-[11px]">Total Parsed</p>
                     <p className="text-base text-text-primary mt-0.5">{totalRowsChecked}</p>
                   </div>
                   <div className="bg-emerald-50/50 p-2 rounded border border-emerald-100 text-emerald-800">
-                    <p className="text-emerald-600/80 uppercase text-[9px]">Total Unique</p>
+                    <p className="text-emerald-600/80 uppercase text-[11px]">Total Unique</p>
                     <p className="text-base mt-0.5">{uniqueKeyCount}</p>
                   </div>
                   <div className="bg-red-50/50 p-2 rounded border border-red-100 text-red-800">
-                    <p className="text-red-600/80 uppercase text-[9px]">Duplicates</p>
+                    <p className="text-red-600/80 uppercase text-[11px]">Duplicates</p>
                     <p className="text-base mt-0.5">{validationErrors.length}</p>
                   </div>
                 </div>
@@ -476,7 +480,7 @@ export default function VoucherUploadModal({ isOpen, onClose, existingKeys, onUp
                   <div className="max-h-40 overflow-y-auto border border-red-150 rounded-xl divide-y divide-red-100/50 text-[11px] font-medium bg-red-50/10">
                     {validationErrors.map((err, idx) => (
                       <div key={idx} className="p-2.5 flex items-start gap-3">
-                        <span className="bg-red-100 text-red-800 font-mono text-[9px] font-bold px-1.5 py-0.5 rounded shrink-0">
+                        <span className="bg-red-100 text-red-800 font-mono text-[11px] font-bold px-1.5 py-0.5 rounded shrink-0">
                           {err.line === -1 ? 'API' : `Line ${err.line}`}
                         </span>
                         <div className="space-y-0.5 overflow-hidden">
@@ -500,7 +504,7 @@ export default function VoucherUploadModal({ isOpen, onClose, existingKeys, onUp
               )}
 
               {/* Action Buttons for Summary */}
-              <div className="flex space-x-3 pt-3 border-t border-gray-100">
+              <div className="flex space-x-3 pt-3 border-t border-gray-200">
                 <button
                   type="button"
                   onClick={handleReset}
@@ -524,14 +528,15 @@ export default function VoucherUploadModal({ isOpen, onClose, existingKeys, onUp
               {/* Common Category Selector */}
               <div className="space-y-1.5">
                 <label className="font-bold text-gray-700">Fallback Exam Category</label>
-                <p className="text-[10px] text-gray-400 font-medium">Default category if not defined row-by-row in the CSV</p>
+                <p className="text-xs text-gray-400 font-medium">Default category if not defined row-by-row in the CSV</p>
                 <select
                   value={voucherType}
                   onChange={(e) => setVoucherType(e.target.value as ExamType)}
                   className="w-full px-3.5 py-2 border border-gray-200 rounded-xl focus:outline-none focus:border-primary bg-white font-semibold text-text-primary"
                 >
-                  <option value="WASSCE_NOVDEC">WASSCE / NOVDEC Checker Key</option>
-                  <option value="BECE">BECE Checker Key</option>
+                  {VOUCHER_TYPES.map((v) => (
+                    <option key={v.type} value={v.type}>{v.displayName} Checker Key</option>
+                  ))}
                 </select>
               </div>
 
@@ -571,14 +576,14 @@ export default function VoucherUploadModal({ isOpen, onClose, existingKeys, onUp
                       )}
                     </div>
                     <p className="font-bold text-gray-700 text-xs">{isChecking ? 'Checking for duplicates on server...' : 'Drag & drop your file here'}</p>
-                    <p className="text-[10px] text-gray-400 mt-1">{isChecking ? 'Please wait' : 'Or click to browse from system explorer'}</p>
-                    <span className="inline-block mt-4 px-2 py-0.5 bg-gray-100 text-gray-500 font-mono text-[9px] rounded font-bold uppercase tracking-wider">
+                    <p className="text-xs text-gray-400 mt-1">{isChecking ? 'Please wait' : 'Or click to browse from system explorer'}</p>
+                    <span className="inline-block mt-4 px-2 py-0.5 bg-gray-100 text-gray-500 font-mono text-[11px] rounded font-bold">
                       Required: .CSV, .XLSX, .XLS format
                     </span>
                   </div>
 
                   {/* Format Specifications info alert */}
-                  <div className="p-4 bg-gray-50 border border-gray-150 rounded-xl space-y-1.5 text-xs text-gray-500 font-medium font-sans">
+                  <div className="p-4 bg-gray-50 border border-gray-200 rounded-xl space-y-1.5 text-xs text-gray-500 font-medium font-sans">
                     <p className="font-bold text-text-primary font-serif">Supported Configurations:</p>
                     <ul className="list-disc pl-4 space-y-1 text-[11px] leading-relaxed">
                       <li>
@@ -618,7 +623,7 @@ export default function VoucherUploadModal({ isOpen, onClose, existingKeys, onUp
                     </div>
                   </div>
 
-                  <div className="flex space-x-3 pt-3 border-t border-gray-100">
+                  <div className="flex space-x-3 pt-3 border-t border-gray-200">
                     <button
                       type="button"
                       onClick={() => { handleReset(); onClose(); }}

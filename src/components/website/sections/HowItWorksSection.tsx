@@ -23,7 +23,7 @@ export const HowItWorksSection: React.FC = () => {
     {
       number: 1,
       title: 'Select Examination',
-      body: 'Choose your exam type (BECE, WASSCE/NOVDEC) and select the exact number of vouchers you need.',
+      body: 'Choose your exam type (BECE, WASSCE/NOVDEC or CTVET/NABTEX) and select the exact number of vouchers you need.',
       theme: '#ebc56b',
       textColor: '#371f0d',
     },

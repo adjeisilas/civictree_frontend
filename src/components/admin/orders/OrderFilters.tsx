@@ -1,10 +1,12 @@
 import type { DateRangePreset } from '../../../types/admin'
+import { VOUCHER_TYPES } from '../../../config/voucherTypes'
+import type { ExamType } from '../../../types/admin'
 
 interface OrderFiltersProps {
   searchQuery: string
   setSearchQuery: (query: string) => void
-  filterType: 'ALL' | 'WASSCE_NOVDEC' | 'BECE'
-  setFilterType: (type: 'ALL' | 'WASSCE_NOVDEC' | 'BECE') => void
+  filterType: 'ALL' | ExamType
+  setFilterType: (type: 'ALL' | ExamType) => void
   filterPayment: 'ALL' | 'Successful' | 'Pending' | 'Failed'
   setFilterPayment: (status: 'ALL' | 'Successful' | 'Pending' | 'Failed') => void
   filterDelivery: 'ALL' | 'Delivered' | 'Failed' | 'Delayed'
@@ -61,7 +63,7 @@ export default function OrderFilters({
     Boolean(endDate)
 
   return (
-    <div className="bg-white p-5 rounded-xl border border-gray-100 shadow-sm space-y-4">
+    <div className="bg-white p-5 rounded-xl border border-gray-200 space-y-4">
       {/* Search Input and Date Presets */}
       <div className="flex flex-col lg:flex-row gap-3 items-stretch lg:items-center justify-between">
         {/* Search Input */}
@@ -89,7 +91,7 @@ export default function OrderFilters({
         </div>
 
         {/* Date Presets Pill Group */}
-        <div className="flex items-center flex-wrap gap-1 bg-gray-50 border border-gray-100 rounded-xl p-1 text-xs font-semibold text-gray-500">
+        <div className="flex items-center flex-wrap gap-1 bg-gray-50 border border-gray-200 rounded-xl p-1 text-xs font-semibold text-gray-500">
           {PRESETS.map((preset) => (
             <button
               key={preset}
@@ -114,7 +116,7 @@ export default function OrderFilters({
             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
               <path strokeLinecap="round" strokeLinejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
             </svg>
-            <span className="text-[11px] uppercase tracking-wider">Custom Range:</span>
+            <span className="text-[11px]">Custom Range:</span>
           </div>
 
           <div className="flex items-center gap-2 flex-1 w-full sm:w-auto">
@@ -158,21 +160,22 @@ export default function OrderFilters({
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 text-xs font-semibold text-gray-600">
         {/* Exam Type select */}
         <div className="space-y-1">
-          <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Exam Category</label>
+          <label className="text-xs font-bold text-gray-400">Exam Category</label>
           <select
             value={filterType}
-            onChange={(e) => setFilterType(e.target.value as 'ALL' | 'WASSCE_NOVDEC' | 'BECE')}
+            onChange={(e) => setFilterType(e.target.value as 'ALL' | ExamType)}
             className="w-full px-3 py-2 border border-gray-200 rounded-xl focus:outline-none focus:border-primary bg-white text-gray-700 cursor-pointer"
           >
             <option value="ALL">All Categories</option>
-            <option value="WASSCE_NOVDEC">WASSCE / NOVDEC</option>
-            <option value="BECE">BECE</option>
+            {VOUCHER_TYPES.map((v) => (
+              <option key={v.type} value={v.type}>{v.displayName}</option>
+            ))}
           </select>
         </div>
 
         {/* Channel select */}
         <div className="space-y-1">
-          <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Purchase Channel</label>
+          <label className="text-xs font-bold text-gray-400">Purchase Channel</label>
           <select
             value={filterChannel}
             onChange={(e) => setFilterChannel?.(e.target.value as 'ALL' | 'WEB' | 'USSD')}
@@ -186,7 +189,7 @@ export default function OrderFilters({
 
         {/* Payment Status select */}
         <div className="space-y-1">
-          <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Payment Status</label>
+          <label className="text-xs font-bold text-gray-400">Payment Status</label>
           <select
             value={filterPayment}
             onChange={(e) => setFilterPayment(e.target.value as 'ALL' | 'Successful' | 'Pending' | 'Failed')}
@@ -201,7 +204,7 @@ export default function OrderFilters({
 
         {/* Delivery Status select */}
         <div className="space-y-1">
-          <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">SMS Delivery Status</label>
+          <label className="text-xs font-bold text-gray-400">SMS Delivery Status</label>
           <select
             value={filterDelivery}
             onChange={(e) => setFilterDelivery(e.target.value as 'ALL' | 'Delivered' | 'Failed' | 'Delayed')}

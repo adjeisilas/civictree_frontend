@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import { VOUCHER_TYPES } from '../../config/voucherTypes';
 
 export const Footer = () => {
   return (
@@ -24,21 +25,13 @@ export const Footer = () => {
           <div>
             <h4 className="font-heading font-bold text-lg text-cta mb-6">Products</h4>
             <ul className="space-y-3">
-              <li>
-                <Link to="/pricing" className="font-sans text-white/80 hover:text-cta transition-colors text-sm">
-                  BECE Voucher
-                </Link>
-              </li>
-              <li>
-                <Link to="/pricing" className="font-sans text-white/80 hover:text-cta transition-colors text-sm">
-                  WASSCE Voucher
-                </Link>
-              </li>
-              <li>
-                <Link to="/pricing" className="font-sans text-white/80 hover:text-cta transition-colors text-sm">
-                  NOVDEC Voucher
-                </Link>
-              </li>
+              {VOUCHER_TYPES.map((voucher) => (
+                <li key={voucher.type}>
+                  <Link to="/pricing" className="font-sans text-white/80 hover:text-cta transition-colors text-sm">
+                    {voucher.displayName} Voucher
+                  </Link>
+                </li>
+              ))}
               <li>
                 <Link to="/timetable" className="font-sans text-white/80 hover:text-cta transition-colors text-sm">
                   Timetable
@@ -74,16 +67,20 @@ export const Footer = () => {
           <div>
             <h4 className="font-heading font-bold text-lg text-cta mb-6">Check Results</h4>
             <ul className="space-y-3">
-              <li>
-                <a href="https://ghana.waecdirect.org/" target="_blank" rel="noopener noreferrer" className="font-sans text-white/80 hover:text-cta transition-colors text-sm">
-                  WASSCE / NOVDEC Portal
-                </a>
-              </li>
-              <li>
-                <a href="https://eresults.waecgh.org/" target="_blank" rel="noopener noreferrer" className="font-sans text-white/80 hover:text-cta transition-colors text-sm">
-                  BECE Portal
-                </a>
-              </li>
+              {/* Only types with a configured portal appear: a type without one must
+                  not be linked to another examining body's checker. */}
+              {VOUCHER_TYPES.filter((voucher) => voucher.resultsUrl).map((voucher) => (
+                <li key={voucher.type}>
+                  <a
+                    href={voucher.resultsUrl ?? undefined}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="font-sans text-white/80 hover:text-cta transition-colors text-sm"
+                  >
+                    {voucher.displayName} Portal
+                  </a>
+                </li>
+              ))}
             </ul>
           </div>
           <div>
